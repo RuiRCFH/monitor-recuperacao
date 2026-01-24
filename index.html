@@ -6,244 +6,191 @@
     <title>Monitor de Evolução</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primario: #4A6767; --segundario: #D4AF37; --fundo: #F4F7F6; --whatsapp: #25D366; }
+        :root { --primario: #4A6767; --segundario: #D4AF37; --fundo: #F4F7F6; --whatsapp: #25D366; --urgente: #E74C3C; }
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; color: #333; }
         .card { background: white; border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
         
         .dia-badge { background: var(--segundario); color: white; padding: 6px 18px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
-
         .bloco { border: 1px solid #F0F0F0; border-radius: 20px; padding: 18px; margin-bottom: 15px; background: white; }
         label { display: block; font-weight: bold; margin-bottom: 12px; font-size: 14px; color: var(--primario); }
 
-        .grid-periodos { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .btn-periodo { border: 2px solid #EEE; padding: 12px; border-radius: 12px; cursor: pointer; background: white; font-size: 11px; font-weight: bold; }
-        .btn-periodo.selected { border-color: var(--primario); background: #F0F5F5; color: var(--primario); }
+        /* ESTILO DO QUESTIONÁRIO SEMANAL */
+        #modal-semanal { display: none; background: #FFF; border: 3px solid var(--segundario); border-radius: 25px; padding: 20px; margin-bottom: 20px; animation: slideIn 0.5s ease; }
+        .btn-check-semanal { width: 100%; padding: 15px; background: var(--segundario); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 15px; }
 
+        .escala-flex { display: flex; justify-content: space-between; gap: 5px; }
         .btn-opcao { flex: 1; font-size: 22px; cursor: pointer; border: 1px solid #EEE; border-radius: 12px; padding: 10px; background: white; }
         .btn-opcao.active { border-color: var(--primario); background: #F0F5F5; border-width: 2px; }
 
-        .btn-salvar { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 18px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        
-        /* BOTÕES DE EXPORTAÇÃO */
-        .area-exportacao { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-export { flex: 1; padding: 12px; border-radius: 12px; border: none; color: white; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-whatsapp { background: var(--whatsapp); }
-        .btn-download { background: var(--primario); }
+        .btn-salvar { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 18px; font-weight: bold; cursor: pointer; }
+        .btn-export { flex: 1; padding: 12px; border-radius: 12px; border: none; color: white; font-weight: bold; font-size: 11px; cursor: pointer; }
 
-        .timeline-card { border-left: 4px solid var(--segundario); background: #FFF; padding: 15px; margin-bottom: 20px; border-radius: 0 15px 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .resumo-linha { border-bottom: 1px solid #F0F0F0; padding: 8px 0; display: flex; justify-content: space-between; font-size: 13px; }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div id="setup" style="display:none; text-align:center; padding: 20px;">
-        <h2 style="color:var(--primario)">Configuração Inicial</h2>
-        <p>Selecione a data que deseja considerar como o <strong>Dia 1</strong>:</p>
-        <input type="date" id="data-ini" style="padding:12px; border-radius:10px; border:1px solid #ddd; width:80%;">
-        <br><br>
-        <button onclick="configurar()" style="padding:15px 30px; border-radius:15px; background:var(--primario); color:white; border:none; font-weight:bold; cursor:pointer;">Iniciar Monitoramento</button>
+    <div id="setup" style="display:none; text-align:center;">
+        <h2>Bem-vindo</h2>
+        <p>Inicie o seu acompanhamento escolhendo a data da 1ª consulta:</p>
+        <input type="date" id="data-ini" style="padding:15px; border-radius:10px; border:1px solid #ddd; width:80%;">
+        <button onclick="configurar()" class="btn-salvar" style="margin-top:20px;">Iniciar Jornada</button>
     </div>
 
     <div id="main-app">
         <header style="text-align: center;">
-            <div id="display-dia-jornada" class="dia-badge">Calculando...</div>
-            <h1 style="font-size: 18px; color: var(--primario); margin: 0; opacity: 0.7;">Monitor de Evolução</h1>
+            <div id="display-dia" class="dia-badge">Dia --</div>
+            <h1>Monitor de Evolução</h1>
         </header>
+
+        <div id="modal-semanal">
+            <h2 style="color:var(--segundario); font-size:18px;">📋 Avaliação de Ciclo (7 Dias)</h2>
+            <p style="font-size:12px;">Como avalia o seu progresso na última semana?</p>
+            
+            <label>Nível de Vitalidade/Energia:</label>
+            <div class="escala-flex">
+                <button class="btn-opcao" onclick="setS('vitalidade', 1, this)">🪫</button>
+                <button class="btn-opcao" onclick="setS('vitalidade', 3, this)">😐</button>
+                <button class="btn-opcao" onclick="setS('vitalidade', 5, this)">⚡</button>
+            </div>
+
+            <label style="margin-top:15px;">Frequência da Dor nesta semana:</label>
+            <div class="escala-flex">
+                <button class="btn-opcao" onclick="setS('frequencia', 'Menor', this)">📉</button>
+                <button class="btn-opcao" onclick="setS('frequencia', 'Igual', this)">📊</button>
+                <button class="btn-opcao" onclick="setS('frequencia', 'Maior', this)">📈</button>
+            </div>
+
+            <button onclick="salvarSemanal()" class="btn-check-semanal">Finalizar Check-up Semanal</button>
+        </div>
 
         <canvas id="graficoDor" style="max-height: 160px; margin: 20px 0;"></canvas>
 
-        <div class="bloco">
-            <label>Período do Registro:</label>
-            <div class="grid-periodos">
-                <button class="btn-periodo" id="btn-Manhã" onclick="selecionarP('Manhã')">☀️ Manhã</button>
-                <button class="btn-periodo" id="btn-Tarde" onclick="selecionarP('Tarde')">🌤️ Tarde</button>
-                <button class="btn-periodo" id="btn-Noite" onclick="selecionarP('Noite')">🌙 Noite</button>
+        <div id="bloco-diario">
+            <div class="bloco">
+                <label>Período:</label>
+                <div class="escala-flex">
+                    <button class="btn-opcao" id="btn-Manhã" onclick="selP('Manhã')">☀️</button>
+                    <button class="btn-opcao" id="btn-Tarde" onclick="selP('Tarde')">🌤️</button>
+                    <button class="btn-opcao" id="btn-Noite" onclick="selP('Noite')">🌙</button>
+                </div>
             </div>
-        </div>
 
-        <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
-            <label>Qualidade do Sono:</label>
-            <div style="display:flex; gap:5px;">
-                <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
-                <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
-                <button class="btn-opcao" onclick="setV('sono','😴',this)">😴</button>
+            <div class="bloco">
+                <label>Dor Atual (0-10): <span id="v-dor">5</span></label>
+                <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-dor').innerText = this.value">
             </div>
+
+            <button class="btn-salvar" onclick="salvarDiario()">Gravar Registo</button>
         </div>
 
-        <div class="bloco">
-            <label>Dor (0-10): <span id="label-dor">5</span></label>
-            <input type="range" id="val-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('label-dor').innerText = this.value">
-            
-            <label style="margin-top:15px;">Humor:</label>
-            <div style="display:flex; gap:5px;">
-                <button class="btn-opcao" onclick="setV('humor','🤩',this)">🤩</button>
-                <button class="btn-opcao" onclick="setV('humor','😐',this)">😐</button>
-                <button class="btn-opcao" onclick="setV('humor','😫',this)">😫</button>
-            </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn-export" style="background:var(--whatsapp)" onclick="exportarWhatsApp()">WhatsApp</button>
+            <button class="btn-export" style="background:var(--primario)" onclick="exportarCSV()">Baixar CSV</button>
         </div>
 
-        <button class="btn-salvar" onclick="salvarDados()">Gravar Dados</button>
-
-        <div class="area-exportacao">
-            <button class="btn-export btn-whatsapp" onclick="enviarWhatsApp()">
-                <span>📱 Enviar WhatsApp</span>
-            </button>
-            <button class="btn-export btn-download" onclick="baixarRelatorio()">
-                <span>📥 Baixar CSV</span>
-            </button>
-        </div>
-
-        <div id="timeline-container" style="margin-top: 35px;">
-            <h3 style="font-size: 14px; color: var(--primario); border-bottom: 1px solid #EEE; padding-bottom: 10px;">Histórico</h3>
-        </div>
-        
-        <button onclick="resetar()" style="margin-top:30px; background:none; border:none; color:#CCC; font-size:10px; width:100%; cursor:pointer;">Reiniciar Aplicativo</button>
+        <div id="historico" style="margin-top:30px;"></div>
+        <button onclick="resetar()" style="margin-top:40px; border:none; background:none; color:#ccc; font-size:10px; width:100%;">Zerar Sistema</button>
     </div>
 </div>
 
 <script>
-    let atual = { periodo: '', sono: null, humor: '😐' };
-    let chartObj = null;
+    let temp = { periodo: '', dor: 5, semanal: {} };
+    let meuGrafico = null;
 
     function configurar() {
-        const val = document.getElementById('data-ini').value;
-        if(val) {
-            localStorage.setItem('data_inicio_v11', val);
-            location.reload();
-        }
+        const d = document.getElementById('data-ini').value;
+        if(d) { localStorage.setItem('inicio_v12', d); location.reload(); }
     }
 
-    function resetar() {
-        if(confirm("Deseja apagar todos os dados?")) {
-            localStorage.clear();
-            location.reload();
-        }
-    }
+    function resetar() { if(confirm("Apagar tudo?")) { localStorage.clear(); location.reload(); } }
 
-    function getDiaJornada() {
-        const dataSalva = localStorage.getItem('data_inicio_v11');
-        if(!dataSalva) return 1;
-        const partes = dataSalva.split('-');
-        const dataInicio = new Date(partes[0], partes[1] - 1, partes[2]);
+    function getDia() {
+        const ini = new Date(localStorage.getItem('inicio_v12'));
         const hoje = new Date();
-        const dataHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-        const diffInDays = Math.floor((dataHoje - dataInicio) / (1000 * 60 * 60 * 24));
-        return diffInDays + 1;
+        hoje.setHours(0,0,0,0);
+        ini.setHours(0,0,0,0);
+        return Math.floor((hoje - ini) / (1000*60*60*24)) + 1;
     }
 
-    function selecionarP(p) {
-        atual.periodo = p;
-        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('selected'));
-        document.getElementById('btn-'+p).classList.add('selected');
-        document.getElementById('bloco-sono').style.display = (p === 'Manhã') ? 'block' : 'none';
+    function selP(p) {
+        temp.periodo = p;
+        document.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-'+p).classList.add('active');
     }
 
-    function setV(campo, val, btn) {
+    function setS(campo, val, btn) {
         btn.parentNode.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        atual[campo] = val;
+        temp.semanal[campo] = val;
     }
 
-    function salvarDados() {
-        if(!atual.periodo) return alert("Selecione o período.");
-        const diaJ = getDiaJornada();
-        const dataH = new Date().toLocaleDateString('pt-PT');
-        
-        const registro = {
-            data: dataH,
-            dia: diaJ,
-            periodo: atual.periodo,
-            dor: document.getElementById('val-dor').value,
-            humor: atual.humor,
-            sono: atual.periodo === 'Manhã' ? atual.sono : null
-        };
-
-        let db = JSON.parse(localStorage.getItem('logs_v11') || "[]");
-        db = db.filter(i => !(i.data === dataH && i.periodo === atual.periodo));
-        db.unshift(registro);
-        localStorage.setItem('logs_v11', JSON.stringify(db));
-        
-        alert("Dados salvos no Dia " + diaJ);
+    function salvarSemanal() {
+        const dia = getDia();
+        const logs = JSON.parse(localStorage.getItem('semanais_v12') || "[]");
+        logs.push({ dia, dados: temp.semanal, data: new Date().toLocaleDateString() });
+        localStorage.setItem('semanais_v12', JSON.stringify(logs));
+        alert("Check-up concluído! Agora pode fazer o registo diário.");
         location.reload();
     }
 
-    // --- FUNÇÕES DE EXPORTAÇÃO ---
-    function enviarWhatsApp() {
-        const db = JSON.parse(localStorage.getItem('logs_v11') || "[]");
-        if(db.length === 0) return alert("Nenhum dado para enviar.");
-
-        let texto = "*Relatório de Evolução Clínica*\n\n";
-        db.slice(0, 15).forEach(i => {
-            texto += `📅 *Dia ${i.dia}* (${i.data}) - ${i.periodo}\n`;
-            texto += `🔹 Dor: ${i.dor}/10 | Humor: ${i.humor} ${i.sono ? '| Sono: '+i.sono : ''}\n`;
-            texto += `------------------\n`;
-        });
-
-        const url = "https://wa.me/?text=" + encodeURIComponent(texto);
-        window.open(url, '_blank');
+    function salvarDiario() {
+        if(!temp.periodo) return alert("Selecione o período.");
+        const registro = {
+            dia: getDia(),
+            data: new Date().toLocaleDateString(),
+            periodo: temp.periodo,
+            dor: document.getElementById('input-dor').value,
+            ts: Date.now()
+        };
+        let db = JSON.parse(localStorage.getItem('diario_v12') || "[]");
+        db.unshift(registro);
+        localStorage.setItem('diario_v12', JSON.stringify(db));
+        alert("Salvo!");
+        location.reload();
     }
 
-    function baixarRelatorio() {
-        const db = JSON.parse(localStorage.getItem('logs_v11') || "[]");
-        if(db.length === 0) return alert("Nenhum dado para baixar.");
-
-        let csv = "Data,Dia,Periodo,Dor,Humor,Sono\n";
-        db.forEach(i => {
-            csv += `${i.data},${i.dia},${i.periodo},${i.dor},${i.humor},${i.sono || '-'}\n`;
-        });
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", "relatorio_evolucao_rui.csv");
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    function exportarWhatsApp() {
+        const db = JSON.parse(localStorage.getItem('diario_v12') || "[]");
+        let txt = "*Relatório Clínico*\n\n";
+        db.slice(0,10).forEach(i => txt += `Dia ${i.dia} - ${i.periodo}: Dor ${i.dor}\n`);
+        window.open("https://wa.me/?text=" + encodeURIComponent(txt));
     }
 
-    function renderizar() {
-        const dataIni = localStorage.getItem('data_inicio_v11');
-        if(!dataIni) {
-            document.getElementById('main-app').style.display='none';
-            document.getElementById('setup').style.display='block';
-            return;
-        }
+    function render() {
+        const ini = localStorage.getItem('inicio_v12');
+        if(!ini) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
         
-        document.getElementById('display-dia-jornada').innerText = "Dia " + getDiaJornada() + " da Jornada";
-        const db = JSON.parse(localStorage.getItem('logs_v11') || "[]");
+        const dia = getDia();
+        document.getElementById('display-dia').innerText = "Dia " + dia;
 
-        // Gráfico
+        // LÓGICA DE BLOQUEIO 7 DIAS
+        const semanais = JSON.parse(localStorage.getItem('semanais_v12') || "[]");
+        const jaFezSemanal = semanais.some(s => s.dia === dia);
+        
+        if (dia > 0 && (dia === 1 || dia % 7 === 1)) {
+            if (!jaFezSemanal) {
+                document.getElementById('modal-semanal').style.display = 'block';
+                document.getElementById('bloco-diario').style.opacity = '0.3';
+                document.getElementById('bloco-diario').style.pointerEvents = 'none';
+            }
+        }
+
+        const db = JSON.parse(localStorage.getItem('diario_v12') || "[]");
         const ctx = document.getElementById('graficoDor').getContext('2d');
         const ultimos = [...db].reverse().slice(-10);
-        if(chartObj) chartObj.destroy();
-        chartObj = new Chart(ctx, {
+        if(meuGrafico) meuGrafico.destroy();
+        meuGrafico = new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: ultimos.map(i => "D" + i.dia + " " + i.periodo[0]),
-                datasets: [{ data: ultimos.map(i => i.dor), borderColor: '#4A6767', tension: 0.3, fill: true, backgroundColor: 'rgba(74,103,103,0.1)' }]
-            },
-            options: { scales: { y: { min:0, max:10 } }, plugins: { legend: { display:false } } }
+            data: { labels: ultimos.map(i => "D"+i.dia), datasets: [{ data: ultimos.map(i => i.dor), borderColor: '#4A6767', fill: true, tension: 0.3 }] }
         });
 
-        // Timeline
-        const container = document.getElementById('timeline-container');
-        const diasUnicos = [...new Set(db.map(i => i.dia))].sort((a,b) => b-a);
-        diasUnicos.forEach(dNum => {
-            const logsD = db.filter(i => i.dia === dNum);
-            const card = document.createElement('div');
-            card.className = 'timeline-card';
-            card.innerHTML = `<div style="font-weight:bold; color:var(--segundario);">DIA ${dNum} <small style="color:#999;">(${logsD[0].data})</small></div>`;
-            logsD.forEach(l => {
-                card.innerHTML += `<div class="resumo-linha"><span><strong>${l.periodo}</strong></span><span>Dor: ${l.dor} | Humor: ${l.humor} ${l.sono ? '| Sono: '+l.sono : ''}</span></div>`;
-            });
-            container.appendChild(card);
-        });
+        const hist = document.getElementById('historico');
+        db.slice(0,5).forEach(i => hist.innerHTML += `<div style="border-bottom:1px solid #eee; padding:5px; font-size:12px;">D${i.dia}: ${i.periodo} - Dor ${i.dor}</div>`);
     }
 
-    window.onload = renderizar;
+    window.onload = render;
 </script>
 </body>
 </html>
