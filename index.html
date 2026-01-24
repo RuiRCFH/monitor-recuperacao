@@ -10,68 +10,67 @@
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; color: #333; }
         .card { background: var(--branco); border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
         
-        /* PAINEL DE CICLO */
         .painel-ciclo { display: flex; justify-content: space-around; background: #EBF0F0; padding: 15px; border-radius: 20px; margin-bottom: 20px; }
-        .ciclo-item { text-align: center; opacity: 0.3; transition: 0.3s; }
+        .ciclo-item { text-align: center; opacity: 0.2; transition: 0.3s; font-size: 11px; }
         .ciclo-item.check { opacity: 1; color: var(--primario); font-weight: bold; }
-        .ciclo-item span { display: block; font-size: 20px; }
+        .ciclo-item span { display: block; font-size: 22px; }
 
-        .dia-badge { background: var(--segundario); color: white; padding: 5px 15px; border-radius: 50px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        .dia-badge { background: var(--segundario); color: white; padding: 6px 18px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
 
         .bloco { border: 1px solid #F0F0F0; border-radius: 20px; padding: 18px; margin-bottom: 15px; background: white; }
         label { display: block; font-weight: bold; margin-bottom: 12px; font-size: 14px; color: var(--primario); }
 
-        /* SELETOR DE PERÍODO MELHORADO */
         .grid-periodos { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .btn-periodo { border: 2px solid #EEE; padding: 10px; border-radius: 12px; cursor: pointer; background: white; font-size: 11px; font-weight: bold; }
-        .btn-periodo.selected { border-color: var(--primario); background: #F0F5F5; }
+        .btn-periodo { border: 2px solid #EEE; padding: 12px; border-radius: 12px; cursor: pointer; background: white; font-size: 11px; font-weight: bold; transition: 0.2s; }
+        .btn-periodo.selected { border-color: var(--primario); background: #F0F5F5; color: var(--primario); }
 
         .btn-opcao { flex: 1; font-size: 22px; cursor: pointer; border: 1px solid #EEE; border-radius: 12px; padding: 10px; background: white; }
-        .btn-opcao.active { border-color: var(--primario); background: #F0F5F5; }
+        .btn-opcao.active { border-color: var(--primario); background: #F0F5F5; border-width: 2px; }
 
-        .btn-salvar { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 18px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-salvar { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 18px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         
-        /* TIMELINE */
-        .timeline-item { border-left: 3px solid var(--segundario); padding-left: 15px; margin-bottom: 20px; position: relative; }
-        .timeline-item::before { content: ''; width: 12px; height: 12px; background: var(--segundario); border-radius: 50%; position: absolute; left: -8px; top: 0; }
-        .resumo-dia { background: #f9f9f9; padding: 10px; border-radius: 10px; font-size: 12px; margin-top: 5px; }
+        /* HISTÓRICO MELHORADO */
+        .timeline-card { border-left: 4px solid var(--segundario); background: #FFF; padding: 15px; margin-bottom: 20px; border-radius: 0 15px 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .resumo-linha { border-bottom: 1px solid #F0F0F0; padding: 8px 0; display: flex; justify-content: space-between; font-size: 13px; }
+        .resumo-linha:last-child { border: none; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="setup" style="display:none; text-align:center; padding: 20px;">
-        <h2>Início da Jornada</h2>
-        <p>Selecione a data da sua primeira consulta:</p>
-        <input type="date" id="data-ini" style="padding:10px; border-radius:10px; border:1px solid #ddd;">
-        <button onclick="configurar()" style="margin-top:15px; padding:10px 20px; border-radius:10px; background:var(--primario); color:white; border:none;">Começar</button>
+        <h2 style="color:var(--primario)">Início da Jornada</h2>
+        <p>Selecione a data da primeira consulta ou início do tratamento:</p>
+        <input type="date" id="data-ini" style="padding:12px; border-radius:10px; border:1px solid #ddd; width:80%;">
+        <br><br>
+        <button onclick="configurar()" style="padding:15px 30px; border-radius:15px; background:var(--primario); color:white; border:none; font-weight:bold; cursor:pointer;">Começar Acompanhamento</button>
     </div>
 
     <div id="main-app">
         <header style="text-align: center;">
-            <div id="dia-atual-badge" class="dia-badge">Dia --</div>
-            <h1 style="font-size: 20px; color: var(--primario); margin: 0;">Monitor de Evolução</h1>
+            <div id="display-dia-jornada" class="dia-badge">Carregando...</div>
+            <h1 style="font-size: 18px; color: var(--primario); margin: 0; opacity: 0.7;">Monitor de Evolução</h1>
         </header>
 
         <div class="painel-ciclo">
-            <div id="indicador-M" class="ciclo-item"><span>☀️</span>Manhã</div>
-            <div id="indicador-T" class="ciclo-item"><span>🌤️</span>Tarde</div>
-            <div id="indicador-N" class="ciclo-item"><span>🌙</span>Noite</div>
+            <div id="ind-Manhã" class="ciclo-item"><span>☀️</span>Manhã</div>
+            <div id="ind-Tarde" class="ciclo-item"><span>🌤️</span>Tarde</div>
+            <div id="ind-Noite" class="ciclo-item"><span>🌙</span>Noite</div>
         </div>
 
-        <canvas id="graficoDor" style="max-height: 180px; margin-bottom: 20px;"></canvas>
+        <canvas id="graficoDor" style="max-height: 160px; margin-bottom: 20px;"></canvas>
 
         <div class="bloco">
-            <label>Qual período está a registar?</label>
+            <label>Qual período está a registar agora?</label>
             <div class="grid-periodos">
-                <button class="btn-periodo" id="P-Manhã" onclick="selecionarP('Manhã')">☀️ Manhã</button>
-                <button class="btn-periodo" id="P-Tarde" onclick="selecionarP('Tarde')">🌤️ Tarde</button>
-                <button class="btn-periodo" id="P-Noite" onclick="selecionarP('Noite')">🌙 Noite</button>
+                <button class="btn-periodo" id="btn-Manhã" onclick="selecionarP('Manhã')">☀️ Manhã</button>
+                <button class="btn-periodo" id="btn-Tarde" onclick="selecionarP('Tarde')">🌤️ Tarde</button>
+                <button class="btn-periodo" id="btn-Noite" onclick="selecionarP('Noite')">🌙 Noite</button>
             </div>
         </div>
 
-        <div id="secao-especifica-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
-            <label>Como foi o seu sono noturno?</label>
+        <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
+            <label>Qualidade do Sono Noturno:</label>
             <div style="display:flex; gap:5px;">
                 <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
                 <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
@@ -80,8 +79,8 @@
         </div>
 
         <div class="bloco">
-            <label>Intensidade da Dor (0-10): <span id="v-dor">5</span></label>
-            <input type="range" id="dor-val" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-dor').innerText = this.value">
+            <label>Nível de Dor (0-10): <span id="label-dor">5</span></label>
+            <input type="range" id="val-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('label-dor').innerText = this.value">
             
             <label style="margin-top:15px;">Humor:</label>
             <div style="display:flex; gap:5px;">
@@ -91,118 +90,127 @@
             </div>
         </div>
 
-        <button class="btn-salvar" onclick="confirmarESalvar()">Gravar Evolução</button>
+        <button class="btn-salvar" onclick="salvarDados()">Gravar Dados</button>
 
-        <div id="timeline" style="margin-top: 30px;">
-            <h3 style="font-size: 14px; color: var(--primario);">Histórico de Lançamentos</h3>
+        <div id="timeline-container" style="margin-top: 35px;">
+            <h3 style="font-size: 14px; color: var(--primario); border-bottom: 1px solid #EEE; padding-bottom: 10px;">Histórico da Jornada</h3>
         </div>
+        
+        <button onclick="resetar()" style="margin-top:30px; background:none; border:none; color:red; font-size:10px; width:100%; cursor:pointer;">Zerar Configurações</button>
     </div>
 </div>
 
 <script>
-    let temp = { periodo: '', sono: null, humor: '😐' };
-    let chart = null;
+    let atual = { periodo: '', sono: null, humor: '😐' };
+    let chartObj = null;
 
     function configurar() {
-        const d = document.getElementById('data-ini').value;
-        if(d) { localStorage.setItem('data_inicio', d); location.reload(); }
+        const data = document.getElementById('data-ini').value;
+        if(data) { localStorage.setItem('inicio_jornada', data); location.reload(); }
+    }
+
+    function resetar() { if(confirm("Deseja apagar todos os dados?")) { localStorage.clear(); location.reload(); } }
+
+    function getDiaJornada() {
+        const ini = new Date(localStorage.getItem('inicio_jornada'));
+        const hoje = new Date();
+        // Zera as horas para comparação pura de dias
+        ini.setHours(0,0,0,0);
+        hoje.setHours(0,0,0,0);
+        const diff = Math.floor((hoje - ini) / (1000 * 60 * 60 * 24)) + 1;
+        return diff > 0 ? diff : 1;
     }
 
     function selecionarP(p) {
-        // Verificar se já existe dado para hoje
-        const hoje = new Date().toLocaleDateString('pt-PT');
-        const db = JSON.parse(localStorage.getItem('monitor_v8') || "[]");
-        const existe = db.find(i => i.data === hoje && i.periodo === p);
-        
-        if(existe && !confirm("Já registou o período da " + p + " hoje. Deseja atualizar o registo?")) return;
-
-        temp.periodo = p;
+        atual.periodo = p;
         document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('selected'));
-        document.getElementById('P-'+p).classList.add('selected');
-        document.getElementById('secao-especifica-sono').style.display = (p === 'Manhã') ? 'block' : 'none';
+        document.getElementById('btn-'+p).classList.add('selected');
+        document.getElementById('bloco-sono').style.display = (p === 'Manhã') ? 'block' : 'none';
     }
 
     function setV(campo, val, btn) {
         btn.parentNode.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        temp[campo] = val;
+        atual[campo] = val;
     }
 
-    function confirmarESalvar() {
-        if(!temp.periodo) return alert("Por favor, selecione o período.");
+    function salvarDados() {
+        if(!atual.periodo) return alert("Selecione Manhã, Tarde ou Noite.");
         
-        const data = new Date().toLocaleDateString('pt-PT');
+        const diaJ = getDiaJornada();
+        const dataH = new Date().toLocaleDateString('pt-PT');
+        
         const registro = {
-            data,
-            periodo: temp.periodo,
-            dor: document.getElementById('dor-val').value,
-            humor: temp.humor,
-            sono: temp.periodo === 'Manhã' ? temp.sono : null,
-            ts: Date.now()
+            data: dataH,
+            dia: diaJ,
+            periodo: atual.periodo,
+            dor: document.getElementById('val-dor').value,
+            humor: atual.humor,
+            sono: atual.periodo === 'Manhã' ? atual.sono : null,
+            timestamp: Date.now()
         };
 
-        let db = JSON.parse(localStorage.getItem('monitor_v8') || "[]");
-        // Remove anterior se for atualização
-        db = db.filter(i => !(i.data === data && i.periodo === temp.periodo));
+        let db = JSON.parse(localStorage.getItem('logs_v9') || "[]");
+        // Substitui se já houver o mesmo período no mesmo dia
+        db = db.filter(i => !(i.data === dataH && i.periodo === atual.periodo));
         db.unshift(registro);
-        localStorage.setItem('monitor_v8', JSON.stringify(db.slice(0, 100)));
+        localStorage.setItem('logs_v9', JSON.stringify(db));
         
-        alert("Registo de " + temp.periodo + " guardado com sucesso!");
+        alert("Registo concluído!");
         location.reload();
     }
 
-    function render() {
-        const ini = localStorage.getItem('data_inicio');
+    function renderizar() {
+        const ini = localStorage.getItem('inicio_jornada');
         if(!ini) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
         
-        const hoje = new Date().toLocaleDateString('pt-PT');
-        const db = JSON.parse(localStorage.getItem('monitor_v8') || "[]");
-        
-        // Atualizar Badge de Dia
-        const d_ini = new Date(ini);
-        const d_hoje = new Date();
-        const diff = Math.ceil((d_hoje - d_ini) / (1000 * 60 * 60 * 24)) || 1;
-        document.getElementById('dia-atual-badge').innerText = "Dia " + diff + " da Jornada";
+        const hojeDia = getDiaJornada();
+        document.getElementById('display-dia-jornada').innerText = "Dia " + hojeDia + " da Jornada";
 
-        // Atualizar Indicadores de Ciclo
+        const db = JSON.parse(localStorage.getItem('logs_v9') || "[]");
+        const hojeData = new Date().toLocaleDateString('pt-PT');
+
+        // Indicadores de Ciclo (Somente para HOJE)
         ['Manhã','Tarde','Noite'].forEach(p => {
-            if(db.some(i => i.data === hoje && i.periodo === p)) 
-                document.getElementById('indicador-'+p[0]).classList.add('check');
+            if(db.some(i => i.data === hojeData && i.periodo === p)) 
+                document.getElementById('ind-'+p).classList.add('check');
         });
 
-        // Gráfico
+        // Gráfico (Últimos 10 registos)
         const ctx = document.getElementById('graficoDor').getContext('2d');
-        const dadosG = [...db].reverse().slice(-10);
-        if(chart) chart.destroy();
-        chart = new Chart(ctx, {
+        const ultimos = [...db].reverse().slice(-10);
+        if(chartObj) chartObj.destroy();
+        chartObj = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: dadosG.map(i => i.periodo[0]),
-                datasets: [{ data: dadosG.map(i => i.dor), borderColor: '#4A6767', tension: 0.3, fill: true, backgroundColor: 'rgba(74,103,103,0.1)' }]
+                labels: ultimos.map(i => i.dia + " " + i.periodo[0]),
+                datasets: [{ data: ultimos.map(i => i.dor), borderColor: '#4A6767', tension: 0.3, fill: true, backgroundColor: 'rgba(74,103,103,0.1)' }]
             },
             options: { scales: { y: { min:0, max:10 } }, plugins: { legend: { display:false } } }
         });
 
-        // Timeline Organizada
-        const timeline = document.getElementById('timeline');
-        const diasUnicos = [...new Set(db.map(i => i.data))].slice(0, 7);
-        
-        diasUnicos.forEach(dia => {
-            const logsDia = db.filter(i => i.data === dia);
-            const item = document.createElement('div');
-            item.className = 'timeline-item';
-            item.innerHTML = `<strong>Data: ${dia}</strong>`;
-            const resumo = document.createElement('div');
-            resumo.className = 'resumo-dia';
-            logsDia.forEach(l => {
-                resumo.innerHTML += `<div>• ${l.periodo}: Dor ${l.dor} | Humor ${l.humor} ${l.sono ? '| Sono '+l.sono : ''}</div>`;
+        // Timeline agrupada por DIA DA JORNADA
+        const container = document.getElementById('timeline-container');
+        const diasUnicos = [...new Set(db.map(i => i.dia))].sort((a,b) => b-a);
+
+        diasUnicos.forEach(dNum => {
+            const logsD = db.filter(i => i.dia === dNum);
+            const card = document.createElement('div');
+            card.className = 'timeline-card';
+            card.innerHTML = `<div style="font-weight:bold; color:var(--segundario); margin-bottom:10px;">DIA ${dNum} <span style="font-size:10px; color:#999; font-weight:normal;">(${logsD[0].data})</span></div>`;
+            
+            logsD.forEach(l => {
+                card.innerHTML += `
+                    <div class="resumo-linha">
+                        <span><strong>${l.periodo}</strong></span>
+                        <span>Dor: ${l.dor} | Humor: ${l.humor} ${l.sono ? '| Sono: '+l.sono : ''}</span>
+                    </div>`;
             });
-            item.appendChild(resumo);
-            timeline.appendChild(item);
+            container.appendChild(card);
         });
     }
 
-    window.onload = render;
+    window.onload = renderizar;
 </script>
 </body>
 </html>
