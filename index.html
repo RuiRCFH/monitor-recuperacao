@@ -3,155 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor Clínico Premium - Rui</title>
+    <title>Monitor de Evolução</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --clinico: #2C3E50; --suave: #F0F4F8; --acao: #2980B9; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--suave); margin: 0; padding: 15px; }
+        :root { --paz: #F4F7F6; --principal: #4A6767; --alerta: #E67E22; --cinza: #7F8C8D; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--paz); color: #2C3E50; margin: 0; padding: 15px; }
         .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
-        h2 { font-size: 18px; text-align: center; color: var(--acao); margin-top: 0; }
-        .bloco { margin-bottom: 20px; padding: 15px; border: 1px solid #E2E8F0; border-radius: 12px; }
-        label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 14px; }
-
-        .escala-visual { display: flex; justify-content: space-between; gap: 5px; }
-        .btn-visual { flex: 1; font-size: 22px; cursor: pointer; border: 2px solid #EEE; border-radius: 10px; padding: 8px; background: white; transition: 0.2s; }
-        .btn-visual.selected { border-color: var(--acao); background: #E1EFFE; }
-
-        .periodo-container { display: flex; gap: 5px; margin-bottom: 15px; background: #f8f9fa; padding: 5px; border-radius: 10px; }
-        .btn-periodo { flex: 1; border: none; padding: 10px; border-radius: 8px; cursor: pointer; background: none; font-weight: bold; font-size: 11px; }
-        .btn-periodo.active { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--acao); }
-
-        .btn-salvar { width: 100%; padding: 18px; background: var(--acao); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
         
-        canvas { margin: 20px 0; max-height: 250px; }
-        .log-item { background: #F8FAFC; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 12px; border-left: 4px solid var(--acao); }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { font-size: 22px; color: var(--principal); margin: 0; }
+        header p { font-size: 14px; color: var(--cinza); }
+
+        .bloco { background: #FFF; border: 1px solid #E2E8F0; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 12px; font-size: 14px; color: var(--principal); }
+
+        /* ESCALAS VISUAIS */
+        .escala-flex { display: flex; justify-content: space-between; gap: 8px; }
+        .btn-opcao { flex: 1; font-size: 20px; cursor: pointer; border: 2px solid #F0F0F0; border-radius: 12px; padding: 10px; background: white; transition: 0.2s; }
+        .btn-opcao.active { border-color: var(--principal); background: #F0F5F5; }
+
+        .btn-check { padding: 10px 20px; border-radius: 10px; border: 2px solid #EEE; cursor: pointer; font-weight: bold; }
+        .btn-check.sim { color: #27AE60; }
+        .btn-check.nao { color: #C0392B; }
+        .active-sim { background: #EAFAF1; border-color: #27AE60; }
+        .active-nao { background: #FDEDEC; border-color: #C0392B; }
+
+        .motivo-box { display: none; margin-top: 15px; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-motivo { font-size: 11px; padding: 8px; border-radius: 8px; border: 1px solid #CCC; background: white; cursor: pointer; }
+
+        .btn-salvar { width: 100%; padding: 18px; background: var(--principal); color: white; border: none; border-radius: 15px; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; }
+        
+        .status-sono { font-size: 12px; text-align: center; color: #27AE60; font-weight: bold; padding: 10px; background: #EAFAF1; border-radius: 10px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Monitor de Evolução Rui</h2>
+    <header>
+        <h1>Monitor de Evolução</h1>
+        <p>Acompanhamento diário de bem-estar</p>
+    </header>
 
-    <div style="padding: 10px;">
-        <canvas id="graficoDor"></canvas>
+    <canvas id="graficoDor" style="margin-bottom: 20px;"></canvas>
+
+    <div id="secao-sono" class="bloco">
+        <label>Qualidade do Sono Noturno:</label>
+        <div class="escala-flex">
+            <button class="btn-opcao" onclick="setVal('sono', '😫', this)">😫</button>
+            <button class="btn-opcao" onclick="setVal('sono', '😒', this)">😒</button>
+            <button class="btn-opcao" onclick="setVal('sono', '😐', this)">😐</button>
+            <button class="btn-opcao" onclick="setVal('sono', '🙂', this)">🙂</button>
+            <button class="btn-opcao" onclick="setVal('sono', '😴', this)">😴</button>
+        </div>
+    </div>
+    <div id="sono-ok" class="status-sono">✓ Sono de hoje já registado</div>
+
+    <div class="bloco">
+        <label>Nível de Dor Agora (0-10): <span id="v-eva">5</span></label>
+        <input type="range" id="input-eva" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-eva').innerText = this.value">
+        
+        <label style="margin-top:15px;">Humor no Momento:</label>
+        <div class="escala-flex">
+            <button class="btn-opcao" onclick="setVal('humor', '🤩', this)">🤩</button>
+            <button class="btn-opcao" onclick="setVal('humor', '🙂', this)">🙂</button>
+            <button class="btn-opcao" onclick="setVal('humor', '😐', this)">😐</button>
+            <button class="btn-opcao" onclick="setVal('humor', '😔', this)">😔</button>
+            <button class="btn-opcao" onclick="setVal('humor', '😫', this)">😫</button>
+        </div>
     </div>
 
     <div class="bloco">
-        <div class="periodo-container">
-            <button class="btn-periodo active" onclick="setPeriodo(this, 'Manhã')">☀️ Manhã</button>
-            <button class="btn-periodo" onclick="setPeriodo(this, 'Tarde')">🌤️ Tarde</button>
-            <button class="btn-periodo" onclick="setPeriodo(this, 'Noite')">🌙 Noite</button>
+        <label>Cumpriu as orientações de autocuidado?</label>
+        <div class="escala-flex">
+            <button class="btn-check sim" id="btn-sim" onclick="setAutocuidado(true)">Sim, fiz!</button>
+            <button class="btn-check nao" id="btn-nao" onclick="setAutocuidado(false)">Ainda não</button>
         </div>
-        
-        <label>Qualidade do Sono (Avaliar na Manhã):</label>
-        <div class="escala-visual">
-            <button class="btn-visual" onclick="selSono(this, '😫')">😫</button>
-            <button class="btn-visual" onclick="selSono(this, '😒')">😒</button>
-            <button class="btn-visual" onclick="selSono(this, '😐')">😐</button>
-            <button class="btn-visual" onclick="selSono(this, '🙂')">🙂</button>
-            <button class="btn-visual" onclick="selSono(this, '😴')">😴</button>
+        <div id="box-motivo" class="motivo-box">
+            <button class="btn-motivo" onclick="setMotivo('Esqueci')">Faltou memória</button>
+            <button class="btn-motivo" onclick="setMotivo('Sem Tempo')">Rotina corrida</button>
+            <button class="btn-motivo" onclick="setMotivo('Mal Estar')">Não me senti bem</button>
+            <button class="btn-motivo" onclick="setMotivo('Outro')">Outro motivo</button>
         </div>
     </div>
 
-    <div class="bloco">
-        <label>Nível de Dor (EVA): <span id="v-eva" style="color:var(--acao)">5</span></label>
-        <input type="range" id="eva" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-eva').innerText = this.value">
-        
-        <label style="margin-top:15px;">Humor do Momento:</label>
-        <div class="escala-visual">
-            <button class="btn-visual" onclick="selHumor(this, '🤩')">🤩</button>
-            <button class="btn-visual" onclick="selHumor(this, '🙂')">🙂</button>
-            <button class="btn-visual" onclick="selHumor(this, '😐')">😐</button>
-            <button class="btn-visual" onclick="selHumor(this, '😔')">😔</button>
-            <button class="btn-visual" onclick="selHumor(this, '😫')">😫</button>
-        </div>
-    </div>
+    <button class="btn-salvar" onclick="salvarTudo()">Gravar Evolução</button>
 
-    <button class="btn-salvar" onclick="salvar()">Gravar Evolução</button>
-
-    <div style="margin-top:25px;">
-        <h3 style="font-size:14px; color:#7F8C8D;">Histórico Semanal:</h3>
-        <div id="historico"></div>
-    </div>
+    <div id="historico-lista" style="margin-top:20px; font-size:12px;"></div>
 </div>
 
 <script>
-    let periodo = "Manhã";
-    let humor = "😐";
-    let sono = "😐";
+    let dadosDia = { sono: null, humor: '😐', fezCuidado: null, motivo: null };
     let meuGrafico = null;
 
-    function setPeriodo(btn, p) {
-        periodo = p;
-        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active'));
+    function setVal(campo, valor, btn) {
+        const pai = btn.parentNode;
+        pai.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        dadosDia[campo] = valor;
     }
 
-    function selHumor(btn, h) {
-        const btns = btn.parentNode.querySelectorAll('.btn-visual');
-        btns.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        humor = h;
+    function setAutocuidado(fez) {
+        dadosDia.fezCuidado = fez;
+        document.getElementById('btn-sim').className = fez ? 'btn-check sim active-sim' : 'btn-check sim';
+        document.getElementById('btn-nao').className = !fez ? 'btn-check nao active-nao' : 'btn-check nao';
+        document.getElementById('box-motivo').style.display = fez ? 'none' : 'grid';
+        if(fez) dadosDia.motivo = "N/A";
     }
 
-    function selSono(btn, s) {
-        const btns = btn.parentNode.querySelectorAll('.btn-visual');
-        btns.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        sono = s;
+    function setMotivo(m) {
+        dadosDia.motivo = m;
+        alert("Motivo registado: " + m);
     }
 
-    function salvar() {
-        const data = new Date().toLocaleDateString('pt-PT');
-        const novo = { data, periodo, eva: document.getElementById('eva').value, humor, sono, ts: Date.now() };
+    function salvarTudo() {
+        const agora = new Date();
+        const dataStr = agora.toLocaleDateString('pt-PT');
+        const horaStr = agora.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
         
-        let db = JSON.parse(localStorage.getItem('rui_monitor_v4') || "[]");
-        db.unshift(novo);
-        localStorage.setItem('rui_monitor_v4', JSON.stringify(db.slice(0, 21)));
+        const entrada = {
+            data: dataStr,
+            hora: horaStr,
+            eva: document.getElementById('input-eva').value,
+            humor: dadosDia.humor,
+            sono: dadosDia.sono,
+            cuidado: dadosDia.fezCuidado ? "Sim" : "Não (" + (dadosDia.motivo || "S/M") + ")",
+            ts: Date.now()
+        };
+
+        let db = JSON.parse(localStorage.getItem('monitor_v5') || "[]");
+        db.unshift(entrada);
+        localStorage.setItem('monitor_v5', JSON.stringify(db.slice(0, 30)));
         
-        alert("Registo guardado!");
-        renderizarTudo();
+        alert("Evolução registada com sucesso!");
+        location.reload(); // Recarrega para aplicar travas de sono
     }
 
-    function renderizarTudo() {
-        const db = JSON.parse(localStorage.getItem('rui_monitor_v4') || "[]").reverse();
+    function render() {
+        const db = JSON.parse(localStorage.getItem('monitor_v5') || "[]");
+        const hoje = new Date().toLocaleDateString('pt-PT');
         
-        const lista = document.getElementById('historico');
-        lista.innerHTML = "";
-        [...db].reverse().forEach(i => {
-            lista.innerHTML += `
-                <div class="log-item">
-                    <strong>${i.data} (${i.periodo})</strong> — Dor: ${i.eva} | Humor: ${i.humor} | Sono: ${i.sono}
-                </div>`;
-        });
+        // Trava do Sono: Verifica se já existe sono hoje
+        const jaTeveSono = db.some(i => i.data === hoje && i.sono !== null);
+        if(jaTeveSono) {
+            document.getElementById('secao-sono').style.display = 'none';
+            document.getElementById('sono-ok').style.display = 'block';
+        }
 
+        // Gráfico
         const ctx = document.getElementById('graficoDor').getContext('2d');
-        if (meuGrafico) meuGrafico.destroy();
-        
-        const labels = db.map(i => i.data.split('/')[0] + " " + i.periodo[0]);
-        const dadosDor = db.map(i => i.eva);
-
+        const dbInvertido = [...db].reverse();
+        if(meuGrafico) meuGrafico.destroy();
         meuGrafico = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: dbInvertido.map(i => i.hora),
                 datasets: [{
-                    label: 'Dor',
-                    data: dadosDor,
-                    borderColor: '#2980B9',
-                    backgroundColor: 'rgba(41, 128, 185, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.3,
-                    fill: true
+                    label: 'Sua Evolução (Dor)',
+                    data: dbInvertido.map(i => i.eva),
+                    borderColor: '#4A6767',
+                    backgroundColor: 'rgba(74, 103, 103, 0.1)',
+                    fill: true,
+                    tension: 0.3
                 }]
             },
-            options: {
-                scales: { y: { min: 0, max: 10 } },
-                plugins: { legend: { display: false } }
-            }
+            options: { scales: { y: { min:0, max:10 } }, plugins: { legend: { display: false } } }
+        });
+
+        // Lista
+        const lista = document.getElementById('historico-lista');
+        db.slice(0, 5).forEach(i => {
+            lista.innerHTML += `<div style="padding:8px; border-bottom:1px solid #EEE;">
+                <strong>${i.data} ${i.hora}</strong> - Dor: ${i.eva} | Cuidado: ${i.cuidado}
+            </div>`;
         });
     }
-    window.onload = renderizarTudo;
+
+    window.onload = render;
 </script>
 </body>
 </html>
