@@ -3,122 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor Clínico - Rui</title>
+    <title>Monitor Clínico Premium - Rui</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --clinico: #2C3E50; --suave: #F0F4F8; --acao: #2980B9; --aviso: #E74C3C; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--suave); margin: 0; padding: 15px; color: var(--clinico); }
-        .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 480px; margin: auto; }
+        :root { --clinico: #2C3E50; --suave: #F0F4F8; --acao: #2980B9; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--suave); margin: 0; padding: 15px; }
+        .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
         h2 { font-size: 18px; text-align: center; color: var(--acao); margin-top: 0; }
+        .bloco { margin-bottom: 20px; padding: 15px; border: 1px solid #E2E8F0; border-radius: 12px; }
+        label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 14px; }
+
+        /* ESCALA DE SONO E HUMOR */
+        .escala-visual { display: flex; justify-content: space-between; gap: 5px; }
+        .btn-visual { flex: 1; font-size: 22px; cursor: pointer; border: 2px solid #EEE; border-radius: 10px; padding: 8px; background: white; transition: 0.2s; }
+        .btn-visual.selected { border-color: var(--acao); background: #E1EFFE; }
+
+        .periodo-container { display: flex; gap: 5px; margin-bottom: 15px; background: #f8f9fa; padding: 5px; border-radius: 10px; }
+        .btn-periodo { flex: 1; border: none; padding: 10px; border-radius: 8px; cursor: pointer; background: none; font-weight: bold; font-size: 11px; }
+        .btn-periodo.active { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--acao); }
+
+        .btn-salvar { width: 100%; padding: 18px; background: var(--acao); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
         
-        .secao-bloco { margin-bottom: 20px; padding: 15px; border: 1px solid #E2E8F0; border-radius: 12px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
-
-        /* ESCALA EVA */
-        input[type=range] { width: 100%; cursor: pointer; }
-        .eva-labels { display: flex; justify-content: space-between; font-size: 11px; color: #7F8C8D; }
-
-        /* HUMOR */
-        .humor-grid { display: flex; justify-content: space-between; margin-top: 10px; }
-        .humor-btn { font-size: 24px; cursor: pointer; border: 2px solid #EEE; border-radius: 10px; padding: 5px; background: white; transition: 0.2s; }
-        .humor-btn.selecionado { border-color: var(--acao); background: #E1EFFE; }
-
-        /* MEDICAMENTOS */
-        .med-input { width: 100%; padding: 10px; border: 1px solid #CCC; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-
-        .btn-salvar { width: 100%; padding: 18px; background: var(--acao); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
-        /* RELATÓRIO */
-        .historico { margin-top: 25px; background: #F8FAFC; padding: 15px; border-radius: 12px; }
-        .log-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; border-left: 4px solid var(--acao); }
-        .tag-sos { background: #FDEDEC; color: #C0392B; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+        canvas { margin: 20px 0; max-height: 250px; }
+        .log-item { background: #F8FAFC; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 12px; border-left: 4px solid var(--acao); }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Registo de Evolução</h2>
+    <h2>Monitor de Evolução Rui</h2>
 
-    <div class="secao-bloco">
-        <label>Intensidade da Dor (EVA): <span id="v-eva" style="color:var(--acao)">5</span></label>
-        <input type="range" id="eva" min="0" max="10" value="5" oninput="document.getElementById('v-eva').innerText = this.value">
-        <div class="eva-labels"><span>0 - Sem Dor</span><span>10 - Máxima</span></div>
+    <div style="padding: 10px;">
+        <canvas id="graficoDor"></canvas>
     </div>
 
-    <div class="secao-bloco">
-        <label>Humor Predominante:</label>
-        <div class="humor-grid">
-            <button class="humor-btn" onclick="selHumor(this, 'Radiante')">🤩</button>
-            <button class="humor-btn" onclick="selHumor(this, 'Bem')">🙂</button>
-            <button class="humor-btn" onclick="selHumor(this, 'Neutro')">😐</button>
-            <button class="humor-btn" onclick="selHumor(this, 'Baixo')">😔</button>
-            <button class="humor-btn" onclick="selHumor(this, 'Crítico')">😫</button>
+    <div class="bloco">
+        <div class="periodo-container">
+            <button class="btn-periodo active" onclick="setPeriodo(this, 'Manhã')">☀️ Manhã</button>
+            <button class="btn-periodo" onclick="setPeriodo(this, 'Tarde')">🌤️ Tarde</button>
+            <button class="btn-periodo" onclick="setPeriodo(this, 'Noite')">🌙 Noite</button>
+        </div>
+        
+        <label>Qualidade do Sono (Avaliar na Manhã):</label>
+        <div class="escala-visual">
+            <button class="btn-visual" onclick="selSono(this, '😫')">😫</button>
+            <button class="btn-visual" onclick="selSono(this, '😒')">😒</button>
+            <button class="btn-visual" onclick="selSono(this, '😐')">😐</button>
+            <button class="btn-visual" onclick="selSono(this, '🙂')">🙂</button>
+            <button class="btn-visual" onclick="selSono(this, '😴')">😴</button>
         </div>
     </div>
 
-    <div class="secao-bloco" style="background: #FFFBF0;">
-        <label>💊 Controlo Medicamentoso:</label>
-        <div class="checkbox-group">
-            <input type="checkbox" id="med_regular">
-            <span>Tomou a medicação de rotina?</span>
-        </div>
-        <div style="margin-top:12px;">
-            <label style="font-size:12px; color:#7F8C8D;">Tomou algum medicamento SOS (Extra)?</label>
-            <input type="text" id="med_sos" class="med-input" placeholder="Ex: Paracetamol, Ibuprofeno...">
+    <div class="bloco">
+        <label>Nível de Dor (EVA): <span id="v-eva" style="color:var(--acao)">5</span></label>
+        <input type="range" id="eva" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-eva').innerText = this.value">
+        
+        <label style="margin-top:15px;">Humor do Momento:</label>
+        <div class="escala-visual">
+            <button class="btn-visual" onclick="selHumor(this, '🤩')">🤩</button>
+            <button class="btn-visual" onclick="selHumor(this, '🙂')">🙂</button>
+            <button class="btn-visual" onclick="selHumor(this, '😐')">😐</button>
+            <button class="btn-visual" onclick="selHumor(this, '😔')">😔</button>
+            <button class="btn-visual" onclick="selHumor(this, '😫')">😫</button>
         </div>
     </div>
 
-    <button class="btn-salvar" onclick="salvar()">Gravar Dados de Hoje</button>
+    <button class="btn-salvar" onclick="salvar()">Gravar Evolução</button>
 
-    <div class="historico">
-        <h3 style="font-size:14px; margin-top:0;">Relatório Semanal para o Rui:</h3>
-        <div id="lista"></div>
+    <div style="margin-top:25px;">
+        <h3 style="font-size:14px; color:#7F8C8D;">Últimos Registos:</h3>
+        <div id="historico"></div>
     </div>
 </div>
 
 <script>
-    let humor = "Neutro";
+    let periodo = "Manhã";
+    let humor = "😐";
+    let sono = "😐";
+    let meuGrafico = null;
 
-    function selHumor(btn, v) {
-        document.querySelectorAll('.humor-btn').forEach(b => b.classList.remove('selecionado'));
-        btn.classList.add('selecionado');
-        humor = v;
+    function setPeriodo(btn, p) {
+        periodo = p;
+        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function selHumor(btn, h) {
+        document.querySelectorAll('.humor-btn, .btn-visual').forEach(b => { if(b.parentNode.innerText.includes('Humor')) b.classList.remove('selected') });
+        const btns = btn.parentNode.querySelectorAll('.btn-visual');
+        btns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        humor = h;
+    }
+
+    function selSono(btn, s) {
+        const btns = btn.parentNode.querySelectorAll('.btn-visual');
+        btns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        sono = s;
     }
 
     function salvar() {
-        const dados = {
-            data: new Date().toLocaleDateString('pt-PT'),
-            eva: document.getElementById('eva').value,
-            humor: humor,
-            regular: document.getElementById('med_regular').checked ? "Sim" : "Não",
-            sos: document.getElementById('med_sos').value || "Nenhum"
-        };
+        const data = new Date().toLocaleDateString('pt-PT');
+        const novo = { data, periodo, eva: document.getElementById('eva').value, humor, sono, ts: Date.now() };
         
-        let lista = JSON.parse(localStorage.getItem('rui_monitor') || "[]");
-        lista = lista.filter(i => i.data !== dados.data);
-        lista.unshift(dados);
-        localStorage.setItem('rui_monitor', JSON.stringify(lista.slice(0, 7)));
+        let db = JSON.parse(localStorage.getItem('rui_monitor_v4') || "[]");
+        db.unshift(novo);
+        localStorage.setItem('rui_monitor_v4', JSON.stringify(db.slice(0, 21)));
         
-        alert("Registo diário concluído!");
-        render();
+        alert("Registo guardado!");
+        renderizarTudo();
     }
 
-    function render() {
-        const lista = JSON.parse(localStorage.getItem('rui_monitor') || "[]");
-        const div = document.getElementById('lista');
-        div.innerHTML = lista.length ? "" : "Sem registos.";
+    function renderizarTudo() {
+        const db = JSON.parse(localStorage.getItem('rui_monitor_v4') || "[]").reverse();
         
-        lista.forEach(i => {
-            div.innerHTML += `
+        // Atualizar Histórico Texto
+        const lista = document.getElementById('historico');
+        lista.innerHTML = "";
+        [...db].reverse().forEach(i => {
+            lista.innerHTML += `
                 <div class="log-item">
-                    <strong>${i.data}</strong> — Dor: ${i.eva}/10 — ${i.humor}<br>
-                    <small>Rotina: ${i.regular} | SOS: ${i.sos !== "Nenhum" ? `<span class="tag-sos">${i.sos}</span>` : 'Nenhum'}</small>
-                </div>
-            `;
+                    <strong>${i.data} (${i.periodo})</strong> — Dor: ${i.eva} | Humor: ${i.humor} | Sono: ${i.sono}
+                </div>`;
+        });
+
+        // Atualizar Gráfico
+        const ctx = document.getElementById('graficoDor').getContext('2d');
+        if (meuGrafico) meuGrafico.destroy();
+        
+        const labels = db.map(i => i.data.split('/')[0] + " " + i.periodo[0]);
+        const dadosDor = db.map(i => i.eva);
+
+        meuGrafico = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Intensidade da Dor',
+                    data: dadosDor,
+                    borderColor: '#2980B9',
+                    backgroundColor: 'rgba(41, 128, 185, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                scales: { y: { min: 0, max: 10 } },
+                plugins: { legend: { display: false } }
+            }
         });
     }
 
-    window.onload = render;
+    window.onload = renderizarTudo;
 </script>
 </body>
 </html>
