@@ -6,48 +6,54 @@
     <title>Monitor de Evolução</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --principal: #4A6767; --manha: #FFB347; --tarde: #77DD77; --noite: #779ECB; --fundo: #F8F9FA; }
-        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: var(--fundo); color: #333; margin: 0; padding: 15px; }
-        .card { background: white; border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
+        :root { --principal: #4A6767; --destaque: #D4AF37; --fundo: #FDFDFD; }
+        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; color: #333; }
+        .card { background: white; border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
         
-        .periodo-selector { display: flex; gap: 10px; margin: 20px 0; }
-        .btn-p { flex: 1; border: 2px solid #EEE; padding: 12px; border-radius: 15px; cursor: pointer; background: white; transition: 0.3s; font-weight: bold; font-size: 11px; text-align: center; }
-        .btn-p.active { color: white; border-color: transparent; }
-        .btn-p.active.m { background: var(--manha); box-shadow: 0 4px 12px rgba(255,179,71,0.3); }
-        .btn-p.active.t { background: var(--tarde); box-shadow: 0 4px 12px rgba(119,221,119,0.3); }
-        .btn-p.active.n { background: var(--noite); box-shadow: 0 4px 12px rgba(119,158,203,0.3); }
+        /* CONFIGURAÇÃO INICIAL */
+        #config-inicial { background: #F0F5F5; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px dashed var(--principal); }
+        
+        .dia-jornada { font-size: 12px; font-weight: bold; color: var(--destaque); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .bloco { border: 1px solid #F0F0F0; border-radius: 20px; padding: 18px; margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 14px; color: var(--principal); }
 
-        .bloco { background: #FFF; border: 1px solid #F0F0F0; border-radius: 20px; padding: 18px; margin-bottom: 15px; display: block; }
-        .bloco-sono { border: 2px dashed var(--manha); background: #FFFDF9; }
-        label { display: block; font-weight: bold; margin-bottom: 12px; font-size: 14px; color: var(--principal); }
-
-        .escala-flex { display: flex; justify-content: space-between; gap: 8px; }
+        .escala-flex { display: flex; justify-content: space-between; gap: 5px; }
         .btn-opcao { flex: 1; font-size: 22px; cursor: pointer; border: 1px solid #EEE; border-radius: 12px; padding: 10px; background: white; }
-        .btn-opcao.active { border-color: var(--principal); background: #F0F5F5; transform: scale(1.1); }
+        .btn-opcao.active { border-color: var(--principal); background: #F0F5F5; transform: scale(1.05); }
 
-        .btn-salvar { width: 100%; padding: 20px; background: var(--principal); color: white; border: none; border-radius: 18px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .status-ok { font-size: 12px; color: #27AE60; text-align: center; padding: 10px; font-weight: bold; }
+        .btn-salvar { width: 100%; padding: 20px; background: var(--principal); color: white; border: none; border-radius: 18px; font-weight: bold; cursor: pointer; }
+        
+        .item-log { border-bottom: 1px solid #EEE; padding: 10px 0; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <header style="text-align: center;">
-        <h1 style="font-size: 20px; color: var(--principal); margin: 0;">Monitor de Evolução</h1>
-        <p style="font-size: 13px; color: #999;">Acompanhamento Clínico Individualizado</p>
+    <header style="text-align: center; margin-bottom: 20px;">
+        <span id="label-dia-jornada" class="dia-jornada">Bem-vindo à sua jornada</span>
+        <h1 style="font-size: 22px; color: var(--principal); margin: 5px 0;">Monitor de Evolução</h1>
     </header>
 
-    <canvas id="graficoDor" style="margin: 20px 0;"></canvas>
-
-    <label>Selecione o período de observação:</label>
-    <div class="periodo-selector">
-        <button class="btn-p active m" onclick="mudarPeriodo(this, 'Manhã')">☀️<br>Manhã</button>
-        <button class="btn-p" onclick="mudarPeriodo(this, 'Tarde')">🌤️<br>Tarde</button>
-        <button class="btn-p" onclick="mudarPeriodo(this, 'Noite')">🌙<br>Noite</button>
+    <div id="config-inicial" style="display:none;">
+        <label>Quando iniciou o seu acompanhamento?</label>
+        <input type="date" id="data-inicio-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #CCC;">
+        <button onclick="definirDataInicio()" style="width:100%; margin-top:10px; padding:10px; border-radius:8px; background:var(--principal); color:white; border:none;">Definir Início da Jornada</button>
     </div>
 
-    <div id="secao-sono" class="bloco bloco-sono">
-        <label>🌅 Qualidade do Sono (Apenas na Manhã):</label>
+    <canvas id="graficoEvolucao" style="margin-bottom: 20px;"></canvas>
+
+    <div class="bloco">
+        <label>Período de Avaliação:</label>
+        <div class="escala-flex">
+            <button class="btn-opcao" id="btn-M" onclick="setPeriodo('Manhã')">☀️</button>
+            <button class="btn-opcao" id="btn-T" onclick="setPeriodo('Tarde')">🌤️</button>
+            <button class="btn-opcao" id="btn-N" onclick="setPeriodo('Noite')">🌙</button>
+        </div>
+    </div>
+
+    <div id="bloco-sono" class="bloco" style="display:none; border-color: var(--destaque);">
+        <label>Como foi a sua noite de sono?</label>
         <div class="escala-flex">
             <button class="btn-opcao" onclick="setVal('sono', '😫', this)">😫</button>
             <button class="btn-opcao" onclick="setVal('sono', '😒', this)">😒</button>
@@ -56,70 +62,53 @@
             <button class="btn-opcao" onclick="setVal('sono', '😴', this)">😴</button>
         </div>
     </div>
-    <div id="sono-registado" class="status-ok" style="display:none;">✓ Sono noturno já avaliado hoje.</div>
 
     <div class="bloco">
-        <label>Nível de Dor Atual (0-10): <span id="txt-eva">5</span></label>
-        <input type="range" id="input-eva" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('txt-eva').innerText = this.value">
+        <label>Nível de Dor (EVA): <span id="v-eva">5</span></label>
+        <input type="range" id="input-eva" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-eva').innerText = this.value">
         
-        <label style="margin-top:20px;">Humor neste momento:</label>
+        <label style="margin-top:15px;">Humor:</label>
         <div class="escala-flex">
             <button class="btn-opcao" onclick="setVal('humor', '🤩', this)">🤩</button>
-            <button class="btn-opcao" onclick="setVal('humor', '🙂', this)">🙂</button>
             <button class="btn-opcao" onclick="setVal('humor', '😐', this)">😐</button>
-            <button class="btn-opcao" onclick="setVal('humor', '😔', this)">😔</button>
             <button class="btn-opcao" onclick="setVal('humor', '😫', this)">😫</button>
         </div>
     </div>
 
-    <div class="bloco">
-        <label>Realizou o autocuidado sugerido?</label>
-        <div class="escala-flex">
-            <button id="c-sim" class="btn-p" onclick="setCuidado(true, this)" style="border-radius: 12px;">Sim</button>
-            <button id="c-nao" class="btn-p" onclick="setCuidado(false, this)" style="border-radius: 12px;">Não</button>
-        </div>
-    </div>
+    <button class="btn-salvar" onclick="salvar()">Gravar Dados</button>
 
-    <button class="btn-salvar" onclick="salvar()">Gravar Observação</button>
-
-    <div id="lista-logs" style="margin-top: 25px; font-size: 11px; color: #666;"></div>
+    <div id="historico" style="margin-top:25px;"></div>
 </div>
 
 <script>
-    let config = { periodo: 'Manhã', sono: null, humor: '😐', cuidado: null };
+    let config = { periodo: '', sono: null, humor: '😐' };
     let chart = null;
 
-    function mudarPeriodo(btn, p) {
-        config.periodo = p;
-        document.querySelectorAll('.btn-p').forEach(b => b.classList.remove('active','m','t','n'));
-        btn.classList.add('active');
-        if(p==='Manhã') btn.classList.add('m');
-        if(p==='Tarde') btn.classList.add('t');
-        if(p==='Noite') btn.classList.add('n');
-        
-        controlarInterfaceSono();
+    function definirDataInicio() {
+        const data = document.getElementById('data-inicio-input').value;
+        if(data) {
+            localStorage.setItem('rui_data_inicio', data);
+            location.reload();
+        }
     }
 
-    function controlarInterfaceSono() {
-        const hoje = new Date().toLocaleDateString('pt-PT');
-        const db = JSON.parse(localStorage.getItem('monitor_v6') || "[]");
-        const jaTeveSono = db.some(i => i.data === hoje && i.sono !== null);
-        
-        const el = document.getElementById('secao-sono');
-        const msg = document.getElementById('sono-registado');
-
-        if (config.periodo === 'Manhã') {
-            if (jaTeveSono) {
-                el.style.display = 'none';
-                msg.style.display = 'block';
-            } else {
-                el.style.display = 'block';
-                msg.style.display = 'none';
-            }
-        } else {
-            el.style.display = 'none';
-            msg.style.display = 'none';
+    function calcularDiaJornada() {
+        const inicio = localStorage.getItem('rui_data_inicio');
+        if(!inicio) {
+            document.getElementById('config-inicial').style.display = 'block';
+            return "--";
         }
+        const diffTime = Math.abs(new Date() - new Date(inicio));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        document.getElementById('label-dia-jornada').innerText = "Dia " + diffDays + " da Jornada";
+        return diffDays;
+    }
+
+    function setPeriodo(p) {
+        config.periodo = p;
+        document.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + p[0]).classList.add('active');
+        document.getElementById('bloco-sono').style.display = (p === 'Manhã') ? 'block' : 'none';
     }
 
     function setVal(campo, valor, btn) {
@@ -128,52 +117,56 @@
         config[campo] = valor;
     }
 
-    function setCuidado(fez, btn) {
-        document.getElementById('c-sim').style.background = 'white';
-        document.getElementById('c-nao').style.background = 'white';
-        btn.style.background = fez ? '#EAFAF1' : '#FDEDEC';
-        config.cuidado = fez ? 'Sim' : 'Não';
-    }
-
     function salvar() {
-        const data = new Date().toLocaleDateString('pt-PT');
+        if(!config.periodo) return alert("Selecione o período (Manhã, Tarde ou Noite)");
+        
         const registro = {
-            data,
+            data: new Date().toLocaleDateString('pt-PT'),
             periodo: config.periodo,
             eva: document.getElementById('input-eva').value,
             humor: config.humor,
-            sono: config.periodo === 'Manhã' ? config.sono : null,
-            cuidado: config.cuidado,
+            sono: config.sono,
+            diaJornada: calcularDiaJornada(),
             ts: Date.now()
         };
 
-        let db = JSON.parse(localStorage.getItem('monitor_v6') || "[]");
+        let db = JSON.parse(localStorage.getItem('monitor_v7') || "[]");
         db.unshift(registro);
-        localStorage.setItem('monitor_v6', JSON.stringify(db.slice(0, 30)));
+        localStorage.setItem('monitor_v7', JSON.stringify(db.slice(0, 180))); // Grava 6 meses
         
-        alert("Observação de " + config.periodo + " gravada!");
+        alert("Registo concluído!");
         location.reload();
     }
 
     function render() {
-        const db = JSON.parse(localStorage.getItem('monitor_v6') || "[]");
-        controlarInterfaceSono();
+        calcularDiaJornada();
+        const db = JSON.parse(localStorage.getItem('monitor_v7') || "[]");
+        const dadosGrafico = [...db].reverse();
 
-        const ctx = document.getElementById('graficoDor').getContext('2d');
-        const dados = [...db].reverse();
+        const ctx = document.getElementById('graficoEvolucao').getContext('2d');
         if(chart) chart.destroy();
         chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: dados.map(i => i.periodo[0]),
-                datasets: [{ label: 'Dor', data: dados.map(i => i.eva), borderColor: '#4A6767', tension: 0.3, fill: true, backgroundColor: 'rgba(74, 103, 103, 0.1)' }]
+                labels: dadosGrafico.map(i => "Dia " + i.diaJornada),
+                datasets: [{ 
+                    label: 'Dor', 
+                    data: dadosGrafico.map(i => i.eva), 
+                    borderColor: '#4A6767', 
+                    backgroundColor: 'rgba(74, 103, 103, 0.1)',
+                    fill: true,
+                    tension: 0.3 
+                }]
             },
             options: { scales: { y: { min:0, max:10 } }, plugins: { legend: { display: false } } }
         });
 
-        const lista = document.getElementById('lista-logs');
-        db.slice(0, 3).forEach(i => {
-            lista.innerHTML += `<p>• ${i.data} (${i.periodo}): Dor ${i.eva}, Humor ${i.humor}, Cuidado: ${i.cuidado}</p>`;
+        const hist = document.getElementById('historico');
+        db.slice(0, 5).forEach(i => {
+            hist.innerHTML += `<div class="item-log">
+                <strong>Dia ${i.diaJornada} (${i.data})</strong> - ${i.periodo}<br>
+                Dor: ${i.eva}/10 | Humor: ${i.humor} ${i.sono ? "| Sono: " + i.sono : ""}
+            </div>`;
         });
     }
 
