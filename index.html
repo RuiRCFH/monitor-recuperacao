@@ -6,48 +6,48 @@
     <title>Monitor de Evolução</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --paz: #F4F7F6; --principal: #4A6767; --alerta: #E67E22; --cinza: #7F8C8D; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--paz); color: #2C3E50; margin: 0; padding: 15px; }
-        .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
+        :root { --principal: #4A6767; --manha: #FFB347; --tarde: #77DD77; --noite: #779ECB; --fundo: #F8F9FA; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: var(--fundo); color: #333; margin: 0; padding: 15px; }
+        .card { background: white; border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
         
-        header { text-align: center; margin-bottom: 20px; }
-        header h1 { font-size: 22px; color: var(--principal); margin: 0; }
-        header p { font-size: 14px; color: var(--cinza); }
+        .periodo-selector { display: flex; gap: 10px; margin: 20px 0; }
+        .btn-p { flex: 1; border: 2px solid #EEE; padding: 12px; border-radius: 15px; cursor: pointer; background: white; transition: 0.3s; font-weight: bold; font-size: 11px; text-align: center; }
+        .btn-p.active { color: white; border-color: transparent; }
+        .btn-p.active.m { background: var(--manha); box-shadow: 0 4px 12px rgba(255,179,71,0.3); }
+        .btn-p.active.t { background: var(--tarde); box-shadow: 0 4px 12px rgba(119,221,119,0.3); }
+        .btn-p.active.n { background: var(--noite); box-shadow: 0 4px 12px rgba(119,158,203,0.3); }
 
-        .bloco { background: #FFF; border: 1px solid #E2E8F0; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        .bloco { background: #FFF; border: 1px solid #F0F0F0; border-radius: 20px; padding: 18px; margin-bottom: 15px; display: block; }
+        .bloco-sono { border: 2px dashed var(--manha); background: #FFFDF9; }
         label { display: block; font-weight: bold; margin-bottom: 12px; font-size: 14px; color: var(--principal); }
 
-        /* ESCALAS VISUAIS */
         .escala-flex { display: flex; justify-content: space-between; gap: 8px; }
-        .btn-opcao { flex: 1; font-size: 20px; cursor: pointer; border: 2px solid #F0F0F0; border-radius: 12px; padding: 10px; background: white; transition: 0.2s; }
-        .btn-opcao.active { border-color: var(--principal); background: #F0F5F5; }
+        .btn-opcao { flex: 1; font-size: 22px; cursor: pointer; border: 1px solid #EEE; border-radius: 12px; padding: 10px; background: white; }
+        .btn-opcao.active { border-color: var(--principal); background: #F0F5F5; transform: scale(1.1); }
 
-        .btn-check { padding: 10px 20px; border-radius: 10px; border: 2px solid #EEE; cursor: pointer; font-weight: bold; }
-        .btn-check.sim { color: #27AE60; }
-        .btn-check.nao { color: #C0392B; }
-        .active-sim { background: #EAFAF1; border-color: #27AE60; }
-        .active-nao { background: #FDEDEC; border-color: #C0392B; }
-
-        .motivo-box { display: none; margin-top: 15px; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn-motivo { font-size: 11px; padding: 8px; border-radius: 8px; border: 1px solid #CCC; background: white; cursor: pointer; }
-
-        .btn-salvar { width: 100%; padding: 18px; background: var(--principal); color: white; border: none; border-radius: 15px; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; }
-        
-        .status-sono { font-size: 12px; text-align: center; color: #27AE60; font-weight: bold; padding: 10px; background: #EAFAF1; border-radius: 10px; display: none; }
+        .btn-salvar { width: 100%; padding: 20px; background: var(--principal); color: white; border: none; border-radius: 18px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .status-ok { font-size: 12px; color: #27AE60; text-align: center; padding: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <header>
-        <h1>Monitor de Evolução</h1>
-        <p>Acompanhamento diário de bem-estar</p>
+    <header style="text-align: center;">
+        <h1 style="font-size: 20px; color: var(--principal); margin: 0;">Monitor de Evolução</h1>
+        <p style="font-size: 13px; color: #999;">Acompanhamento Clínico Individualizado</p>
     </header>
 
-    <canvas id="graficoDor" style="margin-bottom: 20px;"></canvas>
+    <canvas id="graficoDor" style="margin: 20px 0;"></canvas>
 
-    <div id="secao-sono" class="bloco">
-        <label>Qualidade do Sono Noturno:</label>
+    <label>Selecione o período de observação:</label>
+    <div class="periodo-selector">
+        <button class="btn-p active m" onclick="mudarPeriodo(this, 'Manhã')">☀️<br>Manhã</button>
+        <button class="btn-p" onclick="mudarPeriodo(this, 'Tarde')">🌤️<br>Tarde</button>
+        <button class="btn-p" onclick="mudarPeriodo(this, 'Noite')">🌙<br>Noite</button>
+    </div>
+
+    <div id="secao-sono" class="bloco bloco-sono">
+        <label>🌅 Qualidade do Sono (Apenas na Manhã):</label>
         <div class="escala-flex">
             <button class="btn-opcao" onclick="setVal('sono', '😫', this)">😫</button>
             <button class="btn-opcao" onclick="setVal('sono', '😒', this)">😒</button>
@@ -56,13 +56,13 @@
             <button class="btn-opcao" onclick="setVal('sono', '😴', this)">😴</button>
         </div>
     </div>
-    <div id="sono-ok" class="status-sono">✓ Sono de hoje já registado</div>
+    <div id="sono-registado" class="status-ok" style="display:none;">✓ Sono noturno já avaliado hoje.</div>
 
     <div class="bloco">
-        <label>Nível de Dor Agora (0-10): <span id="v-eva">5</span></label>
-        <input type="range" id="input-eva" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-eva').innerText = this.value">
+        <label>Nível de Dor Atual (0-10): <span id="txt-eva">5</span></label>
+        <input type="range" id="input-eva" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('txt-eva').innerText = this.value">
         
-        <label style="margin-top:15px;">Humor no Momento:</label>
+        <label style="margin-top:20px;">Humor neste momento:</label>
         <div class="escala-flex">
             <button class="btn-opcao" onclick="setVal('humor', '🤩', this)">🤩</button>
             <button class="btn-opcao" onclick="setVal('humor', '🙂', this)">🙂</button>
@@ -73,108 +73,107 @@
     </div>
 
     <div class="bloco">
-        <label>Cumpriu as orientações de autocuidado?</label>
+        <label>Realizou o autocuidado sugerido?</label>
         <div class="escala-flex">
-            <button class="btn-check sim" id="btn-sim" onclick="setAutocuidado(true)">Sim, fiz!</button>
-            <button class="btn-check nao" id="btn-nao" onclick="setAutocuidado(false)">Ainda não</button>
-        </div>
-        <div id="box-motivo" class="motivo-box">
-            <button class="btn-motivo" onclick="setMotivo('Esqueci')">Faltou memória</button>
-            <button class="btn-motivo" onclick="setMotivo('Sem Tempo')">Rotina corrida</button>
-            <button class="btn-motivo" onclick="setMotivo('Mal Estar')">Não me senti bem</button>
-            <button class="btn-motivo" onclick="setMotivo('Outro')">Outro motivo</button>
+            <button id="c-sim" class="btn-p" onclick="setCuidado(true, this)" style="border-radius: 12px;">Sim</button>
+            <button id="c-nao" class="btn-p" onclick="setCuidado(false, this)" style="border-radius: 12px;">Não</button>
         </div>
     </div>
 
-    <button class="btn-salvar" onclick="salvarTudo()">Gravar Evolução</button>
+    <button class="btn-salvar" onclick="salvar()">Gravar Observação</button>
 
-    <div id="historico-lista" style="margin-top:20px; font-size:12px;"></div>
+    <div id="lista-logs" style="margin-top: 25px; font-size: 11px; color: #666;"></div>
 </div>
 
 <script>
-    let dadosDia = { sono: null, humor: '😐', fezCuidado: null, motivo: null };
-    let meuGrafico = null;
+    let config = { periodo: 'Manhã', sono: null, humor: '😐', cuidado: null };
+    let chart = null;
+
+    function mudarPeriodo(btn, p) {
+        config.periodo = p;
+        document.querySelectorAll('.btn-p').forEach(b => b.classList.remove('active','m','t','n'));
+        btn.classList.add('active');
+        if(p==='Manhã') btn.classList.add('m');
+        if(p==='Tarde') btn.classList.add('t');
+        if(p==='Noite') btn.classList.add('n');
+        
+        controlarInterfaceSono();
+    }
+
+    function controlarInterfaceSono() {
+        const hoje = new Date().toLocaleDateString('pt-PT');
+        const db = JSON.parse(localStorage.getItem('monitor_v6') || "[]");
+        const jaTeveSono = db.some(i => i.data === hoje && i.sono !== null);
+        
+        const el = document.getElementById('secao-sono');
+        const msg = document.getElementById('sono-registado');
+
+        if (config.periodo === 'Manhã') {
+            if (jaTeveSono) {
+                el.style.display = 'none';
+                msg.style.display = 'block';
+            } else {
+                el.style.display = 'block';
+                msg.style.display = 'none';
+            }
+        } else {
+            el.style.display = 'none';
+            msg.style.display = 'none';
+        }
+    }
 
     function setVal(campo, valor, btn) {
-        const pai = btn.parentNode;
-        pai.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
+        btn.parentNode.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        dadosDia[campo] = valor;
+        config[campo] = valor;
     }
 
-    function setAutocuidado(fez) {
-        dadosDia.fezCuidado = fez;
-        document.getElementById('btn-sim').className = fez ? 'btn-check sim active-sim' : 'btn-check sim';
-        document.getElementById('btn-nao').className = !fez ? 'btn-check nao active-nao' : 'btn-check nao';
-        document.getElementById('box-motivo').style.display = fez ? 'none' : 'grid';
-        if(fez) dadosDia.motivo = "N/A";
+    function setCuidado(fez, btn) {
+        document.getElementById('c-sim').style.background = 'white';
+        document.getElementById('c-nao').style.background = 'white';
+        btn.style.background = fez ? '#EAFAF1' : '#FDEDEC';
+        config.cuidado = fez ? 'Sim' : 'Não';
     }
 
-    function setMotivo(m) {
-        dadosDia.motivo = m;
-        alert("Motivo registado: " + m);
-    }
-
-    function salvarTudo() {
-        const agora = new Date();
-        const dataStr = agora.toLocaleDateString('pt-PT');
-        const horaStr = agora.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
-        
-        const entrada = {
-            data: dataStr,
-            hora: horaStr,
+    function salvar() {
+        const data = new Date().toLocaleDateString('pt-PT');
+        const registro = {
+            data,
+            periodo: config.periodo,
             eva: document.getElementById('input-eva').value,
-            humor: dadosDia.humor,
-            sono: dadosDia.sono,
-            cuidado: dadosDia.fezCuidado ? "Sim" : "Não (" + (dadosDia.motivo || "S/M") + ")",
+            humor: config.humor,
+            sono: config.periodo === 'Manhã' ? config.sono : null,
+            cuidado: config.cuidado,
             ts: Date.now()
         };
 
-        let db = JSON.parse(localStorage.getItem('monitor_v5') || "[]");
-        db.unshift(entrada);
-        localStorage.setItem('monitor_v5', JSON.stringify(db.slice(0, 30)));
+        let db = JSON.parse(localStorage.getItem('monitor_v6') || "[]");
+        db.unshift(registro);
+        localStorage.setItem('monitor_v6', JSON.stringify(db.slice(0, 30)));
         
-        alert("Evolução registada com sucesso!");
-        location.reload(); // Recarrega para aplicar travas de sono
+        alert("Observação de " + config.periodo + " gravada!");
+        location.reload();
     }
 
     function render() {
-        const db = JSON.parse(localStorage.getItem('monitor_v5') || "[]");
-        const hoje = new Date().toLocaleDateString('pt-PT');
-        
-        // Trava do Sono: Verifica se já existe sono hoje
-        const jaTeveSono = db.some(i => i.data === hoje && i.sono !== null);
-        if(jaTeveSono) {
-            document.getElementById('secao-sono').style.display = 'none';
-            document.getElementById('sono-ok').style.display = 'block';
-        }
+        const db = JSON.parse(localStorage.getItem('monitor_v6') || "[]");
+        controlarInterfaceSono();
 
-        // Gráfico
         const ctx = document.getElementById('graficoDor').getContext('2d');
-        const dbInvertido = [...db].reverse();
-        if(meuGrafico) meuGrafico.destroy();
-        meuGrafico = new Chart(ctx, {
+        const dados = [...db].reverse();
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: dbInvertido.map(i => i.hora),
-                datasets: [{
-                    label: 'Sua Evolução (Dor)',
-                    data: dbInvertido.map(i => i.eva),
-                    borderColor: '#4A6767',
-                    backgroundColor: 'rgba(74, 103, 103, 0.1)',
-                    fill: true,
-                    tension: 0.3
-                }]
+                labels: dados.map(i => i.periodo[0]),
+                datasets: [{ label: 'Dor', data: dados.map(i => i.eva), borderColor: '#4A6767', tension: 0.3, fill: true, backgroundColor: 'rgba(74, 103, 103, 0.1)' }]
             },
             options: { scales: { y: { min:0, max:10 } }, plugins: { legend: { display: false } } }
         });
 
-        // Lista
-        const lista = document.getElementById('historico-lista');
-        db.slice(0, 5).forEach(i => {
-            lista.innerHTML += `<div style="padding:8px; border-bottom:1px solid #EEE;">
-                <strong>${i.data} ${i.hora}</strong> - Dor: ${i.eva} | Cuidado: ${i.cuidado}
-            </div>`;
+        const lista = document.getElementById('lista-logs');
+        db.slice(0, 3).forEach(i => {
+            lista.innerHTML += `<p>• ${i.data} (${i.periodo}): Dor ${i.eva}, Humor ${i.humor}, Cuidado: ${i.cuidado}</p>`;
         });
     }
 
