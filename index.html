@@ -6,9 +6,9 @@
     <title>Monitor de Evolução Clínica</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primario: #4A6767; --segundario: #D4AF37; --fundo: #F4F7F6; --branco: #FFFFFF; }
-        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; line-height: 1.4; }
-        .card { background: var(--branco); border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
+        :root { --primario: #4A6767; --segundario: #D4AF37; --fundo: #F4F7F6; --sucesso: #27AE60; }
+        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; }
+        .card { background: white; border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
         
         .dia-badge { background: var(--segundario); color: white; padding: 6px 18px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
         .bloco { border: 1px solid #F0F0F0; border-radius: 20px; padding: 18px; margin-bottom: 15px; background: white; }
@@ -17,31 +17,31 @@
         /* GAD-7 ESTILIZADO */
         #modal-gad7 { display: none; background: #FFF; border: 3px solid var(--segundario); border-radius: 25px; padding: 20px; margin-bottom: 20px; }
         .gad-pergunta { margin-bottom: 25px; background: #F9F9F9; padding: 15px; border-radius: 15px; }
-        .gad-pergunta p { font-size: 14px; margin: 0 0 15px 0; font-weight: bold; color: var(--primario); }
         .gad-opcoes { display: flex; flex-direction: column; gap: 8px; }
-        .btn-gad { width: 100%; text-align: left; padding: 12px 15px; border: 1px solid #DDD; border-radius: 10px; background: white; cursor: pointer; font-size: 13px; transition: 0.2s; }
-        .btn-gad.active { background: var(--segundario); color: white; border-color: var(--segundario); font-weight: bold; }
+        .btn-gad { width: 100%; text-align: left; padding: 12px; border: 1px solid #DDD; border-radius: 10px; background: white; font-size: 13px; }
+        .btn-gad.active { background: var(--segundario); color: white; font-weight: bold; }
 
         /* INTERFACE DIÁRIA */
         .escala-flex { display: flex; justify-content: space-between; gap: 5px; }
         .btn-opcao { flex: 1; font-size: 22px; cursor: pointer; border: 1px solid #EEE; border-radius: 12px; padding: 10px; background: white; }
         .btn-opcao.active { border-color: var(--primario); background: #F0F5F5; border-width: 2px; }
         
-        .btn-check { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid #EEE; cursor: pointer; font-weight: bold; background: white; }
-        .active-sim { background: #EAFAF1; border-color: #27AE60; color: #27AE60; }
-        .active-nao { background: #FDEDEC; border-color: #C0392B; color: #C0392B; }
-
         .btn-salvar { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 18px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        
+        /* MENSAGEM DE CICLO FECHADO */
+        #msg-concluido { display: none; text-align: center; padding: 30px; background: #EAFAF1; border-radius: 20px; border: 2px solid var(--sucesso); margin-bottom: 20px; }
+
+        .timeline-card { border-left: 4px solid var(--segundario); background: #FFF; padding: 15px; margin-bottom: 20px; border-radius: 0 15px 15px 0; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div id="setup" style="display:none; text-align:center; padding: 20px;">
-        <h2 style="color:var(--primario)">Bem-vindo(a)</h2>
-        <p>Inicie a sua jornada definindo a data da primeira consulta:</p>
+    <div id="setup" style="display:none; text-align:center;">
+        <h2 style="color:var(--primario)">Configuração</h2>
+        <p style="font-size:13px;">Para testar o "Dia 2" agora, escolha a data de <strong>ontem</strong>.</p>
         <input type="date" id="data-ini" style="padding:15px; border-radius:12px; border:1px solid #ddd; width:85%; margin-bottom:20px;">
-        <button onclick="configurar()" class="btn-salvar">Ativar Monitorização</button>
+        <button onclick="configurar()" class="btn-salvar">Iniciar Jornada</button>
     </div>
 
     <div id="main-app">
@@ -51,93 +51,84 @@
         </header>
 
         <div id="modal-gad7">
-            <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação Semanal (GAD-7)</h2>
-            <p style="font-size:12px; color:#666; margin-bottom:20px;">Nas últimas 2 semanas, com que frequência foi incomodado pelos problemas abaixo?</p>
-            
+            <h2 style="color:var(--segundario); font-size:18px;">📋 GAD-7 Semanal</h2>
             <div id="gad-container"></div>
-            <button onclick="salvarGAD7()" class="btn-salvar" style="background:var(--segundario); margin-top:10px;">Gravar Avaliação Semanal</button>
+            <button onclick="salvarGAD7()" class="btn-salvar" style="background:var(--segundario); margin-top:15px;">Gravar Avaliação</button>
         </div>
 
-        <div id="bloco-diario">
+        <div id="conteudo-app">
             <canvas id="graficoDor" style="max-height: 160px; margin: 20px 0;"></canvas>
 
-            <div class="bloco">
-                <label>Período do Registro:</label>
-                <div class="escala-flex">
-                    <button class="btn-opcao" id="btn-M" onclick="selP('Manhã')">☀️</button>
-                    <button class="btn-opcao" id="btn-T" onclick="selP('Tarde')">🌤️</button>
-                    <button class="btn-opcao" id="btn-N" onclick="selP('Noite')">🌙</button>
-                </div>
+            <div id="msg-concluido">
+                <span style="font-size: 40px;">🎉</span>
+                <h3 style="color:var(--sucesso); margin: 10px 0;">Ciclo Concluído!</h3>
+                <p id="txt-proximo-dia" style="font-size:13px; color:#555;"></p>
             </div>
 
-            <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario); background: #FFFDF9;">
-                <label>🌅 Qualidade do Sono Noturno:</label>
-                <div class="escala-flex">
-                    <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
-                    <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
-                    <button class="btn-opcao" onclick="setV('sono','😴',this)">😴</button>
+            <div id="formulario-diario">
+                <div class="bloco">
+                    <label>Período:</label>
+                    <div class="escala-flex">
+                        <button class="btn-opcao" id="btn-M" onclick="selP('Manhã')">☀️</button>
+                        <button class="btn-opcao" id="btn-T" onclick="selP('Tarde')">🌤️</button>
+                        <button class="btn-opcao" id="btn-N" onclick="selP('Noite')">🌙</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bloco">
-                <label>Intensidade da Dor (0-10): <span id="v-dor" style="color:var(--segundario)">5</span></label>
-                <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-dor').innerText = this.value">
-                
-                <label style="margin-top:20px;">Humor neste momento:</label>
-                <div class="escala-flex">
-                    <button class="btn-opcao" onclick="setV('humor','🤩',this)">🤩</button>
-                    <button class="btn-opcao" onclick="setV('humor','🙂',this)">🙂</button>
-                    <button class="btn-opcao" onclick="setV('humor','😐',this)">😐</button>
-                    <button class="btn-opcao" onclick="setV('humor','😔',this)">😔</button>
-                    <button class="btn-opcao" onclick="setV('humor','😫',this)">😫</button>
+                <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
+                    <label>Qualidade do Sono:</label>
+                    <div class="escala-flex">
+                        <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
+                        <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
+                        <button class="btn-opcao" onclick="setV('sono','😴',this)">😴</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bloco">
-                <label>Realizou o Autocuidado sugerido?</label>
-                <div class="escala-flex">
-                    <button id="c-sim" class="btn-check" onclick="setCuidado(true, this)">Sim</button>
-                    <button id="c-nao" class="btn-check" onclick="setCuidado(false, this)">Não</button>
+                <div class="bloco">
+                    <label>Dor (0-10): <span id="v-dor" style="color:var(--segundario)">5</span></label>
+                    <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-dor').innerText = this.value">
+                    
+                    <label style="margin-top:20px;">Humor:</label>
+                    <div class="escala-flex">
+                        <button class="btn-opcao" onclick="setV('humor','🤩',this)">🤩</button>
+                        <button class="btn-opcao" onclick="setV('humor','🙂',this)">🙂</button>
+                        <button class="btn-opcao" onclick="setV('humor','😐',this)">😐</button>
+                        <button class="btn-opcao" onclick="setV('humor','😔',this)">😔</button>
+                        <button class="btn-opcao" onclick="setV('humor','😫',this)">😫</button>
+                    </div>
                 </div>
-            </div>
 
-            <button class="btn-salvar" onclick="salvarDiario()">Gravar Dados de Hoje</button>
+                <button class="btn-salvar" onclick="salvarDiario()">Gravar Registo</button>
+            </div>
         </div>
 
         <div id="historico" style="margin-top:30px;"></div>
-        <button onclick="resetar()" style="margin-top:50px; border:none; background:none; color:#ccc; font-size:10px; width:100%; cursor:pointer;">Zerar Aplicativo e Histórico</button>
+        <button onclick="resetar()" style="margin-top:50px; background:none; border:none; color:#ccc; font-size:10px; width:100%; cursor:pointer;">Reiniciar Tudo</button>
     </div>
 </div>
 
 <script>
-    const GAD_QUESTOES = [
-        "Sentir-se nervoso(a), ansioso(a) ou muito tenso(a)",
-        "Não ser capaz de parar de se preocupar ou de controlar as preocupações",
-        "Preocupar-se demais com diversas coisas",
-        "Dificuldade para relaxar",
-        "Ficar tão inquieto(a) que é difícil permanecer sentado(a)",
-        "Ficar facilmente irritável ou aborrecido(a)",
-        "Sentir medo como se algo horrível fosse acontecer"
-    ];
-
-    let dados = { periodo: '', sono: null, humor: '😐', cuidado: null, gad: {} };
+    const GAD_QUESTOES = ["Sentir-se nervoso(a)","Incapaz de controlar preocupações","Preocupar-se demais","Dificuldade para relaxar","Inquietude","Irritabilidade","Medo de algo horrível"];
+    let dados = { periodo: '', sono: null, humor: '😐', gad: {} };
     let chart = null;
 
     function configurar() {
         const d = document.getElementById('data-ini').value;
-        if(d) { localStorage.setItem('v14_inicio', d); location.reload(); }
+        if(d) { localStorage.setItem('v15_inicio', d); location.reload(); }
     }
 
-    function resetar() { if(confirm("Atenção: isto apagará todos os dados. Continuar?")) { localStorage.clear(); location.reload(); } }
+    function resetar() { if(confirm("Apagar todos os dados?")) { localStorage.clear(); location.reload(); } }
 
     function getDia() {
-        const iniStr = localStorage.getItem('v14_inicio');
+        const iniStr = localStorage.getItem('v15_inicio');
         if(!iniStr) return 1;
         const partes = iniStr.split('-');
-        const ini = new Date(partes[0], partes[1]-1, partes[2]);
-        const hoje = new Date();
-        const dataHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-        return Math.floor((dataHoje - ini) / (1000*60*60*24)) + 1;
+        const dataInicio = new Date(partes[0], partes[1]-1, partes[2]);
+        const dataHoje = new Date();
+        dataHoje.setHours(0,0,0,0);
+        dataInicio.setHours(0,0,0,0);
+        const diff = Math.floor((dataHoje - dataInicio) / (1000*60*60*24));
+        return diff + 1;
     }
 
     function selP(p) {
@@ -153,93 +144,96 @@
         dados[campo] = val;
     }
 
-    function setCuidado(fez, btn) {
-        document.getElementById('c-sim').className = 'btn-check';
-        document.getElementById('c-nao').className = 'btn-check';
-        btn.classList.add(fez ? 'active-sim' : 'active-nao');
-        dados.cuidado = fez ? 'Sim' : 'Não';
-    }
-
     function carregarGAD7() {
-        const cont = document.getElementById('gad-container');
-        cont.innerHTML = GAD_QUESTOES.map((q, i) => `
+        document.getElementById('gad-container').innerHTML = GAD_QUESTOES.map((q, i) => `
             <div class="gad-pergunta">
                 <p>${i+1}. ${q}</p>
                 <div class="gad-opcoes">
                     <button class="btn-gad" onclick="setG(${i}, 0, this)">0 - Nenhuma vez</button>
-                    <button class="btn-gad" onclick="setG(${i}, 1, this)">1 - Menos de metade dos dias</button>
-                    <button class="btn-gad" onclick="setG(${i}, 2, this)">2 - Metade dos dias ou mais</button>
+                    <button class="btn-gad" onclick="setG(${i}, 1, this)">1 - Vários dias</button>
+                    <button class="btn-gad" onclick="setG(${i}, 2, this)">2 - Metade dos dias</button>
                     <button class="btn-gad" onclick="setG(${i}, 3, this)">3 - Quase todos os dias</button>
                 </div>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
 
-    function setG(qIdx, pontos, btn) {
+    function setG(idx, pts, btn) {
         btn.parentNode.querySelectorAll('.btn-gad').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        dados.gad[qIdx] = pontos;
+        dados.gad[idx] = pts;
     }
 
     function salvarGAD7() {
-        if(Object.keys(dados.gad).length < 7) return alert("Por favor, responda a todas as 7 perguntas.");
-        const soma = Object.values(dados.gad).reduce((a, b) => a + b, 0);
-        const logs = JSON.parse(localStorage.getItem('v14_semanais') || "[]");
-        logs.push({ dia: getDia(), score: soma, data: new Date().toLocaleDateString('pt-PT') });
-        localStorage.setItem('v14_semanais', JSON.stringify(logs));
-        alert("Avaliação guardada com sucesso!");
+        if(Object.keys(dados.gad).length < 7) return alert("Responda todas.");
+        const soma = Object.values(dados.gad).reduce((a,b) => a+b, 0);
+        let logs = JSON.parse(localStorage.getItem('v15_semanais') || "[]");
+        logs.push({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
+        localStorage.setItem('v15_semanais', JSON.stringify(logs));
         location.reload();
     }
 
     function salvarDiario() {
-        if(!dados.periodo) return alert("Selecione o período (Manhã, Tarde ou Noite).");
+        if(!dados.periodo) return alert("Selecione o período.");
         const registro = {
             dia: getDia(),
             data: new Date().toLocaleDateString('pt-PT'),
             periodo: dados.periodo,
             dor: document.getElementById('input-dor').value,
             humor: dados.humor,
-            cuidado: dados.cuidado,
             sono: dados.periodo === 'Manhã' ? dados.sono : null
         };
-        let db = JSON.parse(localStorage.getItem('v14_diario') || "[]");
+        let db = JSON.parse(localStorage.getItem('v15_diario') || "[]");
         db = db.filter(i => !(i.data === registro.data && i.periodo === registro.periodo));
         db.unshift(registro);
-        localStorage.setItem('v14_diario', JSON.stringify(db));
+        localStorage.setItem('v15_diario', JSON.stringify(db));
         alert("Registo guardado!");
         location.reload();
     }
 
     function render() {
-        const ini = localStorage.getItem('v14_inicio');
+        const ini = localStorage.getItem('v15_inicio');
         if(!ini) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
         
         const dia = getDia();
         document.getElementById('display-dia').innerText = "Dia " + dia;
 
-        const semanais = JSON.parse(localStorage.getItem('v14_semanais') || "[]");
-        const jaFezHoje = semanais.some(s => s.dia === dia);
-        
-        // Ativa GAD-7 no Dia 1 e a cada 7 dias
-        if ((dia === 1 || dia % 7 === 1) && !jaFezHoje) {
+        // Verifica GAD-7
+        const semanais = JSON.parse(localStorage.getItem('v15_semanais') || "[]");
+        const jaFezGAD = semanais.some(s => s.dia === dia);
+        if ((dia === 1 || dia % 7 === 1) && !jaFezGAD) {
             document.getElementById('modal-gad7').style.display = 'block';
-            document.getElementById('bloco-diario').style.display = 'none';
+            document.getElementById('conteudo-app').style.display = 'none';
             carregarGAD7();
-            window.scrollTo(0,0);
+            return;
         }
 
-        const db = JSON.parse(localStorage.getItem('v14_diario') || "[]");
+        const db = JSON.parse(localStorage.getItem('v15_diario') || "[]");
+        const hojeData = new Date().toLocaleDateString('pt-PT');
+        const jaFezNoite = db.some(i => i.data === hojeData && i.periodo === 'Noite');
+
+        if(jaFezNoite) {
+            document.getElementById('formulario-diario').style.display = 'none';
+            document.getElementById('msg-concluido').style.display = 'block';
+            document.getElementById('txt-proximo-dia').innerText = "Já completou todos os registos de hoje. O Dia " + (dia + 1) + " começará automaticamente à meia-noite.";
+        }
+
+        // Gráfico
         const ctx = document.getElementById('graficoDor').getContext('2d');
         const ultimos = [...db].reverse().slice(-10);
         if(chart) chart.destroy();
         chart = new Chart(ctx, {
             type: 'line',
-            data: { labels: ultimos.map(i => "D"+i.dia), datasets: [{ data: ultimos.map(i => i.dor), borderColor: '#4A6767', backgroundColor: 'rgba(74, 103, 103, 0.1)', fill: true, tension: 0.3 }] },
+            data: { labels: ultimos.map(i => "D"+i.dia+" "+i.periodo[0]), datasets: [{ data: ultimos.map(i => i.dor), borderColor: '#4A6767', fill: true, tension: 0.3, backgroundColor: 'rgba(74, 103, 103, 0.1)' }] },
             options: { scales: { y: { min:0, max:10 } }, plugins: { legend: { display: false } } }
         });
 
         const hist = document.getElementById('historico');
-        db.slice(0,5).forEach(i => hist.innerHTML += `<div style="border-bottom:1px solid #eee; padding:10px; font-size:12px;"><strong>Dia ${i.dia} (${i.periodo})</strong>: Dor ${i.dor} | Humor ${i.humor}</div>`);
+        const diasUnicos = [...new Set(db.map(i => i.dia))].sort((a,b) => b-a);
+        diasUnicos.forEach(dNum => {
+            const logs = db.filter(i => i.dia === dNum);
+            hist.innerHTML += `<div class="timeline-card"><strong>DIA ${dNum}</strong> (${logs[0].data})<br>` + 
+                logs.map(l => `• ${l.periodo}: Dor ${l.dor} | Humor ${l.humor}`).join('<br>') + `</div>`;
+        });
     }
 
     window.onload = render;
