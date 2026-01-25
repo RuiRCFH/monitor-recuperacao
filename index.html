@@ -9,35 +9,48 @@
         :root { --primario: #002E70; --segundario: #D4AF37; --sucesso: #008F55; --alerta: #C0392B; --fundo: #F4F7F6; }
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; padding-bottom: 140px; color: #333; }
         .card { background: white; border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 480px; margin: auto; border-top: 10px solid var(--segundario); }
+        
+        /* ALERTA VERMELHO PULSANTE */
+        #alerta-urgente { display: none; background: var(--alerta); color: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; animation: alert-pulse 1.5s infinite; }
+        @keyframes alert-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        
         header { text-align: center; margin-bottom: 25px; }
         .foto-perfil { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; margin-bottom: 10px; background: #EEE; }
         .brand-name { font-size: 24px; font-weight: 800; color: var(--primario); margin: 0; letter-spacing: -1px; }
         .tagline { font-size: 12px; color: var(--segundario); font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
         .dia-badge { background: var(--primario); color: white; padding: 6px 20px; border-radius: 50px; font-size: 13px; font-weight: bold; margin: 15px 0; display: inline-block; }
+        
         .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
         .grid-periodos { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 15px; }
         .btn-periodo { flex: 1; border: 2px solid #EEE; border-radius: 18px; padding: 12px 5px; background: white; font-size: 22px; cursor: pointer; opacity: 0.3; }
         .btn-periodo.active { background: #EBF5FF; border-color: var(--primario); border-width: 3px; opacity: 1; }
         .btn-periodo.disponivel { border-color: var(--segundario); border-width: 2px; opacity: 1; animation: pulse 2s infinite; }
+        
         .btn-opcao { flex: 1; font-size: 26px; padding: 12px; border: 2px solid #EEE; border-radius: 18px; background: white; cursor: pointer; }
         .btn-opcao.active { border-color: var(--primario); background: #F0F4F8; }
-        .btn-sn { flex: 1; padding: 12px; border: 2px solid #EEE; border-radius: 15px; background: white; font-weight: bold; cursor: pointer; }
-        .btn-sn.active { background: var(--primario); color: white; border-color: var(--primario); }
+        
         .btn-principal { width: 100%; padding: 18px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-wa { background: #EBF5FF; color: var(--primario); border: 2px solid var(--primario); padding: 15px; border-radius: 20px; width: 100%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-        .btn-reset { color: var(--alerta); border: 2px solid var(--alerta); background: white; padding: 12px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 13px; }
+        .btn-urgente { background: white; color: var(--alerta); border: none; padding: 10px; border-radius: 50px; font-weight: bold; margin-top: 10px; cursor: pointer; display: block; width: 100%; text-decoration: none; text-align: center; font-size: 14px; }
+
         @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0); } }
     </style>
 </head>
 <body>
 <div class="card">
     <div id="setup" style="display:none; text-align:center;">
-        <h2 style="color:var(--primario);">Início Método 360</h2>
+        <h2 style="color:var(--primario);">Método 360</h2>
+        <p>Data da 1ª consulta:</p>
         <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px;">
         <button onclick="configurar()" class="btn-principal">Ativar Meu Monitor</button>
     </div>
 
     <div id="main-app">
+        <div id="alerta-urgente">
+            <h3 style="margin:0;">⚠️ ATENÇÃO CRÍTICA</h3>
+            <p style="font-size:12px; margin: 8px 0;">Detetamos níveis elevados. Por favor, fale comigo agora.</p>
+            <a href="#" id="link-urgente" class="btn-urgente">FALAR COM DR. RUI AGORA</a>
+        </div>
+
         <header>
             <img src="foto-rui.jpg" class="foto-perfil" id="perfil-img" onerror="corrigirImg(this, 'foto-rui.jpg')">
             <p class="brand-name">MÉTODO 360</p>
@@ -47,7 +60,7 @@
         </header>
 
         <div id="modal-gad7" style="display:none;" class="bloco">
-            <h3 style="color:var(--segundario); margin-top:0;">📋 Avaliação Semanal</h3>
+            <h3 style="color:var(--segundario); margin-top:0;">📋 Avaliação de Saúde</h3>
             <div id="gad-container"></div>
             <button onclick="salvarGAD7()" class="btn-principal" style="background:var(--segundario); margin-top:15px;">Finalizar Avaliação</button>
         </div>
@@ -58,7 +71,7 @@
 
             <div id="formulario-diario">
                 <div class="bloco">
-                    <label style="display:block; font-weight:bold; margin-bottom:10px; color:var(--primario)">Período:</label>
+                    <label style="display:block; font-weight:bold; margin-bottom:10px; color:var(--primario)">Qual período vai registar?</label>
                     <div class="grid-periodos">
                         <button class="btn-periodo" id="btn-M" onclick="selP('Manhã')" disabled>☀️</button>
                         <button class="btn-periodo" id="btn-T" onclick="selP('Tarde')" disabled>🌤️</button>
@@ -67,7 +80,7 @@
                 </div>
 
                 <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
-                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Como foi o sono noturno?</label>
+                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Como foi o sono?</label>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
                         <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
@@ -81,10 +94,10 @@
                 </div>
 
                 <div class="bloco">
-                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Usou medicação? 💊</label>
+                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Usou medicação SOS? 💊</label>
                     <div style="display:flex; gap:10px;">
-                        <button class="btn-sn" onclick="setV('med','Sim',this)">Sim</button>
-                        <button class="btn-sn" onclick="setV('med','Não',this)">Não</button>
+                        <button class="btn-opcao" style="font-size:16px;" onclick="setV('med','Sim',this)">Sim</button>
+                        <button class="btn-opcao" style="font-size:16px;" onclick="setV('med','Não',this)">Não</button>
                     </div>
                 </div>
 
@@ -100,13 +113,10 @@
                 <button class="btn-principal" onclick="salvarDiario()">Gravar Registo Diário</button>
             </div>
             
-            <button onclick="enviarRelatorio()" class="btn-wa">📤 Enviar Relatório Organizado</button>
+            <button onclick="enviarRelatorio()" style="width:100%; background:#EBF5FF; color:var(--primario); border:2px solid var(--primario); border-radius:20px; padding:15px; margin-top:15px; font-weight:bold; cursor:pointer;">📤 Enviar Relatório Método 360</button>
         </div>
 
-        <div class="bloco" style="margin-top:40px; border-color: #ffebee; text-align:center;">
-            <p style="font-size:10px; color:#999;">Área de Gestão</p>
-            <button onclick="if(confirm('Apagar histórico e recomeçar?')) { localStorage.clear(); location.reload(); }" class="btn-reset">⚠️ REINICIAR MONITOR (RESET)</button>
-        </div>
+        <button onclick="if(confirm('Reiniciar tudo?')) { localStorage.clear(); location.reload(); }" style="margin-top:50px; color:#ccc; background:none; border:none; font-size:9px; width:100%; cursor:pointer;">⚠️ REINICIAR MONITOR (RESET)</button>
     </div>
 </div>
 
@@ -121,16 +131,10 @@
     let dadosAtuais = { periodo: '', humor: '😐', sono: '😐', med: 'Não', gad: {} };
     let chart = null;
 
-    function configurar() { const d = document.getElementById('data-ini').value; if(d) { localStorage.setItem('m360_v37_start', d); location.reload(); } }
-    function getDia() { const ini = localStorage.getItem('m360_v37_start'); if(!ini) return null; const d1 = new Date(ini + 'T00:00:00'); const d2 = new Date(); d2.setHours(0,0,0,0); return Math.floor((d2 - d1)/(1000*60*60*24)) + 1; }
+    function configurar() { const d = document.getElementById('data-ini').value; if(d) { localStorage.setItem('m360_v39_start', d); location.reload(); } }
+    function getDia() { const ini = localStorage.getItem('m360_v39_start'); if(!ini) return null; const d1 = new Date(ini + 'T00:00:00'); const d2 = new Date(); d2.setHours(0,0,0,0); return Math.floor((d2 - d1)/(1000*60*60*24)) + 1; }
     
-    function selP(p) { 
-        dadosAtuais.periodo = p; 
-        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active')); 
-        document.getElementById('btn-'+p[0]).classList.add('active'); 
-        document.getElementById('bloco-sono').style.display = (p === 'Manhã') ? 'block' : 'none'; 
-    }
-
+    function selP(p) { dadosAtuais.periodo = p; document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active')); document.getElementById('btn-'+p[0]).classList.add('active'); document.getElementById('bloco-sono').style.display = (p === 'Manhã') ? 'block' : 'none'; }
     function setV(campo, val, btn) { btn.parentNode.querySelectorAll('button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); dadosAtuais[campo] = val; }
     function setG(idx, pts) { for(let j=0; j<=3; j++) { const el = document.getElementById(`g${idx}-${j}`); if(el) el.classList.remove('active'); } document.getElementById(`g${idx}-${pts}`).classList.add('active'); dadosAtuais.gad[idx] = pts; }
     
@@ -147,21 +151,32 @@
             </div>`).join('');
     }
 
+    function verificarAlertas(dor, gadScore) {
+        const alerta = document.getElementById('alerta-urgente');
+        const link = document.getElementById('link-urgente');
+        if (dor >= 8 || gadScore >= 15) {
+            alerta.style.display = 'block';
+            const msg = `⚠️ *ATENDIMENTO URGENTE - MÉTODO 360*%0ADetetados níveis críticos:%0A🔥 Dor: ${dor}/10%0A🧠 GAD-7: ${gadScore} pts`;
+            link.href = `https://wa.me/5538991717426?text=${msg}`;
+        } else { alerta.style.display = 'none'; }
+    }
+
     function salvarGAD7() {
-        if(Object.keys(dadosAtuais.gad).length < 7) return alert("Por favor, responda todas.");
+        if(Object.keys(dadosAtuais.gad).length < 7) return alert("Responda todas.");
         const soma = Object.values(dadosAtuais.gad).reduce((a,b) => a+b, 0);
-        let logs = JSON.parse(localStorage.getItem('m360_v37_gad') || "[]");
+        let logs = JSON.parse(localStorage.getItem('m360_v39_gad') || "[]");
         logs.unshift({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
-        localStorage.setItem('m360_v37_gad', JSON.stringify(logs));
+        localStorage.setItem('m360_v39_gad', JSON.stringify(logs));
         location.reload();
     }
 
     function salvarDiario() {
         if(!dadosAtuais.periodo) return alert("Selecione o período.");
-        const reg = { dia: getDia(), data: new Date().toLocaleDateString('pt-BR'), periodo: dadosAtuais.periodo, dor: parseInt(document.getElementById('input-dor').value), humor: dadosAtuais.humor, med: dadosAtuais.med, sono: dadosAtuais.periodo === 'Manhã' ? dadosAtuais.sono : null };
-        let db = JSON.parse(localStorage.getItem('m360_v37_db') || "[]");
+        const dor = parseInt(document.getElementById('input-dor').value);
+        const reg = { dia: getDia(), data: new Date().toLocaleDateString('pt-BR'), periodo: dadosAtuais.periodo, dor: dor, humor: dadosAtuais.humor, med: dadosAtuais.med, sono: dadosAtuais.periodo === 'Manhã' ? dadosAtuais.sono : null };
+        let db = JSON.parse(localStorage.getItem('m360_v39_db') || "[]");
         db.unshift(reg);
-        localStorage.setItem('m360_v37_db', JSON.stringify(db));
+        localStorage.setItem('m360_v39_db', JSON.stringify(db));
         alert("✅ Registo guardado!");
         location.reload();
     }
@@ -171,12 +186,12 @@
         link.download = 'grafico-metodo360.png';
         link.href = document.getElementById('graficoDor').toDataURL('image/png');
         link.click();
-        alert("📸 Gráfico guardado na Galeria! Pode agora anexá-lo no WhatsApp.");
+        alert("📸 Gráfico guardado!");
     }
 
     function enviarRelatorio() {
-        const db = JSON.parse(localStorage.getItem('m360_v37_db') || "[]");
-        const gad = JSON.parse(localStorage.getItem('m360_v37_gad') || "[]");
+        const db = JSON.parse(localStorage.getItem('m360_v39_db') || "[]");
+        const gad = JSON.parse(localStorage.getItem('m360_v39_gad') || "[]");
         if(db.length === 0) return alert("Sem dados.");
         const u = db[0];
         const media = (db.reduce((a,b) => a + b.dor, 0) / db.length).toFixed(1);
@@ -188,9 +203,11 @@
         const dia = getDia();
         if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
         document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada";
-        const db = JSON.parse(localStorage.getItem('m360_v37_db') || "[]");
-        const gad = JSON.parse(localStorage.getItem('m360_v37_gad') || "[]");
+        const db = JSON.parse(localStorage.getItem('m360_v39_db') || "[]");
+        const gad = JSON.parse(localStorage.getItem('m360_v39_gad') || "[]");
         const hoje = new Date().toLocaleDateString('pt-BR');
+
+        verificarAlertas(db.length > 0 ? db[0].dor : 0, gad.length > 0 ? gad[0].score : 0);
 
         if ((dia === 1 || dia % 7 === 1) && !gad.some(s => s.dia === dia)) {
             document.getElementById('modal-gad7').style.display = 'block';
