@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>MÉTODO 360 - Rui Ribeiro</title>
-    <meta name="description" content="Portal de Autocuidado: Eu cuido de mim.">
-    <meta property="og:title" content="MÉTODO 360">
-    <meta property="og:description" content="Acompanhamento clínico personalizado com Dr. Rui Ribeiro.">
+    <meta name="description" content="Sua jornada de autocuidado e práticas integrativas.">
+    <meta property="og:title" content="MÉTODO 360 - Rui Ribeiro">
+    <meta property="og:description" content="Um olhar 360° para o seu bem-estar e equilíbrio.">
     <meta property="og:image" content="https://ruircfh.github.io/monitor-recuperacao/logo.png">
     <meta property="og:type" content="website">
 
@@ -17,26 +17,30 @@
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; padding-bottom: 140px; }
         .card { background: white; border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 480px; margin: auto; border-top: 10px solid var(--segundario); }
         
-        #alerta-vermelho { display: none; background: var(--alerta); color: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; font-weight: bold; animation: pulse-red 1.5s infinite; }
-        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        #alerta-vermelho { display: none; background: var(--alerta); color: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
         
         header { text-align: center; margin-bottom: 20px; }
         .foto-perfil { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; }
         .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
         .btn-principal { width: 100%; padding: 18px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .btn-opcao { flex: 1; border: 1px solid #eee; border-radius: 12px; padding: 10px; background: white; cursor: pointer; }
+        .btn-opcao.active { border-color: var(--primario); background: #f0f4f8; }
     </style>
 </head>
 <body>
 <div class="card">
     <div id="alerta-vermelho">
-        ⚠️ NÍVEL CRÍTICO DETETADO!<br>
-        <a href="#" id="btn-urgente-link" style="color:white; text-decoration:underline; display:block; margin-top:10px;">CLIQUE AQUI PARA FALAR COMIGO AGORA</a>
+        ⚠️ NÍVEL DE DESCONFORTO ELEVADO<br>
+        <p style="font-size:12px; font-weight:normal; margin: 10px 0;">Identificamos que você não está bem. Vamos conversar?</p>
+        <a href="#" id="link-urgente" style="color:white; font-weight:bold;">FALAR COM RUI RIBEIRO</a>
     </div>
 
     <div id="setup" style="display:none; text-align:center;">
         <h2 style="color:var(--primario);">MÉTODO 360</h2>
+        <p>Início da sua Jornada:</p>
         <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px;">
-        <button onclick="configurar()" class="btn-principal">Começar</button>
+        <button onclick="configurar()" class="btn-principal">Começar Autocuidado</button>
     </div>
 
     <div id="main-app">
@@ -51,27 +55,36 @@
             <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 20px;"></canvas>
             
             <div class="bloco">
-                <label style="display:block; font-weight:bold; margin-bottom:10px;">Qual período?</label>
+                <label style="display:block; font-weight:bold; margin-bottom:10px; color:var(--primario)">Qual período deseja registrar?</label>
                 <div style="display:flex; gap:10px;">
-                    <button onclick="selP('Manhã')" class="btn-principal" style="background:#eee; color:#333;">☀️</button>
-                    <button onclick="selP('Tarde')" class="btn-principal" style="background:#eee; color:#333;">🌤️</button>
-                    <button onclick="selP('Noite')" class="btn-principal" style="background:#eee; color:#333;">🌙</button>
+                    <button onclick="selP('Manhã', this)" class="btn-opcao">☀️ Manhã</button>
+                    <button onclick="selP('Tarde', this)" class="btn-opcao">🌤️ Tarde</button>
+                    <button onclick="selP('Noite', this)" class="btn-opcao">🌙 Noite</button>
                 </div>
             </div>
-            
-            <button onclick="enviarRelatorio()" class="btn-principal" style="background: #25D366;">📤 Enviar Dados pelo WhatsApp</button>
+
+            <div class="bloco">
+                <label style="display:block; font-weight:bold; margin-bottom:10px;">Nível de Desconforto (0-10): <span id="val-dor">5</span></label>
+                <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('val-dor').innerText = this.value">
+            </div>
+
+            <button onclick="enviarRelatorio()" class="btn-principal" style="background: #25D366;">📤 Enviar Evolução para Rui Ribeiro</button>
         </div>
-        <button onclick="localStorage.clear(); location.reload();" style="margin-top:30px; opacity:0.3; border:none; background:none; width:100%;">Reiniciar Sistema</button>
+        
+        <button onclick="if(confirm('Reiniciar jornada?')) { localStorage.clear(); location.reload(); }" style="margin-top:40px; opacity:0.3; border:none; background:none; width:100%; font-size:10px;">REINICIAR MONITOR</button>
     </div>
 </div>
 
 <script>
-    let dados = { periodo: '', dor: 5, humor: 'Estavel', gad: 0 };
+    let dados = { periodo: '', dor: 5 };
 
-    function configurar() { const d = document.getElementById('data-ini').value; if(d) { localStorage.setItem('v40_start', d); location.reload(); } }
-    
+    function configurar() { 
+        const d = document.getElementById('data-ini').value; 
+        if(d) { localStorage.setItem('v41_start', d); location.reload(); } 
+    }
+
     function getDia() {
-        const ini = localStorage.getItem('v40_start');
+        const ini = localStorage.getItem('v41_start');
         if(!ini) return null;
         const d1 = new Date(ini + 'T00:00:00');
         const d2 = new Date();
@@ -79,24 +92,32 @@
         return Math.floor((d2 - d1)/(1000*60*60*24)) + 1;
     }
 
-    function selP(p) { dados.periodo = p; alert("Período selecionado: " + p); }
+    function selP(p, btn) {
+        dados.periodo = p;
+        document.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
 
     function enviarRelatorio() {
-        // CORREÇÃO DOS EMOJIS PARA O WHATSAPP
-        const msg = `*METODO 360 - RELATORIO*%0A` +
-                    `-------------------------%0A` +
-                    `Data: Dia ${getDia()}%0A` +
-                    `Periodo: ${dados.periodo}%0A` +
-                    `Dor: ${dados.dor}/10%0A` +
-                    `Humor: ${dados.humor}%0A` +
-                    `-------------------------`;
+        const dor = document.getElementById('input-dor').value;
+        const msg = `*MÉTODO 360 - EVOLUÇÃO*%0A` +
+                    `----------------------------%0A` +
+                    `📅 *Jornada:* Dia ${getDia()}%0A` +
+                    `🕒 *Período:* ${dados.periodo || 'Não informado'}%0A` +
+                    `🔥 *Nível de Desconforto:* ${dor}/10%0A` +
+                    `----------------------------%0A` +
+                    `_Enviado para Rui Ribeiro_`;
         window.open(`https://wa.me/5538991717426?text=${msg}`);
     }
 
     window.onload = function() {
         const dia = getDia();
-        if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; }
-        else { document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada"; }
+        if(!dia) { 
+            document.getElementById('main-app').style.display='none'; 
+            document.getElementById('setup').style.display='block'; 
+        } else { 
+            document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada"; 
+        }
     };
 </script>
 </body>
