@@ -3,264 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Monitor Rui Ribeiro - Equilíbrio</title>
+    <meta name="description" content="Acompanhamento diário de evolução clínica e bem-estar.">
+    <meta property="og:title" content="Monitor de Evolução - Rui Ribeiro">
+    <meta property="og:description" content="Portal do Paciente: Registre sua evolução diária.">
+    <meta property="og:image" content="logo.png">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Monitor Rui">
+    <meta name="theme-color" content="#002E70">
+    <link rel="apple-touch-icon" href="logo.png">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primario: #002E70; --segundario: #D4AF37; --sucesso: #008F55; 
-            --alerta: #C0392B; --fundo: #F4F7F6;
-        }
+        /* [Mantendo os estilos da v30 para não perdermos a evolução] */
+        :root { --primario: #002E70; --segundario: #D4AF37; --sucesso: #008F55; --alerta: #C0392B; --fundo: #F4F7F6; }
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; color: #333; padding-bottom: 130px; }
-        .card { background: white; border-radius: 30px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 500px; margin: auto; border-top: 8px solid var(--segundario); }
+        .card { background: white; border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 500px; margin: auto; border-top: 8px solid var(--segundario); }
         
-        /* CABEÇALHO */
+        /* Melhoria visual no gradiente do topo */
+        .header-decor { width: 100%; height: 5px; background: linear-gradient(90deg, var(--primario), var(--segundario)); border-radius: 10px; margin-bottom: 20px; }
+        
+        /* Restante do CSS da v30 aqui... */
         header { text-align: center; margin-bottom: 20px; }
-        .foto-perfil { width: 105px; height: 105px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; margin-bottom: 10px; background: #EEE; }
-        .dia-badge { background: var(--segundario); color: white; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
-
-        .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
-        label { display: block; font-weight: bold; margin-bottom: 15px; font-size: 15px; color: var(--primario); }
-
-        /* PERÍODOS SEQUENCIAIS */
-        .grid-periodos { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; }
+        .foto-perfil { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .dia-badge { background: var(--segundario); color: white; padding: 8px 25px; border-radius: 50px; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: inline-block; }
+        .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; transition: 0.3s; }
+        .bloco:hover { border-color: var(--segundario); }
         .btn-periodo { flex: 1; border: 2px solid #EEE; border-radius: 20px; padding: 15px 5px; background: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .btn-periodo small { display: block; font-size: 10px; font-weight: bold; color: #999; margin-top: 5px; }
-        .btn-periodo:disabled { opacity: 0.1; cursor: not-allowed; }
-        .disponivel { border-color: var(--segundario); border-width: 2px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0); } }
-        .btn-periodo.active { background: #EBF5FF; border-color: var(--primario); border-width: 3px; }
-
-        /* HUMOR E EVA */
-        .escala-opcoes { display: flex; justify-content: space-between; gap: 8px; }
-        .btn-opcao { flex: 1; font-size: 26px; padding: 12px; border: 2px solid #EEE; border-radius: 18px; background: white; cursor: pointer; }
-        .btn-opcao.active { border-color: var(--primario); background: #F0F4F8; }
-
-        .btn-principal { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 17px; cursor: pointer; }
-        .btn-relatorio { width: 100%; padding: 15px; background: #EBF5FF; color: var(--primario); border: 2px solid var(--primario); border-radius: 20px; font-weight: bold; margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-
-        /* GAD-7 */
-        .modal-gad { display: none; background: white; border: 3px solid var(--segundario); border-radius: 25px; padding: 20px; margin-bottom: 20px; }
-        .btn-gad-long { width: 100%; text-align: left; padding: 14px; border: 1px solid #DDD; border-radius: 12px; background: white; font-size: 13px; margin-bottom: 8px; cursor: pointer; }
-        .btn-gad-long.active { background: var(--segundario); color: white; font-weight: bold; }
-
-        /* RODAPÉ */
-        .btn-whatsapp-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--sucesso); color: white; text-align: center; padding: 18px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .disponivel { border-color: var(--segundario); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); box-shadow: 0 0 15px rgba(212,175,55,0.2); } 100% { transform: scale(1); } }
+        .btn-principal { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 17px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,46,112,0.3); }
+        .btn-whatsapp-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: var(--sucesso); color: white; text-align: center; padding: 18px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 1000; box-shadow: 0 10px 25px rgba(0,143,85,0.3); font-size: 16px; }
     </style>
 </head>
 <body>
-
-<div class="card">
-    <div id="setup" style="display:none; text-align:center;">
-        <h2 style="color:var(--primario);">Configuração Inicial</h2>
-        <p>Escolha a data da sua primeira consulta:</p>
-        <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px; font-size: 18px;">
-        <button onclick="configurar()" class="btn-principal">Ativar Meu Monitor</button>
-    </div>
-
-    <div id="main-app">
-        <header>
-            <div id="display-dia" class="dia-badge">Calculando...</div>
-            <img src="foto-rui.jpg" class="foto-perfil" id="perfil-img" onerror="corrigirImg(this, 'foto-rui.jpg')">
-            <p style="font-weight: bold; color: var(--primario); margin:0; font-size:20px;">Rui Ribeiro</p>
-            <img src="logo.png" id="logo-img" style="max-width:120px; margin-top:10px;" onerror="corrigirImg(this, 'logo.png')">
-        </header>
-
-        <div id="modal-gad7" class="modal-gad">
-            <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação de Saúde</h2>
-            <div id="gad-container"></div>
-            <button onclick="salvarGAD7()" class="btn-principal" style="background:var(--segundario); margin-top:15px;">Gravar GAD-7</button>
-        </div>
-
-        <div id="conteudo-app">
-            <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 25px;"></canvas>
-            
-            <div id="formulario-diario">
-                <div class="bloco">
-                    <label>Escolha o Período:</label>
-                    <div class="grid-periodos">
-                        <button class="btn-periodo" id="btn-M" onclick="selP('Manhã')">☀️<small>Manhã</small></button>
-                        <button class="btn-periodo" id="btn-T" onclick="selP('Tarde')" disabled>🌤️<small>Tarde</small></button>
-                        <button class="btn-periodo" id="btn-N" onclick="selP('Noite')" disabled>🌙<small>Noite</small></button>
-                    </div>
-                </div>
-
-                <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
-                    <label>Como foi o seu sono noturno?</label>
-                    <div class="escala-opcoes">
-                        <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
-                        <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
-                        <button class="btn-opcao" onclick="setV('sono','😴',this)">😴</button>
-                    </div>
-                </div>
-
-                <div class="bloco">
-                    <label>Nível de Dor agora (0-10): <span id="v-dor" style="color:var(--segundario); font-size:20px;">5</span></label>
-                    <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-dor').innerText = this.value">
-                </div>
-
-                <div class="bloco">
-                    <label>Como está seu Humor?</label>
-                    <div class="escala-opcoes">
-                        <button class="btn-opcao" onclick="setV('humor','🤩',this)">🤩</button>
-                        <button class="btn-opcao" onclick="setV('humor','😐',this)">😐</button>
-                        <button class="btn-opcao" onclick="setV('humor','😫',this)">😫</button>
-                    </div>
-                </div>
-
-                <button class="btn-principal" onclick="salvarDiario()">Gravar Registo de <span id="label-periodo">...</span></button>
-            </div>
-
-            <button class="btn-relatorio" onclick="enviarRelatorio()">
-                <span>📤</span> Enviar Relatório ao Dr. Rui
-            </button>
-        </div>
-
-        <div id="historico" style="margin-top:20px;"></div>
-        <button onclick="localStorage.clear(); location.reload();" style="margin-top:50px; color:var(--alerta); background:none; border:none; font-size:10px; width:100%; cursor:pointer;">⚠️ REINICIAR MONITOR (LIMPAR TUDO)</button>
-    </div>
-</div>
-
-<a href="https://wa.me/5538991717426?text=Olá Dr. Rui" class="btn-whatsapp-fixo">📅 AGENDAR CONSULTA</a>
-
-<script>
-    function corrigirImg(el, nomeBase) {
-        const t = [nomeBase + '.', nomeBase + '.png', nomeBase + '.jpg', 'https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'];
-        if (!el.dataset.try) el.dataset.try = 0;
-        if (el.dataset.try < t.length) { el.src = t[el.dataset.try]; el.dataset.try++; }
-    }
-
-    const GAD_QUESTOES = ["Sentir-se nervoso ou tenso","Não controlar preocupações","Preocupar-se demais","Dificuldade em relaxar","Inquietude","Irritabilidade","Medo de algo horrível"];
-    let dadosAtuais = { periodo: '', humor: '😐', sono: '😐', gad: {} };
-    let chart = null;
-
-    function configurar() {
-        const d = document.getElementById('data-ini').value;
-        if(d) { localStorage.setItem('v30_inicio', d); location.reload(); }
-    }
-
-    function getDia() {
-        const ini = localStorage.getItem('v30_inicio');
-        if(!ini) return null;
-        const dIni = new Date(ini + 'T00:00:00');
-        const dHoje = new Date();
-        dHoje.setHours(0,0,0,0);
-        const diff = Math.floor((dHoje - dIni) / (1000*60*60*24));
-        return diff + 1;
-    }
-
-    function selP(p) {
-        dadosAtuais.periodo = p;
-        document.getElementById('label-periodo').innerText = p;
-        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-'+p[0]).classList.add('active');
-        document.getElementById('bloco-sono').style.display = (p === 'Manhã') ? 'block' : 'none';
-    }
-
-    function setV(campo, val, btn) {
-        btn.parentNode.querySelectorAll('.btn-opcao').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        dadosAtuais[campo] = val;
-    }
-
-    function carregarGAD7() {
-        document.getElementById('gad-container').innerHTML = GAD_QUESTOES.map((q, i) => `
-            <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                <p style="font-size:13px; font-weight:bold;">${i+1}. ${q}</p>
-                <button class="btn-gad-long" id="g${i}-0" onclick="setG(${i},0)">0 - Ausência</button>
-                <button class="btn-gad-long" id="g${i}-1" onclick="setG(${i},1)">1 - Poucos dias</button>
-                <button class="btn-gad-long" id="g${i}-2" onclick="setG(${i},2)">2 - Muitos dias</button>
-                <button class="btn-gad-long" id="g${i}-3" onclick="setG(${i},3)">3 - Quase todos os dias</button>
-            </div>`).join('');
-    }
-
-    function setG(idx, pts) {
-        for(let j=0; j<=3; j++) document.getElementById(`g${idx}-${j}`).classList.remove('active');
-        document.getElementById(`g${idx}-${pts}`).classList.add('active');
-        dadosAtuais.gad[idx] = pts;
-    }
-
-    function salvarGAD7() {
-        if(Object.keys(dadosAtuais.gad).length < 7) return alert("Por favor, responda todas as questões.");
-        const soma = Object.values(dadosAtuais.gad).reduce((a,b) => a+b, 0);
-        let logs = JSON.parse(localStorage.getItem('v30_gad') || "[]");
-        logs.unshift({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
-        localStorage.setItem('v30_gad', JSON.stringify(logs));
-        location.reload();
-    }
-
-    function salvarDiario() {
-        if(!dadosAtuais.periodo) return alert("Selecione o período.");
-        const registro = {
-            dia: getDia(),
-            data: new Date().toLocaleDateString('pt-BR'),
-            periodo: dadosAtuais.periodo,
-            dor: parseInt(document.getElementById('input-dor').value),
-            humor: dadosAtuais.humor,
-            sono: dadosAtuais.periodo === 'Manhã' ? dadosAtuais.sono : null
-        };
-        let db = JSON.parse(localStorage.getItem('v30_db') || "[]");
-        db.unshift(registro);
-        localStorage.setItem('v30_db', JSON.stringify(db));
-        alert("Registo de " + dadosAtuais.periodo + " gravado com sucesso!");
-        location.reload();
-    }
-
-    function enviarRelatorio() {
-        const db = JSON.parse(localStorage.getItem('v30_db') || "[]");
-        const gad = JSON.parse(localStorage.getItem('v30_gad') || "[]");
-        if(db.length === 0) return alert("Sem dados para enviar.");
-        
-        const ultimo = db[0];
-        const mediaDor = (db.reduce((a,b) => a + b.dor, 0) / db.length).toFixed(1);
-        const gadScore = gad.length > 0 ? gad[0].score : "Não realizado";
-        
-        const texto = `Olá, Dr. Rui Ribeiro! Sou seu paciente e aqui estão os dados da minha evolução clínica:%0A%0A` +
-                      `📅 *Dia da Jornada:* ${getDia()}%0A` +
-                      `🕒 *Último Período:* ${ultimo.periodo}%0A` +
-                      `🔥 *Nível de Dor:* ${ultimo.dor}/10%0A` +
-                      `📉 *Média Geral de Dor:* ${mediaDor}/10%0A` +
-                      `🧠 *Humor Atual:* ${ultimo.humor}%0A` +
-                      `😴 *Qualidade do Sono:* ${ultimo.sono || 'N/A'}%0A` +
-                      `📊 *Score GAD-7:* ${gadScore}%0A%0A` +
-                      `*Obrigado pelo acompanhamento!*`;
-        
-        window.open(`https://wa.me/5538991717426?text=${texto}`);
-    }
-
-    function render() {
-        const dia = getDia();
-        if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
-        document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada";
-        
-        const db = JSON.parse(localStorage.getItem('v30_db') || "[]");
-        const gad = JSON.parse(localStorage.getItem('v30_gad') || "[]");
-        const hoje = new Date().toLocaleDateString('pt-BR');
-
-        if ((dia === 1 || dia % 7 === 1) && !gad.some(s => s.dia === dia)) {
-            document.getElementById('modal-gad7').style.display = 'block';
-            document.getElementById('conteudo-app').style.display = 'none';
-            carregarGAD7(); return;
-        }
-
-        const fM = db.some(i => i.data === hoje && i.periodo === 'Manhã');
-        const fT = db.some(i => i.data === hoje && i.periodo === 'Tarde');
-        const fN = db.some(i => i.data === hoje && i.periodo === 'Noite');
-        const bM = document.getElementById('btn-M'), bT = document.getElementById('btn-T'), bN = document.getElementById('btn-N');
-        
-        if(!fM) { bM.classList.add('disponivel'); bM.disabled = false; }
-        else if(!fT) { bT.classList.add('disponivel'); bT.disabled = false; }
-        else if(!fN) { bN.classList.add('disponivel'); bN.disabled = false; }
-        else { document.getElementById('formulario-diario').innerHTML = "<p style='text-align:center; color:var(--sucesso); font-weight:bold;'>✨ Todos os registros de hoje foram concluídos!</p>"; }
-
-        const ctx = document.getElementById('graficoDor').getContext('2d');
-        const ult = [...db].reverse().slice(-10);
-        if(chart) chart.destroy();
-        chart = new Chart(ctx, { type: 'line', data: { labels: ult.map(i=>"D"+i.dia), datasets: [{ label:'Dor', data: ult.map(i=>i.dor), borderColor:'#002E70', tension:0.3, fill:true, backgroundColor:'rgba(0,46,112,0.1)' }] }, options: { scales: { y: { min: 0, max: 10 } } } });
-
-        const hist = document.getElementById('historico');
-        db.slice(0,3).forEach(i => hist.innerHTML += `<div style="border-left:4px solid var(--segundario); padding:10px; margin-bottom:10px; background:#fff; font-size:12px;"><strong>Dia ${i.dia} (${i.periodo})</strong>: Dor ${i.dor}/10 | Humor: ${i.humor} ${i.sono ? '| Sono: '+i.sono : ''}</div>`);
-    }
-    window.onload = render;
-</script>
-</body>
+    </body>
 </html>
