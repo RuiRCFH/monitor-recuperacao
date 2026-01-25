@@ -1,42 +1,47 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor Rui Ribeiro</title>
+    <title>Monitor Rui Ribeiro - Equilíbrio</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primario: #002E70; /* Azul do seu logo */
-            --segundario: #D4AF37; /* Dourado do seu logo */
-            --sucesso: #008F55; /* Verde do seu logo */
-            --alerta: #C0392B; --fundo: #F4F7F6;
+            --primario: #002E70; /* Azul Marinho */
+            --segundario: #D4AF37; /* Dourado */
+            --sucesso: #008F55; /* Verde Equilíbrio */
+            --alerta: #C0392B; /* Vermelho Alerta */
+            --fundo: #F4F7F6;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; color: #333; }
+        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; color: #333; padding-bottom: 90px; }
         .card { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; margin: auto; border-top: 6px solid var(--segundario); }
         
         header { text-align: center; margin-bottom: 20px; }
         .logo-img { max-width: 130px; margin-bottom: 10px; border-radius: 10px; }
-        .dia-badge { background: var(--segundario); color: white; padding: 6px 18px; border-radius: 50px; font-size: 13px; font-weight: bold; display: inline-block; margin-bottom: 15px;}
+        .dia-badge { background: var(--segundario); color: white; padding: 6px 18px; border-radius: 50px; font-size: 13px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
 
-        /* BOX DE ALERTA CLÍNICO */
+        /* BOX DE ALERTA */
         #box-alerta { display: none; background: #FFF5F5; border: 2px solid var(--alerta); border-radius: 20px; padding: 20px; margin-bottom: 20px; border-left: 10px solid var(--alerta); }
 
         .bloco { border: 1px solid #EDEDED; border-radius: 20px; padding: 18px; margin-bottom: 15px; background: white; }
         label { display: block; font-weight: bold; margin-bottom: 12px; font-size: 14px; color: var(--primario); }
 
-        /* GAD-7 */
+        /* GAD-7 MODAL */
         .modal-container { display: none; background: #FFF; border: 3px solid var(--segundario); border-radius: 25px; padding: 20px; margin-bottom: 20px; }
-        .btn-gad { width: 100%; text-align: left; padding: 12px; border: 1px solid #DDD; border-radius: 10px; background: white; font-size: 12px; margin-bottom: 8px; cursor: pointer; }
+        .btn-gad { width: 100%; text-align: left; padding: 12px; border: 1px solid #DDD; border-radius: 10px; background: white; font-size: 13px; margin-bottom: 8px; cursor: pointer; }
         .btn-gad.active { background: var(--segundario); color: white; font-weight: bold; }
 
-        /* BOTÕES */
+        /* BOTÕES DE ESCALA */
         .escala-flex { display: flex; justify-content: space-between; gap: 8px; }
-        .btn-opcao { flex: 1; font-size: 24px; cursor: pointer; border: 2px solid #EEE; border-radius: 15px; padding: 10px; background: white; }
+        .btn-opcao { flex: 1; font-size: 24px; cursor: pointer; border: 1px solid #EEE; border-radius: 15px; padding: 10px; background: white; transition: 0.2s; }
         .btn-opcao.active { border-color: var(--primario); background: #F0F4F8; border-width: 2px; }
         
         .btn-salvar { width: 100%; padding: 18px; background: var(--primario); color: white; border: none; border-radius: 18px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .btn-contato { background: var(--alerta); color: white; padding: 15px; border-radius: 12px; text-decoration: none; display: block; text-align: center; margin-top: 15px; font-weight: bold; }
+
+        /* BOTÃO WHATSAPP FIXO */
+        .btn-agenda-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--sucesso); color: white; text-align: center; padding: 16px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 1000; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        .timeline-card { border-left: 4px solid var(--segundario); background: #FFF; padding: 12px; margin-bottom: 10px; border-radius: 0 12px 12px 0; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -45,29 +50,29 @@
     <div id="setup" style="display:none; text-align:center;">
         <img src="logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
         <h2 style="color:var(--primario);">Bem-vindo</h2>
-        <p>Inicie definindo a data de hoje como o seu Dia 1:</p>
-        <input type="date" id="data-ini" style="padding:15px; border-radius:12px; border:2px solid var(--segundario); width:80%; margin-bottom:20px;">
-        <button onclick="configurar()" class="btn-salvar">Ativar Monitorização</button>
+        <p>Inicie seu monitoramento clínico definindo a data de hoje:</p>
+        <input type="date" id="data-ini" style="padding:15px; border-radius:12px; border:2px solid var(--segundario); width:85%; margin-bottom:20px; font-size:16px;">
+        <button onclick="configurar()" class="btn-salvar">Ativar Monitor</button>
     </div>
 
     <div id="main-app">
         <header>
-            <div id="display-dia" class="dia-badge">Calculando...</div>
+            <div id="display-dia" class="dia-badge">Dia --</div>
             <img src="logo.png" class="logo-img" alt="Logo" style="display:block; margin: 10px auto;" onerror="this.style.display='none'">
-            <p style="font-weight: bold; color: var(--primario); margin:0;">Rui Ribeiro</p>
+            <p style="font-weight: bold; color: var(--primario); margin:0; font-size:18px;">Rui Ribeiro</p>
         </header>
 
         <div id="box-alerta">
-            <h3 style="color:var(--alerta); margin:0; font-size: 16px;">🚨 Sugestão de Novo Atendimento</h3>
+            <h3 style="color:var(--alerta); margin:0; font-size: 16px;">🚨 Sugestão de Agendamento</h3>
             <p id="txt-alerta" style="font-size: 13px; margin: 10px 0; color: #333;"></p>
-            <a href="https://wa.me/351910000000" class="btn-contato">Agendar Sessão de Reforço</a>
+            <p style="font-size: 12px; font-weight: bold;">Fale diretamente com o Dr. Rui para ajuste de conduta.</p>
         </div>
 
         <div id="modal-gad7" class="modal-container">
             <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação Inicial (GAD-7)</h2>
-            <p style="font-size:11px; margin-bottom:15px;">Como se sentiu nas últimas 2 semanas?</p>
+            <p style="font-size:11px; color:#666; margin-bottom:15px;">Como se sentiu nas últimas 2 semanas?</p>
             <div id="gad-container"></div>
-            <button onclick="salvarGAD7()" class="btn-salvar" style="background:var(--segundario); margin-top:15px;">Gravar Avaliação</button>
+            <button onclick="salvarGAD7()" class="btn-salvar" style="background:var(--segundario); margin-top:15px;">Gravar Avaliação Inicial</button>
         </div>
 
         <div id="conteudo-app">
@@ -84,7 +89,7 @@
                 </div>
 
                 <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
-                    <label>Qualidade do Sono:</label>
+                    <label>Qualidade do Sono Noturno:</label>
                     <div class="escala-flex">
                         <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
                         <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
@@ -113,20 +118,24 @@
     </div>
 </div>
 
+<a href="https://wa.me/5538991717426?text=Olá%20Rui,%20o%20Monitor%20de%20Evolução%20indicou%20que%20preciso%20de%20um%20atendimento%20de%20reforço." class="btn-agenda-fixo" id="link-agenda">
+    <span>📅 Agendar Atendimento</span>
+</a>
+
 <script>
-    const GAD_QUESTOES = ["Nervosismo","Incapacidade de controlar preocupações","Preocupação excessiva","Dificuldade em relaxar","Inquietude","Irritabilidade","Medo de algo horrível"];
+    const GAD_QUESTOES = ["Sentir-se nervoso ou tenso","Incapaz de controlar preocupações","Preocupar-se demais com diversas coisas","Dificuldade em relaxar","Inquietude (não parar sentado)","Irritabilidade","Medo de algo horrível"];
     let dados = { periodo: '', sono: null, humor: '😐', gad: {} };
     let chart = null;
 
     function configurar() {
         const d = document.getElementById('data-ini').value;
-        if(d) { localStorage.setItem('v19_inicio', d); location.reload(); }
+        if(d) { localStorage.setItem('v20_final_inicio', d); location.reload(); }
     }
 
-    function resetar() { if(confirm("Deseja apagar os dados e corrigir o erro?")) { localStorage.clear(); location.reload(); } }
+    function resetar() { if(confirm("Apagar todos os dados e reiniciar o monitor?")) { localStorage.clear(); location.reload(); } }
     
     function getDia() {
-        const iniStr = localStorage.getItem('v19_inicio');
+        const iniStr = localStorage.getItem('v20_final_inicio');
         if(!iniStr) return null;
         const partes = iniStr.split('-');
         const dataInicio = new Date(partes[0], partes[1]-1, partes[2]);
@@ -170,11 +179,11 @@
     }
 
     function salvarGAD7() {
-        if(Object.keys(dados.gad).length < 7) return alert("Responda todas as perguntas.");
+        if(Object.keys(dados.gad).length < 7) return alert("Por favor, responda todas as questões.");
         const soma = Object.values(dados.gad).reduce((a,b) => a+b, 0);
-        let logs = JSON.parse(localStorage.getItem('v19_semanais') || "[]");
+        let logs = JSON.parse(localStorage.getItem('v20_final_semanais') || "[]");
         logs.unshift({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
-        localStorage.setItem('v19_semanais', JSON.stringify(logs));
+        localStorage.setItem('v20_final_semanais', JSON.stringify(logs));
         location.reload();
     }
 
@@ -182,15 +191,16 @@
         if(!dados.periodo) return alert("Selecione o período.");
         const registro = {
             dia: getDia(),
-            data: new Date().toLocaleDateString('pt-PT'),
+            data: new Date().toLocaleDateString('pt-BR'),
             periodo: dados.periodo,
             dor: parseInt(document.getElementById('input-dor').value),
             humor: dados.humor,
-            sono: dados.periodo === 'Manhã' ? dados.sono : null
+            sono: dados.periodo === 'Manhã' ? dados.sono : null,
+            ts: Date.now()
         };
-        let db = JSON.parse(localStorage.getItem('v19_diario') || "[]");
+        let db = JSON.parse(localStorage.getItem('v20_final_diario') || "[]");
         db.unshift(registro);
-        localStorage.setItem('v19_diario', JSON.stringify(db));
+        localStorage.setItem('v20_final_diario', JSON.stringify(db));
         location.reload();
     }
 
@@ -199,20 +209,24 @@
         if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
         
         document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada";
-        const db = JSON.parse(localStorage.getItem('v19_diario') || "[]");
-        const semanais = JSON.parse(localStorage.getItem('v19_semanais') || "[]");
+        const db = JSON.parse(localStorage.getItem('v20_final_diario') || "[]");
+        const semanais = JSON.parse(localStorage.getItem('v20_final_semanais') || "[]");
         
-        // ANALISAR ALERTAS
+        // SISTEMA DE ALERTAS (RED FLAGS)
         if(db.length >= 2) {
             const ultimas = db.slice(0, 3).map(i => i.dor);
             const media = ultimas.reduce((a,b) => a+b, 0) / ultimas.length;
             const pico = (ultimas[0] - ultimas[1]) >= 4;
-            if(media >= 7 || pico) {
+            const gadAlto = semanais.length > 0 && semanais[0].score >= 15;
+
+            if(media >= 7 || pico || gadAlto) {
                 document.getElementById('box-alerta').style.display = 'block';
-                document.getElementById('txt-alerta').innerText = pico ? "Detetámos um aumento súbito na sua dor." : "Níveis de dor persistentemente elevados.";
+                document.getElementById('txt-alerta').innerText = pico ? "Aumento súbito de dor detectado." : media >= 7 ? "Níveis de dor persistentemente elevados." : "Nível de ansiedade elevado detectado.";
+                document.getElementById('link-agenda').style.background = 'var(--alerta)';
             }
         }
 
+        // BLOQUEIO GAD-7 (Dia 1 e a cada 7 dias)
         if ((dia === 1 || dia % 7 === 1) && !semanais.some(s => s.dia === dia)) {
             document.getElementById('modal-gad7').style.display = 'block';
             document.getElementById('conteudo-app').style.display = 'none';
@@ -220,7 +234,7 @@
             return;
         }
 
-        // GRÁFICO
+        // GRÁFICO DE DOR
         const ctx = document.getElementById('graficoDor').getContext('2d');
         const ultimos = [...db].reverse().slice(-10);
         if(chart) chart.destroy();
@@ -228,20 +242,14 @@
             type: 'line',
             data: { 
                 labels: ultimos.map(i => "D"+i.dia), 
-                datasets: [{ 
-                    label: 'Dor',
-                    data: ultimos.map(i => i.dor), 
-                    borderColor: '#002E70', 
-                    fill: true, 
-                    tension: 0.3, 
-                    backgroundColor: 'rgba(0, 46, 112, 0.1)' 
-                }] 
+                datasets: [{ data: ultimos.map(i => i.dor), borderColor: '#002E70', fill: true, tension: 0.3, backgroundColor: 'rgba(0, 46, 112, 0.1)' }] 
             },
             options: { scales: { y: { min:0, max:10 } }, plugins: { legend: { display: false } } }
         });
 
+        // HISTÓRICO RECENTE
         const hist = document.getElementById('historico');
-        db.slice(0,5).forEach(i => hist.innerHTML += `<div style="border-left:4px solid var(--segundario); padding:10px; margin-bottom:10px; background:#fff; font-size:12px;"><strong>D${i.dia} (${i.periodo})</strong>: Dor ${i.dor} | Humor ${i.humor}</div>`);
+        db.slice(0,5).forEach(i => hist.innerHTML += `<div class="timeline-card"><strong>Dia ${i.dia} (${i.periodo})</strong>: Dor ${i.dor} | Humor ${i.humor}</div>`);
     }
 
     window.onload = render;
