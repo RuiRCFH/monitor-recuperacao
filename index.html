@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>MÉTODO 360 - Rui Ribeiro</title>
-    <meta name="description" content="Sua jornada de autocuidado e práticas integrativas.">
+    <meta name="description" content="Eu cuido de mim: Práticas Integrativas e Bem-estar.">
     <meta property="og:title" content="MÉTODO 360 - Rui Ribeiro">
-    <meta property="og:description" content="Um olhar 360° para o seu bem-estar e equilíbrio.">
+    <meta property="og:description" content="Acesse o seu monitor de evolução diária.">
     <meta property="og:image" content="https://ruircfh.github.io/monitor-recuperacao/logo.png">
     <meta property="og:type" content="website">
 
@@ -16,31 +16,26 @@
         :root { --primario: #002E70; --segundario: #D4AF37; --alerta: #C0392B; --fundo: #F4F7F6; }
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; padding-bottom: 140px; }
         .card { background: white; border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 480px; margin: auto; border-top: 10px solid var(--segundario); }
-        
-        #alerta-vermelho { display: none; background: var(--alerta); color: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
-        
         header { text-align: center; margin-bottom: 20px; }
         .foto-perfil { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; }
         .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
-        .btn-principal { width: 100%; padding: 18px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .btn-opcao { flex: 1; border: 1px solid #eee; border-radius: 12px; padding: 10px; background: white; cursor: pointer; }
-        .btn-opcao.active { border-color: var(--primario); background: #f0f4f8; }
+        .btn-principal { width: 100%; padding: 18px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-opcao { flex: 1; border: 1px solid #eee; border-radius: 12px; padding: 10px; background: white; cursor: pointer; font-size: 14px; }
+        .btn-opcao.active { border-color: var(--primario); background: #f0f4f8; border-width: 2px; }
+        #alerta-urgente { display: none; background: var(--alerta); color: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: center; }
     </style>
 </head>
 <body>
 <div class="card">
-    <div id="alerta-vermelho">
-        ⚠️ NÍVEL DE DESCONFORTO ELEVADO<br>
-        <p style="font-size:12px; font-weight:normal; margin: 10px 0;">Identificamos que você não está bem. Vamos conversar?</p>
-        <a href="#" id="link-urgente" style="color:white; font-weight:bold;">FALAR COM RUI RIBEIRO</a>
+    <div id="alerta-urgente">
+        <strong>⚠️ ATENÇÃO</strong><br>Níveis elevados detetados.<br>
+        <button onclick="falarRui('urgente')" style="background:white; color:var(--alerta); border:none; padding:8px 15px; border-radius:20px; font-weight:bold; margin-top:10px; cursor:pointer;">FALAR COM RUI RIBEIRO</button>
     </div>
 
     <div id="setup" style="display:none; text-align:center;">
         <h2 style="color:var(--primario);">MÉTODO 360</h2>
-        <p>Início da sua Jornada:</p>
         <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px;">
-        <button onclick="configurar()" class="btn-principal">Começar Autocuidado</button>
+        <button onclick="configurar()" class="btn-principal">Iniciar Jornada</button>
     </div>
 
     <div id="main-app">
@@ -48,15 +43,15 @@
             <img src="foto-rui.jpg" class="foto-perfil" onerror="this.src='https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'">
             <h1 style="color:var(--primario); margin:10px 0 0 0; font-size:22px;">MÉTODO 360</h1>
             <p style="color:var(--segundario); font-size:12px; font-weight:bold; margin:0;">EU CUIDO DE MIM</p>
-            <div id="display-dia" style="background:var(--primario); color:white; padding:5px 15px; border-radius:20px; display:inline-block; margin-top:10px; font-size:12px;">...</div>
+            <div id="display-dia" style="background:var(--primario); color:white; padding:5px 15px; border-radius:20px; display:inline-block; margin-top:10px; font-size:12px;">Dia 1</div>
         </header>
 
         <div id="conteudo-app">
             <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 20px;"></canvas>
             
             <div class="bloco">
-                <label style="display:block; font-weight:bold; margin-bottom:10px; color:var(--primario)">Qual período deseja registrar?</label>
-                <div style="display:flex; gap:10px;">
+                <label style="display:block; font-weight:bold; margin-bottom:10px;">Período:</label>
+                <div style="display:flex; gap:8px;">
                     <button onclick="selP('Manhã', this)" class="btn-opcao">☀️ Manhã</button>
                     <button onclick="selP('Tarde', this)" class="btn-opcao">🌤️ Tarde</button>
                     <button onclick="selP('Noite', this)" class="btn-opcao">🌙 Noite</button>
@@ -64,14 +59,14 @@
             </div>
 
             <div class="bloco">
-                <label style="display:block; font-weight:bold; margin-bottom:10px;">Nível de Desconforto (0-10): <span id="val-dor">5</span></label>
+                <label style="display:block; font-weight:bold; margin-bottom:10px;">Desconforto (0-10): <span id="val-dor">5</span></label>
                 <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('val-dor').innerText = this.value">
             </div>
 
             <button onclick="enviarRelatorio()" class="btn-principal" style="background: #25D366;">📤 Enviar Evolução para Rui Ribeiro</button>
         </div>
         
-        <button onclick="if(confirm('Reiniciar jornada?')) { localStorage.clear(); location.reload(); }" style="margin-top:40px; opacity:0.3; border:none; background:none; width:100%; font-size:10px;">REINICIAR MONITOR</button>
+        <button onclick="if(confirm('Reiniciar?')) { localStorage.clear(); location.reload(); }" style="margin-top:40px; opacity:0.3; border:none; background:none; width:100%; font-size:10px;">REINICIAR MONITOR</button>
     </div>
 </div>
 
@@ -80,15 +75,14 @@
 
     function configurar() { 
         const d = document.getElementById('data-ini').value; 
-        if(d) { localStorage.setItem('v41_start', d); location.reload(); } 
+        if(d) { localStorage.setItem('m360_v42', d); location.reload(); } 
     }
 
     function getDia() {
-        const ini = localStorage.getItem('v41_start');
+        const ini = localStorage.getItem('m360_v42');
         if(!ini) return null;
         const d1 = new Date(ini + 'T00:00:00');
-        const d2 = new Date();
-        d2.setHours(0,0,0,0);
+        const d2 = new Date(); d2.setHours(0,0,0,0);
         return Math.floor((d2 - d1)/(1000*60*60*24)) + 1;
     }
 
@@ -98,16 +92,21 @@
         btn.classList.add('active');
     }
 
+    function falarRui(tipo) {
+        const msg = tipo === 'urgente' ? "⚠️ ATENDIMENTO URGENTE - MÉTODO 360" : "Olá Rui Ribeiro, estou enviando minha evolução.";
+        window.open(`https://wa.me/5538991717426?text=${encodeURIComponent(msg)}`);
+    }
+
     function enviarRelatorio() {
         const dor = document.getElementById('input-dor').value;
-        const msg = `*MÉTODO 360 - EVOLUÇÃO*%0A` +
-                    `----------------------------%0A` +
-                    `📅 *Jornada:* Dia ${getDia()}%0A` +
-                    `🕒 *Período:* ${dados.periodo || 'Não informado'}%0A` +
-                    `🔥 *Nível de Desconforto:* ${dor}/10%0A` +
-                    `----------------------------%0A` +
-                    `_Enviado para Rui Ribeiro_`;
-        window.open(`https://wa.me/5538991717426?text=${msg}`);
+        const msg = `*MÉTODO 360 - EVOLUÇÃO*\n` +
+                    `----------------------------\n` +
+                    `📅 Jornada: Dia ${getDia()}\n` +
+                    `🕒 Período: ${dados.periodo || 'Não informado'}\n` +
+                    `🔥 Desconforto: ${dor}/10\n` +
+                    `----------------------------\n` +
+                    `Enviado para Rui Ribeiro`;
+        window.open(`https://wa.me/5538991717426?text=${encodeURIComponent(msg)}`);
     }
 
     window.onload = function() {
@@ -116,7 +115,7 @@
             document.getElementById('main-app').style.display='none'; 
             document.getElementById('setup').style.display='block'; 
         } else { 
-            document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada"; 
+            document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada";
         }
     };
 </script>
