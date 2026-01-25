@@ -13,90 +13,84 @@
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; color: #333; padding-bottom: 110px; }
         .card { background: white; border-radius: 30px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 500px; margin: auto; border-top: 8px solid var(--segundario); }
         
-        header { text-align: center; margin-bottom: 20px; }
-        .logo-img { max-width: 140px; margin-bottom: 10px; border-radius: 15px; }
+        /* CABEÇALHO COM FOTO */
+        header { text-align: center; margin-bottom: 20px; position: relative; }
+        .foto-perfil { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--segundario); object-fit: cover; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .logo-img { max-width: 100px; display: block; margin: 5px auto 10px; opacity: 0.8; }
         .dia-badge { background: var(--segundario); color: white; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
 
-        /* ALERTAS E MENSAGENS */
         #box-alerta { display: none; background: #FFF5F5; border: 2px solid var(--alerta); border-radius: 20px; padding: 15px; margin-bottom: 20px; border-left: 10px solid var(--alerta); }
         #msg-concluido { display: none; text-align: center; padding: 25px; background: #E8F5E9; border-radius: 20px; border: 2px solid var(--sucesso); margin-bottom: 20px; }
 
         .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
         label { display: block; font-weight: bold; margin-bottom: 15px; font-size: 15px; color: var(--primario); }
 
-        /* BOTÕES DE PERÍODO (Poka-Yoke) */
+        /* GRID SEQUENCIAL */
         .grid-periodos { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
-        .btn-periodo { flex: 1; border: 2px solid #EEE; border-radius: 20px; padding: 15px 5px; background: white; font-size: 24px; cursor: pointer; transition: 0.3s; position: relative; }
+        .btn-periodo { flex: 1; border: 2px solid #EEE; border-radius: 20px; padding: 15px 5px; background: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
         .btn-periodo small { display: block; font-size: 10px; font-weight: bold; color: #999; margin-top: 5px; }
         .btn-periodo:disabled { opacity: 0.15; cursor: not-allowed; }
-        
-        /* Efeito de Pulso para o botão disponível */
         .disponivel { border-color: var(--segundario); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0); } }
-        
         .btn-periodo.active { background: #EBF5FF; border-color: var(--primario); border-width: 3px; }
 
         /* GAD-7 EXPLICATIVO */
-        .gad-item { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #EEE; }
-        .btn-gad-long { width: 100%; text-align: left; padding: 14px; border: 1px solid #DDD; border-radius: 12px; background: white; font-size: 13px; margin-bottom: 8px; cursor: pointer; display: block; }
+        .btn-gad-long { width: 100%; text-align: left; padding: 14px; border: 1px solid #DDD; border-radius: 12px; background: white; font-size: 13px; margin-bottom: 8px; cursor: pointer; }
         .btn-gad-long.active { background: var(--segundario); color: white; font-weight: bold; border-color: var(--segundario); }
 
-        /* DEMAIS BOTÕES */
         .escala-humor { display: flex; justify-content: space-between; gap: 8px; }
-        .btn-humor { flex: 1; font-size: 26px; padding: 12px; border: 2px solid #EEE; border-radius: 18px; background: white; cursor: pointer; }
+        .btn-humor { flex: 1; font-size: 26px; padding: 12px; border: 2px solid #EEE; border-radius: 18px; background: white; }
         .btn-humor.active { border-color: var(--primario); background: #F0F4F8; }
 
-        .btn-principal { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 17px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,46,112,0.2); }
-        
-        /* BOTÃO ZERAR (VERMELHO CHAMATIVO) */
-        .btn-reset-urgente { width: 100%; padding: 15px; background: white; color: var(--alerta); border: 2px solid var(--alerta); border-radius: 15px; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 50px; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-reset-urgente:hover { background: var(--alerta); color: white; }
+        .btn-principal { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 17px; cursor: pointer; }
+        .btn-reset-urgente { width: 100%; padding: 15px; background: white; color: var(--alerta); border: 2px solid var(--alerta); border-radius: 15px; font-weight: bold; font-size: 11px; cursor: pointer; margin-top: 50px; }
 
-        .btn-whatsapp-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--sucesso); color: white; text-align: center; padding: 18px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 20px rgba(0,143,85,0.3); z-index: 1000; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-whatsapp-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--sucesso); color: white; text-align: center; padding: 18px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 1000; display: flex; align-items: center; justify-content: center; gap: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="setup" style="display:none; text-align:center;">
-        <img src="logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
-        <h2 style="color:var(--primario);">Bem-vindo</h2>
-        <p>Para começar, selecione a data de hoje:</p>
+        <img src="foto-rui.jpg" class="foto-perfil" alt="Rui Ribeiro" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+        <h2 style="color:var(--primario);">Olá, sou o Rui Ribeiro</h2>
+        <p>Vamos iniciar seu acompanhamento clínico. Escolha a data de hoje:</p>
         <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px; font-size:18px;">
-        <button onclick="configurar()" class="btn-principal">Ativar Meu Monitor</button>
+        <button onclick="configurar()" class="btn-principal">Iniciar Monitoramento</button>
     </div>
 
     <div id="main-app">
         <header>
             <div id="display-dia" class="dia-badge">Dia --</div>
-            <img src="logo.png" class="logo-img" alt="Logo" style="display:block; margin: 0 auto 10px auto;" onerror="this.style.display='none'">
-            <p style="font-weight: bold; color: var(--primario); margin:0; font-size:18px;">Rui Ribeiro</p>
+            <img src="foto-rui.jpg" class="foto-perfil" alt="Rui Ribeiro" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+            <p style="font-weight: bold; color: var(--primario); margin:0; font-size:20px;">Rui Ribeiro</p>
+            <img src="logo.png" class="logo-img" alt="Logo Equilíbrio" onerror="this.style.display='none'">
         </header>
 
         <div id="box-alerta">
-            <h3 style="color:var(--alerta); margin:0; font-size: 16px;">🚨 Atenção Necessária</h3>
+            <h3 style="color:var(--alerta); margin:0; font-size: 16px;">🚨 Sugestão do Terapeuta</h3>
             <p id="txt-alerta" style="font-size: 13px; margin: 10px 0; color: #333;"></p>
         </div>
 
         <div id="modal-gad7" style="display:none; background: #FFF; border: 3px solid var(--segundario); border-radius: 25px; padding: 20px; margin-bottom: 20px;">
-            <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação de Saúde</h2>
-            <p style="font-size:12px; color:#666; margin-bottom:20px;">Nas últimas 2 semanas, com que frequência você foi incomodado por:</p>
+            <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação Periódica</h2>
+            <p style="font-size:12px; color:#666; margin-bottom:20px;">Como você se sentiu nas últimas 2 semanas?</p>
             <div id="gad-container"></div>
-            <button onclick="salvarGAD7()" class="btn-principal" style="background:var(--segundario); margin-top:10px;">Concluir Avaliação</button>
+            <button onclick="salvarGAD7()" class="btn-principal" style="background:var(--segundario); margin-top:10px;">Gravar Avaliação</button>
         </div>
 
         <div id="conteudo-app">
             <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 25px;"></canvas>
 
             <div id="msg-concluido">
-                <span style="font-size: 40px;">✨</span>
-                <h3>Tudo pronto por hoje!</h3>
+                <span style="font-size: 40px;">✅</span>
+                <h3>Registros de hoje concluídos!</h3>
                 <p id="txt-proximo-dia" style="font-size:13px; color:#555;"></p>
             </div>
 
             <div id="formulario-diario">
                 <div class="bloco">
-                    <label>Selecione o período atual:</label>
+                    <label>Período de Registro:</label>
                     <div class="grid-periodos">
                         <button class="btn-periodo" id="btn-M" onclick="selP('Manhã')">☀️<small>Manhã</small></button>
                         <button class="btn-periodo" id="btn-T" onclick="selP('Tarde')" disabled>🌤️<small>Tarde</small></button>
@@ -105,7 +99,7 @@
                 </div>
 
                 <div id="bloco-sono" class="bloco" style="display:none; border: 2px solid var(--segundario);">
-                    <label>Qualidade do seu sono nesta noite:</label>
+                    <label>Qualidade do seu sono:</label>
                     <div class="escala-humor">
                         <button class="btn-humor" onclick="setV('sono','😫',this)">😫</button>
                         <button class="btn-humor" onclick="setV('sono','😐',this)">😐</button>
@@ -114,10 +108,10 @@
                 </div>
 
                 <div class="bloco">
-                    <label>Sua Dor agora (0 a 10): <span id="v-dor" style="color:var(--segundario); font-size:20px;">5</span></label>
+                    <label>Nível de Dor agora (0 a 10): <span id="v-dor" style="color:var(--segundario); font-size:20px;">5</span></label>
                     <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%; accent-color: var(--primario);" oninput="document.getElementById('v-dor').innerText = this.value">
                     
-                    <label style="margin-top:25px;">Como está o seu Humor?</label>
+                    <label style="margin-top:25px;">Como está seu Humor?</label>
                     <div class="escala-humor">
                         <button class="btn-humor" onclick="setV('humor','🤩',this)">🤩</button>
                         <button class="btn-humor" onclick="setV('humor','😐',this)">😐</button>
@@ -125,34 +119,33 @@
                     </div>
                 </div>
 
-                <button class="btn-principal" id="btn-gravar" onclick="salvarDiario()">Gravar Informações</button>
+                <button class="btn-principal" id="btn-gravar" onclick="salvarDiario()">Gravar no Prontuário</button>
             </div>
         </div>
 
         <div id="historico" style="margin-top:30px;"></div>
-        
-        <button onclick="resetar()" class="btn-reset-urgente">⚠️ APAGAR DADOS E REINICIAR APP</button>
+        <button onclick="resetar()" class="btn-reset-urgente">⚠️ APAGAR TUDO E RECOMEÇAR</button>
     </div>
 </div>
 
-<a href="https://wa.me/5538991717426?text=Olá%20Rui,%20o%20Monitor%20de%20Evolução%20sugeriu%20um%20contato." class="btn-whatsapp-fixo">
-    <span>📅 AGENDAR ATENDIMENTO</span>
+<a href="https://wa.me/5538991717426?text=Olá%20Rui,%20preciso%20de%20um%20suporte%20sobre%20meu%20monitoramento." class="btn-whatsapp-fixo">
+    <span>📅 AGENDAR CONSULTA</span>
 </a>
 
 <script>
-    const GAD_QUESTOES = ["Sentir-se nervoso ou tenso","Não controlar preocupações","Preocupar-se demais","Dificuldade em relaxar","Inquietude (não parar sentado)","Irritabilidade","Medo de algo horrível"];
+    const GAD_QUESTOES = ["Sentir-se nervoso ou tenso","Incapaz de controlar preocupações","Preocupação excessiva","Dificuldade em relaxar","Inquietude (não parar sentado)","Irritabilidade","Medo de algo horrível"];
     let dados = { periodo: '', sono: null, humor: '😐', gad: {} };
     let chart = null;
 
     function configurar() {
         const d = document.getElementById('data-ini').value;
-        if(d) { localStorage.setItem('v22_start', d); location.reload(); }
+        if(d) { localStorage.setItem('v23_inicio', d); location.reload(); }
     }
 
-    function resetar() { if(confirm("CUIDADO: Isso apagará todo o seu histórico permanentemente. Deseja continuar?")) { localStorage.clear(); location.reload(); } }
+    function resetar() { if(confirm("Deseja apagar todos os dados permanentemente?")) { localStorage.clear(); location.reload(); } }
     
     function getDia() {
-        const iniStr = localStorage.getItem('v22_start');
+        const iniStr = localStorage.getItem('v23_inicio');
         if(!iniStr) return null;
         const partes = iniStr.split('-');
         const dataInicio = new Date(partes[0], partes[1]-1, partes[2]);
@@ -178,8 +171,8 @@
 
     function carregarGAD7() {
         document.getElementById('gad-container').innerHTML = GAD_QUESTOES.map((q, i) => `
-            <div class="gad-item">
-                <p style="font-size:14px; font-weight:bold; margin-bottom:10px;">${i+1}. ${q}</p>
+            <div style="margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                <p style="font-size:13px; font-weight:bold; margin-bottom:10px;">${i+1}. ${q}</p>
                 <button class="btn-gad-long" id="g${i}-0" onclick="setG(${i},0)">0 - Ausência de sintomas</button>
                 <button class="btn-gad-long" id="g${i}-1" onclick="setG(${i},1)">1 - Menos de metade dos dias</button>
                 <button class="btn-gad-long" id="g${i}-2" onclick="setG(${i},2)">2 - Metade dos dias</button>
@@ -194,16 +187,16 @@
     }
 
     function salvarGAD7() {
-        if(Object.keys(dados.gad).length < 7) return alert("Por favor, responda todas as questões antes de continuar.");
+        if(Object.keys(dados.gad).length < 7) return alert("Por favor, responda todas as questões.");
         const soma = Object.values(dados.gad).reduce((a,b) => a+b, 0);
-        let logs = JSON.parse(localStorage.getItem('v22_gad_logs') || "[]");
+        let logs = JSON.parse(localStorage.getItem('v23_gad') || "[]");
         logs.unshift({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
-        localStorage.setItem('v22_gad_logs', JSON.stringify(logs));
+        localStorage.setItem('v23_gad', JSON.stringify(logs));
         location.reload();
     }
 
     function salvarDiario() {
-        if(!dados.periodo) return alert("Por favor, selecione Manhã, Tarde ou Noite.");
+        if(!dados.periodo) return alert("Selecione o período.");
         const registro = {
             dia: getDia(),
             data: new Date().toLocaleDateString('pt-BR'),
@@ -212,11 +205,10 @@
             humor: dados.humor,
             sono: dados.periodo === 'Manhã' ? dados.sono : null
         };
-        let db = JSON.parse(localStorage.getItem('v22_db') || "[]");
+        let db = JSON.parse(localStorage.getItem('v23_db') || "[]");
         db = db.filter(i => !(i.data === registro.data && i.periodo === registro.periodo));
         db.unshift(registro);
-        localStorage.setItem('v22_db', JSON.stringify(db));
-        alert("Informações gravadas!");
+        localStorage.setItem('v23_db', JSON.stringify(db));
         location.reload();
     }
 
@@ -224,19 +216,17 @@
         const dia = getDia();
         if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
         
-        document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada";
-        const db = JSON.parse(localStorage.getItem('v22_db') || "[]");
-        const gadLogs = JSON.parse(localStorage.getItem('v22_gad_logs') || "[]");
+        document.getElementById('display-dia').innerText = "Dia " + dia;
+        const db = JSON.parse(localStorage.getItem('v23_db') || "[]");
+        const gadLogs = JSON.parse(localStorage.getItem('v23_gad') || "[]");
         const hoje = new Date().toLocaleDateString('pt-BR');
 
-        // GAD-7 OBRIGATÓRIO (Dia 1 ou a cada 7 dias)
         if ((dia === 1 || dia % 7 === 1) && !gadLogs.some(s => s.dia === dia)) {
             document.getElementById('modal-gad7').style.display = 'block';
             document.getElementById('conteudo-app').style.display = 'none';
             carregarGAD7(); return;
         }
 
-        // SEQUÊNCIA DE BOTÕES
         const fezM = db.some(i => i.data === hoje && i.periodo === 'Manhã');
         const fezT = db.some(i => i.data === hoje && i.periodo === 'Tarde');
         const fezN = db.some(i => i.data === hoje && i.periodo === 'Noite');
@@ -248,16 +238,14 @@
         else {
             document.getElementById('formulario-diario').style.display = 'none';
             document.getElementById('msg-concluido').style.display = 'block';
-            document.getElementById('txt-proximo-dia').innerText = "O Dia " + (dia+1) + " começará amanhã.";
+            document.getElementById('txt-proximo-dia').innerText = "Vemo-nos amanhã para o Dia " + (dia+1);
         }
 
-        // ALERTAS
         if(db.length >= 2) {
             const ult = db.slice(0, 3).map(i => i.dor);
-            const media = ult.reduce((a,b) => a+b, 0) / ult.length;
-            if(media >= 7 || (ult[0] - ult[1] >= 4)) {
+            if((ult.reduce((a,b)=>a+b,0)/ult.length) >= 7 || (ult[0]-ult[1]>=4)) {
                 document.getElementById('box-alerta').style.display = 'block';
-                document.getElementById('txt-alerta').innerText = "Seus níveis de dor sugerem a necessidade de um suporte especializado.";
+                document.getElementById('txt-alerta').innerText = "Seus níveis de dor sugerem a necessidade de um contato para ajuste.";
             }
         }
 
