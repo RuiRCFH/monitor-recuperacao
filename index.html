@@ -3,90 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Método 360 - Rui Ribeiro</title>
-    <meta name="description" content="Sua jornada de autocuidado e evolução clínica.">
-    <meta property="og:title" content="Método 360 - Eu cuido de mim">
-    <meta property="og:image" content="logo.png">
-    <meta name="theme-color" content="#002E70">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primario: #002E70; --segundario: #D4AF37; --sucesso: #008F55; --fundo: #F4F7F6; }
-        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 15px; padding-bottom: 130px; }
+        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; padding-bottom: 130px; }
         .card { background: white; border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 480px; margin: auto; border-top: 10px solid var(--segundario); }
-        
         header { text-align: center; margin-bottom: 25px; }
         .foto-perfil { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; margin-bottom: 10px; }
         .brand-name { font-size: 24px; font-weight: 800; color: var(--primario); margin: 0; letter-spacing: -1px; }
         .tagline { font-size: 12px; color: var(--segundario); font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        
         .dia-badge { background: var(--primario); color: white; padding: 6px 20px; border-radius: 50px; font-size: 13px; font-weight: bold; margin: 15px 0; display: inline-block; }
         .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
-        
-        /* BOTÕES E INPUTS MANTIDOS DA V30/V31 */
         .grid-periodos { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 15px; }
         .btn-periodo { flex: 1; border: 2px solid #EEE; border-radius: 18px; padding: 12px 5px; background: white; font-size: 22px; cursor: pointer; }
         .btn-periodo.active { background: #EBF5FF; border-color: var(--primario); border-width: 3px; }
-        .disponivel { border-color: var(--segundario); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
-        
+        .btn-opcao { flex: 1; font-size: 26px; padding: 12px; border: 2px solid #EEE; border-radius: 18px; background: white; cursor: pointer; }
+        .btn-opcao.active { border-color: var(--primario); background: #F0F4F8; }
+        .btn-sn { flex: 1; padding: 12px; border: 2px solid #EEE; border-radius: 15px; background: white; font-weight: bold; cursor: pointer; }
+        .btn-sn.active { background: var(--primario); color: white; border-color: var(--primario); }
         .btn-principal { width: 100%; padding: 18px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-gad-long { width: 100%; text-align: left; padding: 14px; border: 1px solid #DDD; border-radius: 12px; background: white; font-size: 13px; margin-bottom: 8px; cursor: pointer; }
+        .btn-gad-long.active { background: var(--segundario); color: white; font-weight: bold; }
         .btn-whatsapp-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--sucesso); color: white; text-align: center; padding: 18px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
-
 <div class="card">
-    <header>
-        <img src="foto-rui.jpg" class="foto-perfil" id="perfil-img" onerror="corrigirImg(this, 'foto-rui.jpg')">
-        <p class="brand-name">MÉTODO 360</p>
-        <p class="tagline">Eu cuido de mim</p>
-        <div id="display-dia" class="dia-badge">Dia 1 da Jornada</div>
-        <img src="logo.png" style="max-width:100px; display:block; margin: 10px auto;" onerror="corrigirImg(this, 'logo.png')">
-    </header>
-
-    <div id="conteudo-app">
-        <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 20px;"></canvas>
-        
-        <div class="bloco">
-            <label style="display:block; font-weight:bold; margin-bottom:10px; color:var(--primario)">Registo Diário:</label>
-            <div class="grid-periodos">
-                <button class="btn-periodo disponivel" id="btn-M" onclick="selP('Manhã')">☀️</button>
-                <button class="btn-periodo" id="btn-T" onclick="selP('Tarde')" disabled>🌤️</button>
-                <button class="btn-periodo" id="btn-N" onclick="selP('Noite')" disabled>🌙</button>
-            </div>
-            <p id="txt-periodo" style="text-align:center; font-size:12px; color:#999;">Selecione o período acima</p>
-        </div>
-
-        <button class="btn-principal" onclick="alert('Registo guardado! Envie o relatório ao Dr. Rui abaixo.')">Gravar Evolução</button>
-        
-        <button onclick="enviarRelatorio()" style="width:100%; background:#EBF5FF; color:var(--primario); border:2px solid var(--primario); border-radius:20px; padding:12px; margin-top:10px; font-weight:bold; cursor:pointer;">
-            📤 Enviar Relatório Método 360
-        </button>
+    <div id="setup" style="display:none; text-align:center;">
+        <h2 style="color:var(--primario);">Bem-vindo ao Método 360</h2>
+        <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px;">
+        <button onclick="configurar()" class="btn-principal">Ativar Meu Monitor</button>
     </div>
 
-    <button onclick="localStorage.clear(); location.reload();" style="margin-top:40px; color:#ccc; background:none; border:none; font-size:9px; width:100%;">REINICIAR SISTEMA</button>
-</div>
+    <div id="main-app">
+        <header>
+            <img src="foto-rui.jpg" class="foto-perfil" onerror="this.src='https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'">
+            <p class="brand-name">MÉTODO 360</p>
+            <p class="tagline">Eu cuido de mim</p>
+            <div id="display-dia" class="dia-badge">...</div>
+        </header>
 
-<a href="https://wa.me/5538991717426?text=Olá Dr. Rui, estou usando o Método 360." class="btn-whatsapp-fixo">📅 AGENDAR CONSULTA</a>
+        <div id="modal-gad7" style="display:none;">
+            <div class="bloco" style="border-color: var(--segundario);">
+                <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação de Saúde</h2>
+                <div id="gad-container"></div>
+                <button onclick="salvarGAD7()" class="btn-principal" style="background:var(--segundario);">Gravar Avaliação</button>
+            </div>
+        </div>
+
+        <div id="conteudo-app">
+            <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 20px;"></canvas>
+            <div id="formulario-diario">
+                <div class="bloco">
+                    <label style="display:block; font-weight:bold; margin-bottom:10px; color:var(--primario)">Período:</label>
+                    <div class="grid-periodos">
+                        <button class="btn-periodo" id="btn-M" onclick="selP('Manhã')">☀️</button>
+                        <button class="btn-periodo" id="btn-T" onclick="selP('Tarde')" disabled>🌤️</button>
+                        <button class="btn-periodo" id="btn-N" onclick="selP('Noite')" disabled>🌙</button>
+                    </div>
+                </div>
+
+                <div id="bloco-sono" class="bloco" style="display:none;">
+                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Sono noturno:</label>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-opcao" onclick="setV('sono','😫',this)">😫</button>
+                        <button class="btn-opcao" onclick="setV('sono','😐',this)">😐</button>
+                        <button class="btn-opcao" onclick="setV('sono','😴',this)">😴</button>
+                    </div>
+                </div>
+
+                <div class="bloco">
+                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Dor agora (0-10): <span id="v-dor" style="color:var(--segundario)">5</span></label>
+                    <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-dor').innerText = this.value">
+                </div>
+
+                <div class="bloco">
+                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Precisou de medicamento? 💊</label>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-sn" onclick="setV('med','Sim',this)">Sim</button>
+                        <button class="btn-sn" onclick="setV('med','Não',this)">Não</button>
+                    </div>
+                </div>
+
+                <div class="bloco">
+                    <label style="display:block; font-weight:bold; margin-bottom:10px;">Humor:</label>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-opcao" onclick="setV('humor','🤩',this)">🤩</button>
+                        <button class="btn-opcao" onclick="setV('humor','😐',this)">😐</button>
+                        <button class="btn-opcao" onclick="setV('humor','😫',this)">😫</button>
+                    </div>
+                </div>
+
+                <button class="btn-principal" onclick="salvarDiario()">Gravar Registo</button>
+            </div>
+            <button onclick="enviarRelatorio()" style="width:100%; background:#EBF5FF; color:var(--primario); border:2px solid var(--primario); border-radius:20px; padding:15px; margin-top:15px; font-weight:bold; cursor:pointer;">📤 Enviar Relatório Método 360</button>
+        </div>
+        <button onclick="localStorage.clear(); location.reload();" style="margin-top:40px; color:#ccc; background:none; border:none; font-size:9px; width:100%;">REINICIAR SISTEMA</button>
+    </div>
+</div>
+<a href="https://wa.me/5538991717426?text=Olá Dr. Rui" class="btn-whatsapp-fixo">📅 AGENDAR CONSULTA</a>
 
 <script>
-    function corrigirImg(el, nb) {
-        const ts = [nb+'.', nb+'.png', nb+'.jpg', 'https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'];
-        if (!el.dataset.try) el.dataset.try = 0;
-        if (el.dataset.try < ts.length) { el.src = ts[el.dataset.try]; el.dataset.try++; }
+    const GAD_QUESTOES = ["Nervosismo","Preocupação incontrolável","Preocupação excessiva","Dificuldade em relaxar","Inquietude","Irritabilidade","Medo"];
+    let dadosAtuais = { periodo: '', humor: '😐', sono: '😐', med: 'Não', gad: {} };
+    let chart = null;
+
+    function configurar() { const d = document.getElementById('data-ini').value; if(d) { localStorage.setItem('v34_start', d); location.reload(); } }
+    function getDia() { const ini = localStorage.getItem('v34_start'); if(!ini) return null; return Math.floor((new Date() - new Date(ini))/(1000*60*60*24)) + 1; }
+    function selP(p) { dadosAtuais.periodo = p; document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active')); document.getElementById('btn-'+p[0]).classList.add('active'); document.getElementById('bloco-sono').style.display = (p === 'Manhã') ? 'block' : 'none'; }
+    function setV(campo, val, btn) { btn.parentNode.querySelectorAll('button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); dadosAtuais[campo] = val; }
+    function setG(idx, pts) { for(let j=0; j<=3; j++) document.getElementById(`g${idx}-${j}`).classList.remove('active'); document.getElementById(`g${idx}-${pts}`).classList.add('active'); dadosAtuais.gad[idx] = pts; }
+    
+    function carregarGAD7() {
+        document.getElementById('gad-container').innerHTML = GAD_QUESTOES.map((q, i) => `
+            <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                <p style="font-size:13px; font-weight:bold;">${i+1}. ${q}</p>
+                <button class="btn-gad-long" id="g${i}-0" onclick="setG(${i},0)">0 - Ausência</button>
+                <button class="btn-gad-long" id="g${i}-1" onclick="setG(${i},1)">1 - Poucos dias</button>
+                <button class="btn-gad-long" id="g${i}-2" onclick="setG(${i},2)">2 - Muitos dias</button>
+                <button class="btn-gad-long" id="g${i}-3" onclick="setG(${i},3)">3 - Quase sempre</button>
+            </div>`).join('');
     }
-    function selP(p) {
-        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-'+p[0]).classList.add('active');
-        document.getElementById('txt-periodo').innerText = "Registo de " + p + " selecionado.";
+
+    function salvarGAD7() {
+        if(Object.keys(dadosAtuais.gad).length < 7) return alert("Responda todas.");
+        const soma = Object.values(dadosAtuais.gad).reduce((a,b) => a+b, 0);
+        let logs = JSON.parse(localStorage.getItem('v34_gad') || "[]");
+        logs.unshift({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
+        localStorage.setItem('v34_gad', JSON.stringify(logs));
+        location.reload();
     }
+
+    function salvarDiario() {
+        if(!dadosAtuais.periodo) return alert("Selecione o período.");
+        const reg = { dia: getDia(), data: new Date().toLocaleDateString('pt-BR'), periodo: dadosAtuais.periodo, dor: parseInt(document.getElementById('input-dor').value), humor: dadosAtuais.humor, med: dadosAtuais.med, sono: dadosAtuais.periodo === 'Manhã' ? dadosAtuais.sono : null };
+        let db = JSON.parse(localStorage.getItem('v34_db') || "[]");
+        db.unshift(reg);
+        localStorage.setItem('v34_db', JSON.stringify(db));
+        alert("✅ Registo de " + dadosAtuais.periodo + " guardado!");
+        location.reload();
+    }
+
     function enviarRelatorio() {
-        const t = `Olá Dr. Rui! Aqui estão meus dados do *Método 360 - Eu cuido de mim*:%0A%0A📅 Dia: 1%0A🔥 Dor: 5/10%0A🧠 Humor: Estável`;
+        const db = JSON.parse(localStorage.getItem('v34_db') || "[]");
+        if(db.length === 0) return alert("Sem dados.");
+        const u = db[0];
+        const t = `Método 360 - Relatório Dia ${getDia()}%0ADor: ${u.dor}/10%0AMedicação: ${u.med}%0AHumor: ${u.humor}%0ASono: ${u.sono || 'N/A'}`;
         window.open(`https://wa.me/5538991717426?text=${t}`);
     }
-    // Lógica de gráfico e dia mantida das versões estáveis anteriores...
+
+    window.onload = function() {
+        const dia = getDia();
+        if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
+        document.getElementById('display-dia').innerText = "Dia " + dia + " da Jornada";
+        const db = JSON.parse(localStorage.getItem('v34_db') || "[]");
+        const gad = JSON.parse(localStorage.getItem('v34_gad') || "[]");
+        const hoje = new Date().toLocaleDateString('pt-BR');
+
+        if ((dia === 1 || dia % 7 === 1) && !gad.some(s => s.dia === dia)) {
+            document.getElementById('modal-gad7').style.display = 'block';
+            document.getElementById('conteudo-app').style.display = 'none';
+            carregarGAD7(); return;
+        }
+
+        const fM = db.some(i => i.data === hoje && i.periodo === 'Manhã');
+        const fT = db.some(i => i.data === hoje && i.periodo === 'Tarde');
+        const bM = document.getElementById('btn-M'), bT = document.getElementById('btn-T'), bN = document.getElementById('btn-N');
+        if(!fM) { bM.classList.add('disponivel'); bM.disabled = false; }
+        else if(!fT) { bT.classList.add('disponivel'); bT.disabled = false; }
+        else { bN.classList.add('disponivel'); bN.disabled = false; }
+
+        const ctx = document.getElementById('graficoDor').getContext('2d');
+        const ult = [...db].reverse().slice(-10);
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, { type:'line', data:{ labels:ult.map(i=>"D"+i.dia), datasets:[{ label:'Dor', data:ult.map(i=>i.dor), borderColor:'#002E70', tension:0.3, fill:true, backgroundColor:'rgba(0,46,112,0.1)' }] }, options:{ scales:{y:{min:0,max:10}}}});
+    }
 </script>
 </body>
 </html>
