@@ -10,57 +10,219 @@
             --primario: #002E70; --segundario: #D4AF37; --sucesso: #008F55; 
             --alerta: #C0392B; --fundo: #F4F7F6;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; color: #333; padding-bottom: 110px; }
+        body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; color: #333; padding-bottom: 120px; }
         .card { background: white; border-radius: 30px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 500px; margin: auto; border-top: 8px solid var(--segundario); }
+        
+        /* CABEÇALHO */
         header { text-align: center; margin-bottom: 20px; }
         .foto-perfil { width: 105px; height: 105px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; margin-bottom: 10px; background: #EEE; }
         .dia-badge { background: var(--segundario); color: white; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
+
         .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
         label { display: block; font-weight: bold; margin-bottom: 15px; font-size: 15px; color: var(--primario); }
+
+        /* PERÍODOS SEQUENCIAIS */
+        .grid-periodos { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; }
+        .btn-periodo { flex: 1; border: 2px solid #EEE; border-radius: 20px; padding: 15px 5px; background: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
+        .btn-periodo small { display: block; font-size: 10px; font-weight: bold; color: #999; margin-top: 5px; }
+        .btn-periodo:disabled { opacity: 0.1; cursor: not-allowed; }
+        .disponivel { border-color: var(--segundario); border-width: 2px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0); } }
+        .btn-periodo.active { background: #EBF5FF; border-color: var(--primario); border-width: 3px; }
+
+        /* HUMOR E EVA */
+        .escala-humor { display: flex; justify-content: space-between; gap: 8px; }
+        .btn-humor { flex: 1; font-size: 26px; padding: 12px; border: 2px solid #EEE; border-radius: 18px; background: white; cursor: pointer; }
+        .btn-humor.active { border-color: var(--primario); background: #F0F4F8; }
+
         .btn-principal { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 17px; cursor: pointer; }
+        .btn-relatorio { width: 100%; padding: 15px; background: #EBF5FF; color: var(--primario); border: 2px solid var(--primario); border-radius: 20px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+
+        /* GAD-7 */
+        .modal-gad { display: none; background: white; border: 3px solid var(--segundario); border-radius: 25px; padding: 20px; margin-bottom: 20px; }
+        .btn-gad-long { width: 100%; text-align: left; padding: 14px; border: 1px solid #DDD; border-radius: 12px; background: white; font-size: 13px; margin-bottom: 8px; cursor: pointer; }
+        .btn-gad-long.active { background: var(--segundario); color: white; font-weight: bold; }
+
+        /* RODAPÉ */
         .btn-whatsapp-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--sucesso); color: white; text-align: center; padding: 18px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
+
 <div class="card">
+    <div id="setup" style="display:none; text-align:center;">
+        <h2 style="color:var(--primario);">Bem-vindo</h2>
+        <p>Escolha a data da sua primeira consulta:</p>
+        <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px;">
+        <button onclick="configurar()" class="btn-principal">Começar Monitoramento</button>
+    </div>
+
     <div id="main-app">
         <header>
             <div id="display-dia" class="dia-badge">Calculando...</div>
-            <img src="foto-rui.jpg" class="foto-perfil" alt="Rui Ribeiro" id="perfil-img" onerror="corrigirFoto(this)">
+            <img src="foto-rui.jpg" class="foto-perfil" id="perfil-img" onerror="corrigirImg(this, 'foto-rui.jpg')">
             <p style="font-weight: bold; color: var(--primario); margin:0; font-size:20px;">Rui Ribeiro</p>
-            <img src="logo.png" id="logo-img" style="max-width:120px; margin-top:10px;" onerror="corrigirLogo(this)">
+            <img src="logo.png" id="logo-img" style="max-width:120px; margin-top:10px;" onerror="corrigirImg(this, 'logo.png')">
         </header>
+
+        <div id="modal-gad7" class="modal-gad">
+            <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação de Saúde</h2>
+            <p style="font-size:12px; margin-bottom:15px;">Frequência dos sintomas nas últimas 2 semanas:</p>
+            <div id="gad-container"></div>
+            <button onclick="salvarGAD7()" class="btn-principal" style="background:var(--segundario); margin-top:15px;">Gravar GAD-7</button>
+        </div>
+
         <div id="conteudo-app">
             <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 25px;"></canvas>
-            <button class="btn-principal" onclick="enviarRelatorio()">📤 Enviar Dados ao Dr. Rui</button>
+            
+            <div id="formulario-diario">
+                <div class="bloco">
+                    <label>Período atual:</label>
+                    <div class="grid-periodos">
+                        <button class="btn-periodo" id="btn-M" onclick="selP('Manhã')">☀️<small>Manhã</small></button>
+                        <button class="btn-periodo" id="btn-T" onclick="selP('Tarde')" disabled>🌤️<small>Tarde</small></button>
+                        <button class="btn-periodo" id="btn-N" onclick="selP('Noite')" disabled>🌙<small>Noite</small></button>
+                    </div>
+                </div>
+
+                <div class="bloco">
+                    <label>Nível de Dor (0-10): <span id="v-dor" style="color:var(--segundario); font-size:20px;">5</span></label>
+                    <input type="range" id="input-dor" min="0" max="10" value="5" style="width:100%" oninput="document.getElementById('v-dor').innerText = this.value">
+                </div>
+
+                <div class="bloco">
+                    <label>Como está seu Humor?</label>
+                    <div class="escala-humor">
+                        <button class="btn-humor" onclick="setV('humor','🤩',this)">🤩</button>
+                        <button class="btn-humor" onclick="setV('humor','😐',this)">😐</button>
+                        <button class="btn-humor" onclick="setV('humor','😫',this)">😫</button>
+                    </div>
+                </div>
+
+                <button class="btn-principal" onclick="salvarDiario()">Gravar Registo Diário</button>
+            </div>
+
+            <button class="btn-relatorio" onclick="enviarRelatorio()">📤 Enviar Dados ao Dr. Rui</button>
         </div>
-        <button onclick="localStorage.clear(); location.reload();" style="margin-top:50px; color:red; background:none; border:none; font-size:10px; width:100%;">⚠️ REINICIAR MONITOR</button>
+
+        <button onclick="localStorage.clear(); location.reload();" style="margin-top:50px; color:var(--alerta); background:none; border:none; font-size:10px; width:100%; cursor:pointer;">⚠️ REINICIAR MONITOR (APAGAR TUDO)</button>
     </div>
 </div>
-<a href="https://wa.me/5538991717426" class="btn-whatsapp-fixo">📅 AGENDAR CONSULTA</a>
+
+<a href="https://wa.me/5538991717426?text=Olá Dr. Rui" class="btn-whatsapp-fixo">📅 AGENDAR CONSULTA</a>
+
 <script>
-    function corrigirFoto(el) {
-        const caminhos = ['foto-rui.jpg.', 'foto-rui.jpg.jpg', 'https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'];
+    // Correção inteligente de imagens (lida com pontos extras no nome)
+    function corrigirImg(el, nomeBase) {
+        const tentativas = [nomeBase + '.', nomeBase + '.png', nomeBase + '.jpg', 'https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'];
         if (!el.dataset.try) el.dataset.try = 0;
-        if (el.dataset.try < caminhos.length) {
-            el.src = caminhos[el.dataset.try];
+        if (el.dataset.try < tentativas.length) {
+            el.src = tentativas[el.dataset.try];
             el.dataset.try++;
         }
     }
-    function corrigirLogo(el) {
-        const caminhos = ['logo.png.', 'logo.png.png'];
-        if (!el.dataset.try) el.dataset.try = 0;
-        if (el.dataset.try < caminhos.length) {
-            el.src = caminhos[el.dataset.try];
-            el.dataset.try++;
-        } else { el.style.display = 'none'; }
+
+    const GAD_QUESTOES = ["Nervosismo","Controle de preocupações","Preocupação excessiva","Relaxamento","Inquietude","Irritabilidade","Medo"];
+    let dados = { periodo: '', humor: '😐', gad: {} };
+    let chart = null;
+
+    function configurar() {
+        const d = document.getElementById('data-ini').value;
+        if(d) { localStorage.setItem('v29_inicio', d); location.reload(); }
     }
-    window.onload = function() {
-        const ini = localStorage.getItem('v28_start') || new Date().toISOString().split('T')[0];
-        localStorage.setItem('v28_start', ini);
-        const diff = Math.floor((new Date() - new Date(ini))/(1000*60*60*24)) + 1;
-        document.getElementById('display-dia').innerText = "Dia " + diff;
+
+    function getDia() {
+        const ini = localStorage.getItem('v29_inicio');
+        if(!ini) return null;
+        const dataInicio = new Date(ini);
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0); dataInicio.setHours(0,0,0,0);
+        return Math.floor((hoje - dataInicio) / (1000*60*60*24)) + 1;
     }
+
+    function selP(p) {
+        dados.periodo = p;
+        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-'+p[0]).classList.add('active');
+    }
+
+    function setV(campo, val, btn) {
+        btn.parentNode.querySelectorAll('.btn-humor').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        dados[campo] = val;
+    }
+
+    function carregarGAD7() {
+        document.getElementById('gad-container').innerHTML = GAD_QUESTOES.map((q, i) => `
+            <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                <p style="font-size:13px; font-weight:bold;">${i+1}. ${q}</p>
+                <button class="btn-gad-long" id="g${i}-0" onclick="setG(${i},0)">0 - Ausência de sintomas</button>
+                <button class="btn-gad-long" id="g${i}-1" onclick="setG(${i},1)">1 - Menos de metade dos dias</button>
+                <button class="btn-gad-long" id="g${i}-2" onclick="setG(${i},2)">2 - Metade dos dias</button>
+                <button class="btn-gad-long" id="g${i}-3" onclick="setG(${i},3)">3 - Todos os dias</button>
+            </div>`).join('');
+    }
+
+    function setG(idx, pts) {
+        for(let j=0; j<=3; j++) document.getElementById(`g${idx}-${j}`).classList.remove('active');
+        document.getElementById(`g${idx}-${pts}`).classList.add('active');
+        dados.gad[idx] = pts;
+    }
+
+    function salvarGAD7() {
+        if(Object.keys(dados.gad).length < 7) return alert("Responda todas as perguntas.");
+        const soma = Object.values(dados.gad).reduce((a,b) => a+b, 0);
+        let logs = JSON.parse(localStorage.getItem('v29_gad') || "[]");
+        logs.unshift({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
+        localStorage.setItem('v29_gad', JSON.stringify(logs));
+        location.reload();
+    }
+
+    function salvarDiario() {
+        if(!dados.periodo) return alert("Selecione o período.");
+        const registro = { dia: getDia(), data: new Date().toLocaleDateString('pt-BR'), periodo: dados.periodo, dor: parseInt(document.getElementById('input-dor').value), humor: dados.humor };
+        let db = JSON.parse(localStorage.getItem('v29_db') || "[]");
+        db.unshift(registro);
+        localStorage.setItem('v29_db', JSON.stringify(db));
+        alert("Registo guardado!");
+        location.reload();
+    }
+
+    function enviarRelatorio() {
+        const db = JSON.parse(localStorage.getItem('v29_db') || "[]");
+        if(db.length === 0) return alert("Sem dados.");
+        const t = `Relatório Rui Ribeiro - Dia ${getDia()}%0ADor: ${db[0].dor}/10%0AHumor: ${db[0].humor}`;
+        window.open(`https://wa.me/5538991717426?text=${t}`);
+    }
+
+    function render() {
+        const dia = getDia();
+        if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
+        document.getElementById('display-dia').innerText = "Dia " + dia;
+        
+        const db = JSON.parse(localStorage.getItem('v29_db') || "[]");
+        const gad = JSON.parse(localStorage.getItem('v29_gad') || "[]");
+        const hoje = new Date().toLocaleDateString('pt-BR');
+
+        if ((dia === 1 || dia % 7 === 1) && !gad.some(s => s.dia === dia)) {
+            document.getElementById('modal-gad7').style.display = 'block';
+            document.getElementById('conteudo-app').style.display = 'none';
+            carregarGAD7(); return;
+        }
+
+        const fM = db.some(i => i.data === hoje && i.periodo === 'Manhã');
+        const fT = db.some(i => i.data === hoje && i.periodo === 'Tarde');
+        const bM = document.getElementById('btn-M'), bT = document.getElementById('btn-T'), bN = document.getElementById('btn-N');
+        if(!fM) { bM.classList.add('disponivel'); bM.disabled = false; }
+        else if(!fT) { bT.classList.add('disponivel'); bT.disabled = false; }
+        else { bN.classList.add('disponivel'); bN.disabled = false; }
+
+        const ctx = document.getElementById('graficoDor').getContext('2d');
+        const ult = [...db].reverse().slice(-10);
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, { type: 'line', data: { labels: ult.map(i=>"D"+i.dia), datasets: [{ label:'Dor', data: ult.map(i=>i.dor), borderColor: '#002E70', tension:0.3, fill:true, backgroundColor:'rgba(0,46,112,0.1)' }] } });
+    }
+    window.onload = render;
 </script>
 </body>
 </html>
