@@ -12,154 +12,55 @@
         }
         body { font-family: 'Inter', sans-serif; background: var(--fundo); margin: 0; padding: 10px; color: #333; padding-bottom: 110px; }
         .card { background: white; border-radius: 30px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 500px; margin: auto; border-top: 8px solid var(--segundario); }
-        
         header { text-align: center; margin-bottom: 20px; }
         .foto-perfil { width: 105px; height: 105px; border-radius: 50%; border: 4px solid var(--segundario); object-fit: cover; margin-bottom: 10px; background: #EEE; }
         .dia-badge { background: var(--segundario); color: white; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
-
         .bloco { border: 1px solid #EDEDED; border-radius: 25px; padding: 20px; margin-bottom: 15px; background: white; }
         label { display: block; font-weight: bold; margin-bottom: 15px; font-size: 15px; color: var(--primario); }
-
-        /* GRID SEQUENCIAL */
-        .grid-periodos { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; }
-        .btn-periodo { flex: 1; border: 2px solid #EEE; border-radius: 20px; padding: 15px 5px; background: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .btn-periodo small { display: block; font-size: 10px; font-weight: bold; color: #999; margin-top: 5px; }
-        .btn-periodo:disabled { opacity: 0.1; cursor: not-allowed; }
-        .disponivel { border-color: var(--segundario); border-width: 2px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0px rgba(212, 175, 55, 0); } }
-        .btn-periodo.active { background: #EBF5FF; border-color: var(--primario); border-width: 3px; }
-
-        .btn-gad-long { width: 100%; text-align: left; padding: 14px; border: 1px solid #DDD; border-radius: 12px; background: white; font-size: 13px; margin-bottom: 8px; cursor: pointer; }
-        .btn-gad-long.active { background: var(--segundario); color: white; font-weight: bold; }
-
         .btn-principal { width: 100%; padding: 20px; background: var(--primario); color: white; border: none; border-radius: 20px; font-weight: bold; font-size: 17px; cursor: pointer; }
-        .btn-reset-alerta { width: 100%; padding: 15px; background: white; color: var(--alerta); border: 2px solid var(--alerta); border-radius: 15px; font-weight: bold; font-size: 11px; cursor: pointer; margin-top: 50px; }
-
         .btn-whatsapp-fixo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--sucesso); color: white; text-align: center; padding: 18px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
-
 <div class="card">
-    <div id="setup" style="display:none; text-align:center;">
-        <img src="foto-rui.jpg" class="foto-perfil" alt="Rui Ribeiro" onerror="this.src='https://ui-avatars.com/api/?name=Rui+Ribeiro&background=002E70&color=fff'">
-        <h2 style="color:var(--primario);">Olá, sou o Rui Ribeiro</h2>
-        <p>Inicie seu monitoramento clínico definindo a data de hoje:</p>
-        <input type="date" id="data-ini" style="padding:15px; border-radius:15px; border:2px solid var(--segundario); width:80%; margin-bottom:20px; font-size:18px;">
-        <button onclick="configurar()" class="btn-principal">Ativar Monitor</button>
-    </div>
-
     <div id="main-app">
         <header>
-            <div id="display-dia" class="dia-badge">Dia --</div>
-            <img src="foto-rui.jpg" class="foto-perfil" alt="Rui Ribeiro" onerror="this.src='https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'">
+            <div id="display-dia" class="dia-badge">Calculando...</div>
+            <img src="foto-rui.jpg" class="foto-perfil" alt="Rui Ribeiro" id="perfil-img" onerror="corrigirFoto(this)">
             <p style="font-weight: bold; color: var(--primario); margin:0; font-size:20px;">Rui Ribeiro</p>
-            <img src="logo.png" style="max-width:120px; margin-top:10px;" onerror="this.style.display='none'">
+            <img src="logo.png" id="logo-img" style="max-width:120px; margin-top:10px;" onerror="corrigirLogo(this)">
         </header>
-
-        <div id="modal-gad7" style="display:none; background:#FFF; border:3px solid var(--segundario); border-radius:25px; padding:20px; margin-bottom:20px;">
-            <h2 style="color:var(--segundario); font-size:18px; margin-top:0;">📋 Avaliação de Saúde</h2>
-            <div id="gad-container"></div>
-            <button onclick="salvarGAD7()" class="btn-principal" style="background:var(--segundario); margin-top:15px;">Gravar Avaliação</button>
-        </div>
-
         <div id="conteudo-app">
             <canvas id="graficoDor" style="max-height: 150px; margin-bottom: 25px;"></canvas>
-            <div id="formulario-diario">
-                <div class="bloco">
-                    <label>Período do Registro:</label>
-                    <div class="grid-periodos">
-                        <button class="btn-periodo" id="btn-M" onclick="selP('Manhã')">☀️<small>Manhã</small></button>
-                        <button class="btn-periodo" id="btn-T" onclick="selP('Tarde')" disabled>🌤️<small>Tarde</small></button>
-                        <button class="btn-periodo" id="btn-N" onclick="selP('Noite')" disabled>🌙<small>Noite</small></button>
-                    </div>
-                </div>
-                <button class="btn-principal" onclick="salvarDiario()">Gravar Informações</button>
-            </div>
+            <button class="btn-principal" onclick="enviarRelatorio()">📤 Enviar Dados ao Dr. Rui</button>
         </div>
-        <button onclick="resetar()" class="btn-reset-alerta">⚠️ REINICIAR MONITOR (APAGAR TUDO)</button>
+        <button onclick="localStorage.clear(); location.reload();" style="margin-top:50px; color:red; background:none; border:none; font-size:10px; width:100%;">⚠️ REINICIAR MONITOR</button>
     </div>
 </div>
-
-<a href="https://wa.me/5538991717426?text=Olá Rui" class="btn-whatsapp-fixo">📅 AGENDAR CONSULTA</a>
-
+<a href="https://wa.me/5538991717426" class="btn-whatsapp-fixo">📅 AGENDAR CONSULTA</a>
 <script>
-    function resetar() { if(confirm("Apagar tudo?")) { localStorage.clear(); location.reload(); } }
-    const GAD_QUESTOES = ["Nervosismo","Controle de preocupações","Preocupação excessiva","Dificuldade em relaxar","Inquietude","Irritabilidade","Medo"];
-    let dados = { periodo: '', sono: null, humor: '😐', gad: {} };
-    let chart = null;
-
-    function configurar() {
-        const d = document.getElementById('data-ini').value;
-        if(d) { localStorage.setItem('v26_start', d); location.reload(); }
-    }
-
-    function getDia() {
-        const iniStr = localStorage.getItem('v26_start');
-        if(!iniStr) return null;
-        const partes = iniStr.split('-');
-        const dataInicio = new Date(partes[0], partes[1]-1, partes[2]);
-        const hoje = new Date();
-        hoje.setHours(0,0,0,0); dataInicio.setHours(0,0,0,0);
-        return Math.floor((hoje - dataInicio) / (1000*60*60*24)) + 1;
-    }
-
-    function selP(p) {
-        dados.periodo = p;
-        document.querySelectorAll('.btn-periodo').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-'+p[0]).classList.add('active');
-    }
-
-    function carregarGAD7() {
-        document.getElementById('gad-container').innerHTML = GAD_QUESTOES.map((q, i) => `
-            <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                <p style="font-size:13px; font-weight:bold;">${i+1}. ${q}</p>
-                <button class="btn-gad-long" id="g${i}-0" onclick="setG(${i},0)">0 - Ausência de sintomas</button>
-                <button class="btn-gad-long" id="g${i}-1" onclick="setG(${i},1)">1 - Menos de metade dos dias</button>
-                <button class="btn-gad-long" id="g${i}-2" onclick="setG(${i},2)">2 - Metade dos dias</button>
-                <button class="btn-gad-long" id="g${i}-3" onclick="setG(${i},3)">3 - Todos os dias</button>
-            </div>`).join('');
-    }
-
-    function setG(qIdx, pts) {
-        for(let j=0; j<=3; j++) document.getElementById(`g${qIdx}-${j}`).classList.remove('active');
-        document.getElementById(`g${qIdx}-${pts}`).classList.add('active');
-        dados.gad[qIdx] = pts;
-    }
-
-    function salvarGAD7() {
-        if(Object.keys(dados.gad).length < 7) return alert("Responda todas.");
-        const soma = Object.values(dados.gad).reduce((a,b) => a+b, 0);
-        let logs = JSON.parse(localStorage.getItem('v26_gad') || "[]");
-        logs.unshift({ dia: getDia(), score: soma, data: new Date().toLocaleDateString() });
-        localStorage.setItem('v26_gad', JSON.stringify(logs));
-        location.reload();
-    }
-
-    function salvarDiario() {
-        const registro = { dia: getDia(), data: new Date().toLocaleDateString('pt-BR'), periodo: dados.periodo, dor: 5 };
-        let db = JSON.parse(localStorage.getItem('v26_db') || "[]");
-        db.unshift(registro);
-        localStorage.setItem('v26_db', JSON.stringify(db));
-        location.reload();
-    }
-
-    function render() {
-        const dia = getDia();
-        if(!dia) { document.getElementById('main-app').style.display='none'; document.getElementById('setup').style.display='block'; return; }
-        document.getElementById('display-dia').innerText = "Dia " + dia;
-        const db = JSON.parse(localStorage.getItem('v26_db') || "[]");
-        const gadLogs = JSON.parse(localStorage.getItem('v26_gad') || "[]");
-        if ((dia === 1 || dia % 7 === 1) && !gadLogs.some(s => s.dia === dia)) {
-            document.getElementById('modal-gad7').style.display = 'block';
-            document.getElementById('conteudo-app').style.display = 'none';
-            carregarGAD7(); return;
+    function corrigirFoto(el) {
+        const caminhos = ['foto-rui.jpg.', 'foto-rui.jpg.jpg', 'https://ui-avatars.com/api/?name=RR&background=002E70&color=fff'];
+        if (!el.dataset.try) el.dataset.try = 0;
+        if (el.dataset.try < caminhos.length) {
+            el.src = caminhos[el.dataset.try];
+            el.dataset.try++;
         }
-        const ctx = document.getElementById('graficoDor').getContext('2d');
-        if(chart) chart.destroy();
-        chart = new Chart(ctx, { type: 'line', data: { labels: ['D1'], datasets: [{ data: [5], borderColor: '#002E70' }] } });
     }
-    window.onload = render;
+    function corrigirLogo(el) {
+        const caminhos = ['logo.png.', 'logo.png.png'];
+        if (!el.dataset.try) el.dataset.try = 0;
+        if (el.dataset.try < caminhos.length) {
+            el.src = caminhos[el.dataset.try];
+            el.dataset.try++;
+        } else { el.style.display = 'none'; }
+    }
+    window.onload = function() {
+        const ini = localStorage.getItem('v28_start') || new Date().toISOString().split('T')[0];
+        localStorage.setItem('v28_start', ini);
+        const diff = Math.floor((new Date() - new Date(ini))/(1000*60*60*24)) + 1;
+        document.getElementById('display-dia').innerText = "Dia " + diff;
+    }
 </script>
 </body>
 </html>
