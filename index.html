@@ -1,153 +1,41 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÉTODO 360 - Rui Ribeiro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --dourado: #B8860B; --escuro: #1a1a1a; }
-        body { font-family: 'Montserrat', sans-serif; background-color: #f4f4f4; color: var(--escuro); padding-bottom: 50px; }
-        .header { background: linear-gradient(135deg, #000, #333); color: white; padding: 30px 20px; text-align: center; border-bottom: 4px solid var(--dourado); }
-        .logo { max-width: 120px; margin-bottom: 15px; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .card-header { background-color: white; border-bottom: 1px solid #eee; font-weight: bold; color: var(--dourado); cursor: pointer; }
-        .emoji-group { display: flex; justify-content: space-between; margin: 15px 0; }
-        .emoji-btn { font-size: 24px; cursor: pointer; border: 2px solid transparent; border-radius: 10px; padding: 5px; transition: 0.3s; background: none; width: 18%; }
-        .emoji-btn:hover, .emoji-btn.active { border-color: var(--dourado); background-color: #fffcf0; }
-        .btn-enviar { background-color: var(--dourado); color: white; font-weight: bold; width: 100%; padding: 15px; border-radius: 30px; border: none; font-size: 18px; }
-        .gad-item { margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #f0f0f0; }
-        .required-alert { color: red; font-size: 12px; display: none; }
-        .turno-ativo { border-left: 5px solid var(--dourado); }
-    </style>
-</head>
-<body>
+// 1. Função para detetar o horário e focar no turno certo ao abrir
+function focarTurnoAtual() {
+    const hora = new Date().getHours();
+    let idTurno = "";
 
-<div class="header">
-    <img src="logo.png" alt="Logo Método 360" class="logo">
-    <h1>MÉTODO 360</h1>
-    <p>Monitor de Recuperação - Rui Ribeiro</p>
-</div>
+    if (hora >= 5 && hora < 12) idTurno = "collapseManha";
+    else if (hora >= 12 && hora < 18) idTurno = "collapseTarde";
+    else idTurno = "collapseNoite";
 
-<div class="container mt-4">
-    <div class="card" id="cardManha">
-        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#colManha">🌅 Manhã (Físico e Disposição)</div>
-        <div id="colManha" class="collapse">
-            <div class="card-body">
-                <label>Nível de Desconforto/Dor:</label>
-                <div class="emoji-group">
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 0, 'Manha')">0😊</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 3, 'Manha')">3🙂</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 5, 'Manha')">5😐</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 7, 'Manha')">7😟</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 10, 'Manha')">10😫</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card" id="cardTarde">
-        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#colTarde">☀️ Tarde (Energia e Foco)</div>
-        <div id="colTarde" class="collapse">
-            <div class="card-body">
-                <label>Nível de Desconforto/Dor:</label>
-                <div class="emoji-group">
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 0, 'Tarde')">0😊</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 3, 'Tarde')">3🙂</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 5, 'Tarde')">5😐</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 7, 'Tarde')">7😟</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 10, 'Tarde')">10😫</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card" id="cardNoite">
-        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#colNoite">🌙 Noite (Humor e Sono)</div>
-        <div id="colNoite" class="collapse">
-            <div class="card-body">
-                <label>Qualidade do Sono/Humor:</label>
-                <div class="emoji-group">
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorNoite', 0, 'Noite')">0😴</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorNoite', 5, 'Noite')">5😐</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorNoite', 10, 'Noite')">10😫</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card border-primary">
-        <div class="card-header bg-light text-primary">📑 Protocolo GAD-7 (Obrigatório)</div>
-        <div class="card-body">
-            <div id="gad-container">
-                <div class="gad-item">
-                    <p>1. Sentir-se nervoso, ansioso ou muito tenso?</p>
-                    <select class="form-select gad-input" id="gad1">
-                        <option value="">Selecione...</option>
-                        <option value="0">Nenhuma vez</option>
-                        <option value="1">Vários dias</option>
-                        <option value="2">Mais da metade dos dias</option>
-                        <option value="3">Quase todos os dias</option>
-                    </select>
-                </div>
-                <div class="gad-item"><p>2. Não ser capaz de impedir ou controlar as preocupações?</p>
-                <select class="form-select gad-input" id="gad2"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="gad-item"><p>3. Preocupar-se muito com diversas coisas?</p>
-                <select class="form-select gad-input" id="gad3"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                </div>
-        </div>
-    </div>
-
-    <button class="btn-enviar" onclick="enviarRelatorio()">🚀 GERAR RELATÓRIO FINAL</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    let dados = { dorManha: "", dorTarde: "", dorNoite: "" };
-
-    window.onload = function() {
-        const hora = new Date().getHours();
-        let idCol = (hora >= 5 && hora < 12) ? "colManha" : (hora >= 12 && hora < 18) ? "colTarde" : "colNoite";
-        new bootstrap.Collapse(document.getElementById(idCol)).show();
-    };
-
-    function selecionar(btn, campo, valor, atual) {
-        // Remove active dos irmãos
-        btn.parentElement.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        dados[campo] = valor;
-
-        // Transição automática de turno
-        if(atual === 'Manha') { setTimeout(() => { new bootstrap.Collapse(document.getElementById('colManha')).hide(); new bootstrap.Collapse(document.getElementById('colTarde')).show(); }, 600); }
-        if(atual === 'Tarde') { setTimeout(() => { new bootstrap.Collapse(document.getElementById('colTarde')).hide(); new bootstrap.Collapse(document.getElementById('colNoite')).show(); }, 600); }
+    // Abre o turno atual automaticamente
+    const elemento = document.getElementById(idTurno);
+    if (elemento) {
+        new bootstrap.Collapse(elemento, { show: true });
     }
+}
 
-    function enviarRelatorio() {
-        // Validação GAD-7
-        let gadIncompletos = false;
-        document.querySelectorAll('.gad-input').forEach(input => {
-            if (input.value === "") gadIncompletos = true;
-        });
+// 2. Função para saltar para o próximo turno após clicar
+function proximoTurno(atual) {
+    const ordem = ["Manha", "Tarde", "Noite"];
+    const index = ordem.indexOf(atual);
+    
+    if (index >= 0 && index < ordem.length - 1) {
+        const proximoID = "collapse" + ordem[index + 1];
+        const atualID = "collapse" + ordem[index];
 
-        if (gadIncompletos) {
-            alert("⚠️ Por favor, responda todas as perguntas do GAD-7. Elas são essenciais para o seu acompanhamento.");
-            return;
-        }
-
-        // Construção da mensagem
-        let gadScore = 0;
-        document.querySelectorAll('.gad-input').forEach(i => gadScore += parseInt(i.value));
-
-        let msg = `*MÉTODO 360 - RELATÓRIO*%0A%0A`;
-        msg += `🌅 Manhã: ${dados.dorManha || '---'}%0A`;
-        msg += `☀️ Tarde: ${dados.dorTarde || '---'}%0A`;
-        msg += `🌙 Noite: ${dados.dorNoite || '---'}%0A%0A`;
-        msg += `📊 *GAD-7 Score: ${gadScore}* (Ansiedade)%0A`;
-        
-        const telefone = "5538999128532"; // Seu WhatsApp
-        window.open(`https://wa.me/${telefone}?text=${msg}`, '_blank');
+        // Pequena pausa para o paciente ver que marcou
+        setTimeout(() => {
+            // Fecha o atual e abre o próximo
+            new bootstrap.Collapse(document.getElementById(atualID)).hide();
+            new bootstrap.Collapse(document.getElementById(proximoID)).show();
+            
+            // Faz um scroll suave para o novo turno
+            document.getElementById(proximoID).scrollIntoView({ behavior: 'smooth' });
+        }, 500);
     }
-</script>
-</body>
-</html>
+}
+
+// 3. Chamar a função ao carregar a página
+window.onload = function() {
+    focarTurnoAtual();
+};
