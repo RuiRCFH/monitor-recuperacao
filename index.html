@@ -7,123 +7,144 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dourado: #B8860B; --escuro: #1a1a1a; }
-        body { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; color: var(--escuro); padding-bottom: 40px; }
+        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f4f7f6; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; }
+
+        /* ESTILO EXATO DA SUA IMAGEM (CARD BRANCO/AZUL) */
+        .main-card {
+            background: #fff; border-radius: 30px; padding: 40px 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 50px;
+            border-top: 8px solid var(--dourado); text-align: center;
+        }
+        .titulo-metodo { color: var(--azul); font-weight: 700; font-size: 2rem; margin-bottom: 10px; }
         
-        /* CABEÇALHO LIMPO E PROFISSIONAL */
-        .header-container {
-            background: #fff; padding: 40px 20px; text-align: center;
-            border-bottom: 5px solid var(--dourado); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
+        .btn-turno-header { 
+            width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 15px;
+            background: #fff; color: var(--azul); font-weight: 700; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .header-container h1 { font-weight: 700; letter-spacing: 2px; margin: 0; font-size: 1.8rem; }
-        .header-container p { color: var(--dourado); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 3px; font-weight: 700; margin-top: 5px; }
 
-        /* CARDS */
-        .card-personalizado { border: none; border-radius: 15px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.04); margin-bottom: 15px; }
-        .titulo-setor { padding: 18px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* BOTÕES DE EMOJI */
-        .grupo-emoji { display: flex; justify-content: space-between; gap: 8px; padding: 0 15px 15px 15px; }
-        .btn-check {
-            flex: 1; padding: 15px 5px; border: 1px solid #eee; border-radius: 12px;
-            background: #fff; font-size: 1.1rem; transition: 0.2s; cursor: pointer;
+        /* BOTÕES DE EMOJI (FUNCIONALIDADE) */
+        .emoji-box { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0 20px; }
+        .btn-emoji { 
+            flex: 1; padding: 15px 5px; border: 2px solid #f0f0f0; border-radius: 15px; 
+            background: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.2s;
         }
-        .btn-check.active { background: var(--dourado); color: white; border-color: var(--dourado); box-shadow: 0 4px 12px rgba(184,134,11,0.3); }
+        .btn-emoji.active { background: var(--azul); color: white; border-color: var(--azul); }
 
-        /* GAD-7 OBRIGATÓRIO */
-        .gad-box { border: 2px solid var(--dourado); border-radius: 15px; background: #fffdf9; margin-top: 25px; overflow: hidden; }
-        .gad-topo { background: var(--dourado); color: white; padding: 15px; font-weight: 700; text-align: center; }
-        .pergunta-gad { padding: 15px; border-bottom: 1px solid #f0f0f0; }
-        .pergunta-gad p { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+        /* GAD-7 OBRIGATÓRIO ESTILIZADO */
+        .gad-card { border: 2px solid var(--dourado); border-radius: 20px; background: #fffdf9; margin-top: 30px; overflow: hidden; }
+        .gad-title { background: var(--dourado); color: white; padding: 15px; font-weight: 700; }
+        .gad-q { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
 
-        /* BOTÃO ENVIAR */
-        .btn-final {
-            background: #000; color: var(--dourado); font-weight: 700;
-            width: 100%; padding: 20px; border-radius: 50px; border: 2px solid var(--dourado);
-            margin-top: 30px; text-transform: uppercase; letter-spacing: 1.5px;
+        /* BOTÃO "COMEÇAR AUTOCUIDADO" DA SUA IMAGEM */
+        .btn-principal {
+            background: var(--azul); color: white; font-weight: 700;
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            font-size: 1.1rem; margin-top: 30px; transition: 0.3s;
         }
+        .btn-principal:hover { background: #002244; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <h1>MÉTODO 360</h1>
-        <p>Monitor de Recuperação Ativa</p>
-    </div>
+<div class="container" style="max-width: 500px;">
+    <div class="main-card">
+        <h1 class="titulo-metodo">MÉTODO 360</h1>
+        <p class="text-muted mb-4">Acompanhamento de Recuperação</p>
 
-    <div class="container" style="max-width: 500px;">
-        
-        <div class="accordion" id="mainAcc">
-            
-            <div class="card-personalizado">
-                <div class="titulo-setor" data-bs-toggle="collapse" data-bs-target="#tabManha">
-                    <span>🌅 MANHÃ</span> <small class="text-muted">Físico</small>
-                </div>
-                <div id="tabManha" class="collapse" data-bs-parent="#mainAcc">
-                    <div class="grupo-emoji">
-                        <div class="btn-check" onclick="selecionar(this, 'm', 0, 'tabTarde')">0😊</div>
-                        <div class="btn-check" onclick="selecionar(this, 'm', 5, 'tabTarde')">5😐</div>
-                        <div class="btn-check" onclick="selecionar(this, 'm', 10, 'tabTarde')">10😫</div>
+        <div class="accordion" id="accFisico">
+            <div class="card border-0 mb-2">
+                <button class="btn-turno-header" type="button" data-bs-toggle="collapse" data-bs-target="#c1">
+                    🌅 MANHÃ <span>+</span>
+                </button>
+                <div id="c1" class="collapse" data-bs-parent="#accFisico">
+                    <div class="emoji-box">
+                        <button class="btn-emoji" onclick="selecionar(this,'m',0,'c2')">0😊</button>
+                        <button class="btn-emoji" onclick="selecionar(this,'m',5,'c2')">5😐</button>
+                        <button class="btn-emoji" onclick="selecionar(this,'m',10,'c2')">10😫</button>
                     </div>
                 </div>
             </div>
 
-            <div class="card-personalizado">
-                <div class="titulo-setor" data-bs-toggle="collapse" data-bs-target="#tabTarde">
-                    <span>☀️ TARDE</span> <small class="text-muted">Energia</small>
-                </div>
-                <div id="tabTarde" class="collapse" data-bs-parent="#mainAcc">
-                    <div class="grupo-emoji">
-                        <div class="btn-check" onclick="selecionar(this, 't', 0, 'tabNoite')">0😊</div>
-                        <div class="btn-check" onclick="selecionar(this, 't', 5, 'tabNoite')">5😐</div>
-                        <div class="btn-check" onclick="selecionar(this, 't', 10, 'tabTarde')">10😫</div>
+            <div class="card border-0 mb-2">
+                <button class="btn-turno-header" type="button" data-bs-toggle="collapse" data-bs-target="#c2">
+                    ☀️ TARDE <span>+</span>
+                </button>
+                <div id="c2" class="collapse" data-bs-parent="#accFisico">
+                    <div class="emoji-box">
+                        <button class="btn-emoji" onclick="selecionar(this,'t',0,'c3')">0😊</button>
+                        <button class="btn-emoji" onclick="selecionar(this,'t',5,'c3')">5😐</button>
+                        <button class="btn-emoji" onclick="selecionar(this,'t',10,'c3')">10😫</button>
                     </div>
                 </div>
             </div>
 
-            <div class="card-personalizado">
-                <div class="titulo-setor" data-bs-toggle="collapse" data-bs-target="#tabNoite">
-                    <span>🌙 NOITE</span> <small class="text-muted">Sono</small>
-                </div>
-                <div id="tabNoite" class="collapse" data-bs-parent="#mainAcc">
-                    <div class="grupo-emoji">
-                        <div class="btn-check" onclick="selecionar(this, 'n', 0, null)">0😴</div>
-                        <div class="btn-check" onclick="selecionar(this, 'n', 5, null)">5😐</div>
-                        <div class="btn-check" onclick="selecionar(this, 'n', 10, null)">10😫</div>
+            <div class="card border-0 mb-2">
+                <button class="btn-turno-header" type="button" data-bs-toggle="collapse" data-bs-target="#c3">
+                    🌙 NOITE <span>+</span>
+                </button>
+                <div id="c3" class="collapse" data-bs-parent="#accFisico">
+                    <div class="emoji-box">
+                        <button class="btn-emoji" onclick="selecionar(this,'n',0,null)">0😴</button>
+                        <button class="btn-emoji" onclick="selecionar(this,'n',5,null)">5😐</button>
+                        <button class="btn-emoji" onclick="selecionar(this,'n',10,null)">10😫</button>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <div class="gad-box">
-            <div class="gad-topo">📑 PROTOCOLO GAD-7</div>
-            
-            <div class="pergunta-gad"><p>1. Sentir-se nervoso ou muito tenso?</p>
-                <select class="form-select g-input"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-            
-            <div class="pergunta-gad"><p>2. Não conseguir controlar as preocupações?</p>
-                <select class="form-select g-input"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-            
-            <div class="pergunta-gad"><p>3. Preocupar-se muito com diversas coisas?</p>
-                <select class="form-select g-input"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-            
-            <div class="pergunta-gad"><p>4. Dificuldade para relaxar?</p>
-                <select class="form-select g-input"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-            
-            <div class="pergunta-gad"><p>5. Estar inquieto (difícil ficar sentado)?</p>
-                <select class="form-select g-input"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-            
-            <div class="pergunta-gad"><p>6. Ficar facilmente aborrecido ou irritado?</p>
-                <select class="form-select g-input"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-            
-            <div class="pergunta-gad"><p>7. Sentir medo de que algo ruim aconteça?</p>
-                <select class="form-select g-input"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-        </div>
+        <div class="gad-card">
+            <div class="gad-title">📑 PROTOCOLO GAD-7</div>
+            <div class="gad-q">
+                <p class="small mb-1">1. Sentir-se nervoso ou muito tenso?</p>
+                <select class="form-select g-check"><option value="">Escolha...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+            </div>
+            <div class="gad-q">
+                <p class="small mb-1">2. Não controlar as preocupações?</p>
+                <select class="form-select g-check"><option value="">Escolha...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+            </div>
+            </div>
 
-        <button class="btn-final" onclick="gerarRelatorio()">ENVIAR RELATÓRIO 🚀</button>
-
+        <button class="btn-principal" onclick="enviar()">GERAR RELATÓRIO FINAL</button>
     </div>
+</div>
 
-    <script src="
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let d = { m: null, t: null, n: null };
+
+    // Abre no turno certo sozinho
+    window.onload = function() {
+        const h = new Date().getHours();
+        let id = (h < 12) ? 'c1' : (h < 18) ? 'c2' : 'c3';
+        new bootstrap.Collapse(document.getElementById(id)).show();
+    };
+
+    function selecionar(btn, turno, valor, prox) {
+        btn.parentElement.querySelectorAll('.btn-emoji').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        d[turno] = valor;
+        if(prox) {
+            setTimeout(() => {
+                new bootstrap.Collapse(document.getElementById(btn.closest('.collapse').id)).hide();
+                new bootstrap.Collapse(document.getElementById(prox)).show();
+            }, 400);
+        }
+    }
+
+    function enviar() {
+        let soma = 0; let ok = true;
+        document.querySelectorAll('.g-check').forEach(s => {
+            if(s.value === "") ok = false;
+            soma += parseInt(s.value || 0);
+        });
+
+        if(!ok) { alert("⚠️ Responda o GAD-7 completo antes de enviar."); return; }
+
+        let msg = `*MÉTODO 360*%0A🌅M: ${d.m??'--'}%0A☀️T: ${d.t??'--'}%0A🌙N: ${d.n??'--'}%0A📊GAD-7: ${soma}`;
+        window.open(`https://wa.me/5538999128532?text=${msg}`, '_blank');
+    }
+</script>
+</body>
+</html>
