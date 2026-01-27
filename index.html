@@ -10,17 +10,19 @@
         :root { --azul: #003366; --dourado: #B8860B; --fundo: #f8f9fa; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; }
 
+        /* Estrutura de Telas */
         .tela { display: none; max-width: 500px; margin: 20px auto; padding: 15px; animation: slideIn 0.4s ease; }
         .ativa { display: block; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-        .card-jornada { background: #fff; border-radius: 35px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 10px solid var(--dourado); text-align: center; }
+        /* Estilo dos Cards */
+        .card-jornada { background: #fff; border-radius: 35px; padding: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 10px solid var(--dourado); text-align: center; }
         
-        .logo-txt { font-weight: 700; color: var(--azul); letter-spacing: 2px; font-size: 1.6rem; margin-bottom: 5px; }
+        .logo-txt { font-weight: 700; color: var(--azul); letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; }
         .btn-acao { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; margin-top: 25px; transition: 0.3s; }
         .btn-acao:hover { background: #002244; transform: scale(1.02); }
 
-        /* ESTILO EMOJIS */
+        /* Botões de Emoji */
         .emoji-flex { display: flex; justify-content: space-between; gap: 8px; margin: 15px 0; }
         .btn-emoji { flex: 1; border: 2px solid #f0f0f0; border-radius: 18px; background: #fff; padding: 12px 5px; transition: 0.2s; cursor: pointer; }
         .btn-emoji span { display: block; font-size: 1.8rem; margin-bottom: 5px; }
@@ -28,14 +30,10 @@
         .btn-emoji.active { border-color: var(--azul); background: #eef4f9; }
         .btn-emoji.active small { color: var(--azul); }
 
-        /* ESCALA EVA 0-10 */
+        /* Escala EVA 0-10 */
         .eva-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 15px; }
-        .btn-eva { 
-            padding: 12px 0; border: 2px solid #f0f0f0; background: #fff; border-radius: 10px; 
-            font-weight: 700; color: var(--azul); transition: 0.2s; 
-        }
+        .btn-eva { padding: 12px 0; border: 2px solid #f0f0f0; background: #fff; border-radius: 10px; font-weight: 700; color: var(--azul); transition: 0.2s; }
         .btn-eva.active { background: var(--dourado); color: white; border-color: var(--dourado); transform: scale(1.1); }
-        .eva-labels { display: flex; justify-content: space-between; margin-top: 5px; font-size: 0.7rem; font-weight: 700; color: #999; }
     </style>
 </head>
 <body>
@@ -44,10 +42,12 @@
         <div class="card-jornada">
             <h1 class="logo-txt">MÉTODO 360</h1>
             <p style="color: var(--dourado); font-size: 0.8rem; letter-spacing: 3px; font-weight: 700;">RUI RIBEIRO</p>
+            
             <div class="mt-5 text-start">
                 <label class="fw-bold small mb-2" style="color: var(--azul)">DATA DO REGISTRO</label>
                 <input type="date" id="data-dia" class="form-control" style="border-radius: 15px; padding: 12px; font-weight: 700; border: 2px solid #eee;">
             </div>
+
             <button class="btn-acao" onclick="irPara(2)">INICIAR JORNADA</button>
         </div>
     </div>
@@ -69,7 +69,7 @@
     <div id="passo3" class="tela">
         <div class="card-jornada">
             <h4 class="fw-bold" style="color: var(--azul)">Estado de Humor</h4>
-            <p class="small text-muted mb-3">Como você se sente emocionalmente agora?</p>
+            <p class="small text-muted mb-3">Como se sente emocionalmente agora?</p>
             <div class="emoji-flex">
                 <div class="btn-emoji" onclick="selecionar(this, 'humor', 'Radiante')"><span>😊</span><small>Radiante</small></div>
                 <div class="btn-emoji" onclick="selecionar(this, 'humor', 'Estável')"><span>😐</span><small>Estável</small></div>
@@ -79,8 +79,7 @@
             <hr class="my-4" style="opacity: 0.1;">
 
             <h4 class="fw-bold" style="color: var(--azul)">Nível de Dor (EVA)</h4>
-            <p class="small text-muted mb-1">Assinale a intensidade da sua dor:</p>
-            
+            <p class="small text-muted mb-1">Intensidade da sua dor física:</p>
             <div class="eva-grid">
                 <button class="btn-eva" onclick="selecionarEva(this, 0)">0</button>
                 <button class="btn-eva" onclick="selecionarEva(this, 1)">1</button>
@@ -88,6 +87,3 @@
                 <button class="btn-eva" onclick="selecionarEva(this, 3)">3</button>
                 <button class="btn-eva" onclick="selecionarEva(this, 4)">4</button>
                 <button class="btn-eva" onclick="selecionarEva(this, 5)">5</button>
-                <button class="btn-eva" onclick="selecionarEva(this, 6)">6</button>
-                <button class="btn-eva" onclick="selecionarEva(this, 7)">7</button>
-                <button class="btn-eva" onclick="selecionarEva(this,
