@@ -3,53 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÉTODO 360 | Monitoramento de Alerta</title>
+    <title>MÉTODO 360 | Rui Ribeiro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f4f7f6; }
+        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f4f7f6; --vermelho: #d9534f; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; }
 
-        /* NAVEGAÇÃO */
         .tela { display: none; max-width: 500px; margin: 20px auto; padding: 15px; }
         .ativa { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS */
-        .card-jornada { background: #fff; border-radius: 35px; padding: 35px 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-top: 10px solid var(--dourado); text-align: center; }
-        .titulo-master { color: var(--azul); font-weight: 700; font-size: 2.2rem; margin-bottom: 5px; }
+        .card-jornada { background: #fff; border-radius: 35px; padding: 35px 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 10px solid var(--dourado); text-align: center; }
         .foto-rui { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--dourado); margin: 0 auto 15px; display: block; object-fit: cover; background: #eee; }
         
-        /* BOTÕES */
         .btn-principal { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; margin-top: 25px; }
-        .btn-principal:disabled { background: #ccc; cursor: not-allowed; }
-        
-        .btn-emoji { flex: 1; border: 2px solid #f0f0f0; border-radius: 18px; background: #fff; padding: 12px; font-size: 1.8rem; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
-        .btn-emoji.active { border-color: var(--dourado); background: #fffcf0; transform: scale(1.05); }
-        .emoji-label { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; margin-top: 5px; }
+        .btn-principal:disabled { background: #ccc !important; cursor: not-allowed; opacity: 0.6; }
 
-        /* EVA GRID */
-        .eva-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 10px; }
-        .btn-eva { border: 2px solid #f0f0f0; background: #fff; border-radius: 10px; padding: 10px 0; font-weight: 700; color: var(--azul); cursor: pointer; }
-        .btn-eva.active { background: var(--azul); color: white; border-color: var(--azul); }
+        /* HUMOR E EMOJIS */
+        .emoji-flex { display: flex; justify-content: space-between; gap: 10px; margin: 15px 0; }
+        .btn-emoji { flex: 1; border: 2px solid #f0f0f0; border-radius: 18px; background: #fff; padding: 12px 5px; cursor: pointer; transition: 0.2s; }
+        .btn-emoji span { display: block; font-size: 1.8rem; }
+        .btn-emoji small { font-weight: 700; font-size: 0.65rem; color: #777; text-transform: uppercase; }
+        .btn-emoji.active { border-color: var(--dourado); background: #fffcf0; }
 
-        /* GAD-7 */
-        .gad-pergunta { text-align: left; margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 20px; border: 1px solid #f0f0f0; }
-        .gad-pergunta p { font-weight: 700; font-size: 0.85rem; color: var(--azul); margin-bottom: 10px; }
-        .form-select { border-radius: 12px; }
+        /* ESCALA EVA 1-10 */
+        .eva-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+        .btn-eva { border: 2px solid #f0f0f0; background: #fff; border-radius: 12px; padding: 12px 0; font-weight: 700; color: var(--azul); }
+        .btn-eva.active { background: var(--azul); color: white; border-color: var(--azul); transform: scale(1.05); }
 
-        .secao-periodo { background: #f0f4f8; padding: 15px; border-radius: 20px; margin-top: 20px; text-align: left; }
-        .alerta-texto { font-size: 0.8rem; color: #d9534f; font-weight: 700; margin-top: 15px; display: none; }
+        .secao-alerta { background: #fff5f5; border: 1px solid #ffcccc; padding: 15px; border-radius: 20px; margin-top: 20px; display: none; }
+        .pergunta-bloco { background: #f8fafc; padding: 15px; border-radius: 20px; margin-top: 20px; text-align: left; border: 1px solid #edf2f7; }
+        .label-pergunta { font-weight: 700; color: var(--azul); font-size: 0.9rem; margin-bottom: 12px; display: block; }
     </style>
 </head>
 <body>
 
     <div id="tela0" class="tela ativa">
         <div class="card-jornada">
-            <h1 class="titulo-master">MÉTODO 360</h1>
-            <p style="color: var(--dourado); font-weight: 700; letter-spacing: 3px; font-size: 0.8rem;">JORNADA DE AUTOCUIDADO</p>
+            <h1 style="color: var(--azul); font-weight: 700;">MÉTODO 360</h1>
+            <p style="color: var(--dourado); font-weight: 700; letter-spacing: 3px; font-size: 0.8rem;">RUI RIBEIRO</p>
             <div class="mt-5 text-start">
-                <label class="fw-bold small mb-2" style="color: var(--azul)">DATA DO REGISTRO</label>
+                <label class="fw-bold small mb-2">DATA DO REGISTRO</label>
                 <input type="date" id="data-dia" class="form-control" style="border-radius: 15px; padding: 12px; font-weight: 700;">
             </div>
             <button class="btn-principal" onclick="ir(1)">COMEÇAR AUTO CUIDADO</button>
@@ -59,69 +54,64 @@
     <div id="tela1" class="tela">
         <div class="card-jornada">
             <h5 class="fw-bold mb-4" style="color: var(--azul)">Passo 1: Protocolo GAD-7</h5>
-            <div id="gad-inputs">
-                <div class="gad-pergunta"><p>1. Sentir-se nervoso ou ansioso?</p><select class="form-select g-in" onchange="verificarNiveis()"><option value="">Selecione...</option><option value="0">0 - Nenhuma vez</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase todos os dias</option></select></div>
-                <div class="gad-pergunta"><p>2. Não controlar preocupações?</p><select class="form-select g-in" onchange="verificarNiveis()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="gad-pergunta"><p>3. Preocupar-se muito com diversas coisas?</p><select class="form-select g-in" onchange="verificarNiveis()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            <div id="gad-area">
+                <div class="pergunta-bloco">
+                    <span class="label-pergunta">1. Sentir-se nervoso ou ansioso?</span>
+                    <select class="form-select g-in" onchange="checkAlerts()"><option value="">Selecione...</option><option value="0">0 - Nenhuma vez</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase todos os dias</option></select>
                 </div>
+                <div class="pergunta-bloco"><span class="label-pergunta">2. Não controlar preocupações?</span><select class="form-select g-in" onchange="checkAlerts()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            </div>
             <button class="btn-principal" onclick="validarIr(2)">PRÓXIMO PASSO</button>
         </div>
     </div>
 
     <div id="tela2" class="tela">
         <div class="card-jornada">
-            <img src="SuaFoto.jpg" class="foto-rui" alt="Rui Ribeiro">
-            <div class="logo-txt mb-4" style="color: var(--azul); font-weight: 700; font-size: 1.2rem;">MÉTODO 360</div>
-            <p class="fw-bold text-start mb-2" style="color: var(--azul)">Passo 2: Qualidade do Sono</p>
-            <div class="d-flex justify-content-between gap-2">
-                <div class="btn-emoji" onclick="sel(this,'sono','Excelente')"><span>😴</span><small class="emoji-label">Excelente</small></div>
-                <div class="btn-emoji" onclick="sel(this,'sono','Regular')"><span>😐</span><small class="emoji-label">Regular</small></div>
-                <div class="btn-emoji" onclick="sel(this,'sono','Ruim')"><span>😫</span><small class="emoji-label">Ruim</small></div>
+            <img src="https://ui-avatars.com/api/?name=Rui+Ribeiro&background=003366&color=fff&size=140" class="foto-rui" id="perfil-img" alt="Rui Ribeiro">
+            <h5 class="fw-bold" style="color: var(--azul)">MÉTODO 360</h5>
+            
+            <div class="pergunta-bloco mt-4 text-center">
+                <span class="label-pergunta">COMO FOI A QUALIDADE DO SONO?</span>
+                <div class="emoji-flex">
+                    <div class="btn-emoji" onclick="sel(this,'sono','Ótimo')"><span>😴</span><small>Ótimo</small></div>
+                    <div class="btn-emoji" onclick="sel(this,'sono','Médio')"><span>😐</span><small>Médio</small></div>
+                    <div class="btn-emoji" onclick="sel(this,'sono','Ruim')"><span>😫</span><small>Ruim</small></div>
+                </div>
             </div>
-            <button class="btn-principal" onclick="ir(3)">PRÓXIMO PASSO</button>
+            <button class="btn-principal" onclick="ir(3)">AVANÇAR MONITORAMENTO</button>
         </div>
     </div>
 
     <div id="tela3" class="tela">
         <div class="card-jornada">
-            <h5 class="fw-bold mb-4" style="color: var(--azul)">Passo 3: Acompanhamento de Dor</h5>
-            
-            <div class="secao-periodo">
-                <span class="fw-bold" style="color: var(--azul)">🌅 MANHÃ</span>
-                <div class="eva-grid">
-                    <button class="btn-eva" onclick="selEva(this,'m',0)">0</button>
-                    <button class="btn-eva" onclick="selEva(this,'m',7)">7</button>
-                    <button class="btn-eva" onclick="selEva(this,'m',10)">10</button>
+            <h5 class="fw-bold mb-4" style="color: var(--azul)">Passo 3: Humor e Dor</h5>
+
+            <div class="pergunta-bloco">
+                <span class="label-pergunta">QUAL SEU ESTADO DE HUMOR AGORA?</span>
+                <div class="emoji-flex">
+                    <div class="btn-emoji" onclick="sel(this,'humor','Ótimo')"><span>😊</span><small>Ótimo</small></div>
+                    <div class="btn-emoji" onclick="sel(this,'humor','Médio')"><span>😐</span><small>Médio</small></div>
+                    <div class="btn-emoji" onclick="sel(this,'humor','Ruim')"><span>😟</span><small>Ruim</small></div>
                 </div>
             </div>
 
-            <div class="secao-periodo">
-                <span class="fw-bold" style="color: var(--azul)">☀️ TARDE</span>
+            <div class="pergunta-bloco">
+                <span class="label-pergunta">NÍVEL DE DOR (ESCALA EVA 1-10)</span>
                 <div class="eva-grid">
-                    <button class="btn-eva" onclick="selEva(this,'t',0)">0</button>
-                    <button class="btn-eva" onclick="selEva(this,'t',7)">7</button>
-                    <button class="btn-eva" onclick="selEva(this,'t',10)">10</button>
+                    <button class="btn-eva" onclick="selEva(this,1)">1</button><button class="btn-eva" onclick="selEva(this,2)">2</button><button class="btn-eva" onclick="selEva(this,3)">3</button><button class="btn-eva" onclick="selEva(this,4)">4</button><button class="btn-eva" onclick="selEva(this,5)">5</button><button class="btn-eva" onclick="selEva(this,6)">6</button><button class="btn-eva" onclick="selEva(this,7)">7</button><button class="btn-eva" onclick="selEva(this,8)">8</button><button class="btn-eva" onclick="selEva(this,9)">9</button><button class="btn-eva" onclick="selEva(this,10)">10</button>
                 </div>
             </div>
 
-            <div class="secao-periodo">
-                <span class="fw-bold" style="color: var(--azul)">🌙 NOITE</span>
-                <div class="eva-grid">
-                    <button class="btn-eva" onclick="selEva(this,'n',0)">0</button>
-                    <button class="btn-eva" onclick="selEva(this,'n',7)">7</button>
-                    <button class="btn-eva" onclick="selEva(this,'n',10)">10</button>
-                </div>
+            <div id="alerta-clinico" class="secao-alerta">
+                <p class="mb-0 text-danger fw-bold">⚠️ ALERTA: Níveis fora da normalidade detectados. O botão de envio foi ativado.</p>
             </div>
 
-            <p id="msg-bloqueio" class="alerta-texto mt-4">⚠️ O envio automático está desativado. Suas métricas estão dentro da normalidade clínica.</p>
-            
-            <button id="btn-whatsapp" class="btn-principal" onclick="finalizar()" disabled>NOTIFICAR RUI RIBEIRO 🚀</button>
-            <p class="small text-muted mt-2">O botão será ativado apenas em níveis de alerta (Dor ≥ 7 ou GAD-7 ≥ 10).</p>
+            <button id="btn-envio" class="btn-principal" onclick="enviarWhatsApp()" disabled>MONITORAMENTO NORMAL</button>
         </div>
     </div>
 
     <script>
-        let res = { m: 0, t: 0, n: 0, gad: 0, sono: "" };
+        let d = { data: "", gad: 0, sono: "", humor: "", dor: 0 };
         document.getElementById('data-dia').valueAsDate = new Date();
 
         function ir(n) {
@@ -132,58 +122,45 @@
 
         function validarIr(n) {
             let soma = 0; let ok = true;
-            document.querySelectorAll('.g-in').forEach(i => {
-                if(i.value === "") ok = false;
-                soma += parseInt(i.value || 0);
-            });
-            if(!ok) { alert("⚠️ O Protocolo GAD-7 é obrigatório."); return; }
-            res.gad = soma;
-            verificarNiveis();
-            ir(n);
+            document.querySelectorAll('.g-in').forEach(i => { if(i.value === "") ok = false; soma += parseInt(i.value || 0); });
+            if(!ok) { alert("Responda todas as perguntas do GAD-7."); return; }
+            d.gad = soma; checkAlerts(); ir(n);
         }
 
         function sel(btn, cat, val) {
             btn.parentElement.querySelectorAll('.btn-emoji').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            res[cat] = val;
-            verificarNiveis();
+            d[cat] = val;
+            checkAlerts();
         }
 
-        function selEva(btn, turno, val) {
+        function selEva(btn, val) {
             btn.parentElement.querySelectorAll('.btn-eva').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            res[turno] = val;
-            verificarNiveis();
+            d.dor = val;
+            checkAlerts();
         }
 
-        function verificarNiveis() {
-            // Lógica de Ativação: Dor maior que 7 OU GAD maior que 10
-            let dorAlerta = (res.m >= 7 || res.t >= 7 || res.n >= 7);
-            let ansiedadeAlerta = (res.gad >= 10);
-
-            const btn = document.getElementById('btn-whatsapp');
-            const msg = document.getElementById('msg-bloqueio');
-
-            if (dorAlerta || ansiedadeAlerta) {
+        function checkAlerts() {
+            const btn = document.getElementById('btn-envio');
+            const box = document.getElementById('alerta-clinico');
+            
+            // Critérios: Dor >= 7 OU GAD-7 >= 10
+            if(d.dor >= 7 || d.gad >= 10) {
                 btn.disabled = false;
-                btn.style.background = "#d9534f"; // Vermelho Alerta
-                btn.innerText = "ENVIAR ALERTA DE DOR/ANSIEDADE ⚠️";
-                msg.style.display = "none";
+                btn.innerText = "ENVIAR ALERTA CLÍNICO 🚀";
+                btn.style.background = "#d9534f";
+                box.style.display = "block";
             } else {
                 btn.disabled = true;
-                btn.style.background = "#ccc";
                 btn.innerText = "MONITORAMENTO NORMAL";
-                msg.style.display = "block";
+                btn.style.background = "#003366";
+                box.style.display = "none";
             }
         }
 
-        function finalizar() {
-            const data = document.getElementById('data-dia').value;
-            const linkChart = `https://quickchart.io/chart?c={type:'line',data:{labels:['M','T','N'],datasets:[{label:'Dor Alerta',data:[${res.m},${res.t},${res.n}],borderColor:'red',fill:false}]}}`;
-            
-            let msg = `*ALERTA MÉTODO 360*%0A📅 Data: ${data}%0A📊 GAD-7: ${res.gad} (ALERTA)%0A😴 Sono: ${res.sono}%0A🌅 M: EVA ${res.m}%0A☀️ T: EVA ${res.t}%0A🌙 N: EVA ${res.n}%0A%0A📈 Gráfico de Crise: ${linkChart}`;
-            
-            // NOVO NÚMERO ATUALIZADO
+        function enviarWhatsApp() {
+            const msg = `*ALERTA MÉTODO 360*%0A📅 Data: ${document.getElementById('data-dia').value}%0A📊 GAD-7: ${d.gad}%0A😴 Sono: ${d.sono}%0A😊 Humor: ${d.humor}%0A😫 Dor EVA: ${d.dor}`;
             window.open(`https://wa.me/5535991717426?text=${msg}`, '_blank');
         }
     </script>
