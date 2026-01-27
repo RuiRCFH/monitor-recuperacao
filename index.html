@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f8f9fa; --leve: #3498db; --moderado: #f39c12; --alto: #d32f2f; }
+        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f8f9fa; --leve: #3498db; --moderado: #f39c12; --alto: #d32f2f; --sucesso: #27ae60; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; padding-bottom: 60px; }
 
         .tela { display: none; max-width: 500px; margin: 20px auto; padding: 15px; }
@@ -16,39 +16,40 @@
 
         .card-jornada { background: #fff; border-radius: 35px; padding: 30px 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-top: 10px solid var(--dourado); text-align: center; }
         
-        /* FOTO REAL */
-        .foto-rui { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--dourado); margin: 0 auto 15px; display: block; object-fit: cover; background: #eee; }
+        /* FOTO RUI RIBEIRO */
+        .foto-rui { width: 160px; height: 160px; border-radius: 50%; border: 5px solid var(--dourado); margin: 0 auto 15px; display: block; object-fit: cover; background: #eee; }
 
-        /* GAD-7 TARJETA */
+        /* TARJETA GAD-7 */
         #tarjeta-gad { display: none; padding: 12px; color: white; font-weight: 700; border-radius: 15px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
 
-        /* ESCALA EVA (SLIDER) */
-        .eva-range { width: 100%; margin: 20px 0; accent-color: var(--azul); }
-        .eva-valor { font-size: 2rem; font-weight: 700; color: var(--azul); }
+        /* ESCALA EVA 0-10 */
+        .eva-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 10px; }
+        .btn-eva { border: 1px solid #eee; background: #fff; border-radius: 8px; padding: 10px 0; font-weight: 700; font-size: 0.85rem; color: var(--azul); transition: 0.2s; }
+        .btn-eva.active { background: var(--azul) !important; color: white !important; border-color: var(--azul); }
 
         /* BOTÕES */
         .btn-principal { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; margin-top: 15px; }
-        .btn-voltar { background: transparent; color: #777; border: none; font-size: 0.85rem; margin-top: 15px; text-decoration: underline; }
-        .btn-reset { background: #f0f0f0; color: #d32f2f; border: none; padding: 8px 15px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; margin-bottom: 20px; }
-
-        .humor-box { display: flex; justify-content: space-between; gap: 8px; margin-top: 10px; }
-        .btn-humor { flex: 1; border: 2px solid #eee; border-radius: 15px; background: #fff; padding: 10px; cursor: pointer; }
-        .btn-humor.active { border-color: var(--azul); background: #f0f7ff; }
+        .btn-voltar { background: transparent; color: #999; border: none; font-size: 0.8rem; margin-top: 15px; font-weight: 700; }
+        .btn-reset { background: #fee2e2; color: #d32f2f; border: none; padding: 5px 15px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; margin-bottom: 15px; }
 
         .bloco { background: #f8fafc; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; border: 1px solid #eee; }
+        .btn-humor { flex: 1; border: 2px solid #eee; border-radius: 15px; background: #fff; padding: 10px; cursor: pointer; text-align: center; }
+        .btn-humor.active { border-color: var(--azul); background: #f0f7ff; }
     </style>
 </head>
 <body>
 
     <div id="tela0" class="tela ativa">
         <div class="card-jornada">
-            <button class="btn-reset" onclick="resetarTudo()">🔄 RESETAR JORNADA</button>
-            <img src="https://via.placeholder.com/150" id="minha-foto" class="foto-rui" alt="Rui Ribeiro">
+            <button class="btn-reset" onclick="resetar()">🔄 RECOMEÇAR TUDO</button>
+            
+            <img src="foto_rui.jpg" class="foto-rui" alt="Rui Ribeiro" onerror="this.src='https://ui-avatars.com/api/?name=Rui+Ribeiro&background=003366&color=fff&size=160'">
+            
             <h1 style="color: var(--azul); font-weight: 700;">MÉTODO 360</h1>
-            <p style="color: var(--dourado); font-weight: 700; letter-spacing: 2px; font-size: 0.8rem;">AUTOCUIDADO PROFISSIONAL</p>
+            <p style="color: var(--dourado); font-weight: 700; letter-spacing: 2px; font-size: 0.8rem;">JORNADA DE AUTOCUIDADO</p>
             
             <div class="mt-4 text-start px-3">
-                <label class="fw-bold small mb-2">DATA DE HOJE</label>
+                <label class="fw-bold small mb-2">DATA DO REGISTRO</label>
                 <input type="date" id="data-dia" class="form-control" style="border-radius: 15px; padding: 12px; font-weight: 700;">
             </div>
             <button class="btn-principal" onclick="ir(1)">INICIAR JORNADA</button>
@@ -59,19 +60,20 @@
         <div class="card-jornada">
             <div id="tarjeta-gad">Status do Score</div>
             <h5 class="fw-bold mb-3" style="color: var(--azul)">1. PROTOCOLO GAD-7</h5>
-            
             <div id="lista-gad" style="max-height: 400px; overflow-y: auto;">
                 <div class="bloco">
-                    <p class="small fw-bold mb-2">Como você se sentiu nas últimas 2 semanas?</p>
-                    <p class="small mb-2">1. Sentir-se nervoso ou ansioso?</p>
+                    <p class="small fw-bold mb-2">1. Sentir-se nervoso, ansioso ou muito tenso?</p>
                     <select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0 - Nenhuma vez</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase todos os dias</option></select>
                 </div>
                 <div class="bloco"><p class="small fw-bold mb-2">2. Não controlar preocupações?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0 - Nenhuma vez</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase todos os dias</option></select></div>
                 <div class="bloco"><p class="small fw-bold mb-2">3. Preocupar-se muito?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0 - Nenhuma vez</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase todos os dias</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">4. Dificuldade para relaxar?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">5. Inquietude?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">6. Irritabilidade?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">7. Medo de algo ruim?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
             </div>
-            
-            <button class="btn-principal" onclick="validarGad()">PRÓXIMO: SONO</button>
-            <button class="btn-voltar" onclick="ir(0)">Voltar para Início</button>
+            <button class="btn-principal" onclick="validarIr(2)">PRÓXIMO: SONO</button>
+            <button class="btn-voltar" onclick="ir(0)">← VOLTAR</button>
         </div>
     </div>
 
@@ -84,74 +86,68 @@
                 <div class="btn-humor" onclick="sel(this,'sono','Ruim')"><span>😫</span><small>Ruim</small></div>
             </div>
             <button class="btn-principal" onclick="ir(3)">PRÓXIMO: MANHÃ</button>
-            <button class="btn-voltar" onclick="ir(1)">Voltar para GAD-7</button>
+            <button class="btn-voltar" onclick="ir(1)">← VOLTAR</button>
         </div>
     </div>
 
     <div id="tela3" class="tela">
         <div class="card-jornada">
-            <h5 class="fw-bold" style="color: var(--azul)">3. PERÍODO: MANHÃ</h5>
+            <h5 class="fw-bold" style="color: var(--azul)">3. REGISTRO: MANHÃ</h5>
             <div class="bloco">
-                <p class="fw-bold small text-center">HUMOR MATINAL</p>
-                <div class="humor-box">
+                <p class="fw-bold small text-center">HUMOR</p>
+                <div class="d-flex gap-2">
                     <div class="btn-humor" onclick="sel(this,'hM','Ótimo')"><span>😊</span></div>
                     <div class="btn-humor" onclick="sel(this,'hM','Médio')"><span>😐</span></div>
                     <div class="btn-humor" onclick="sel(this,'hM','Ruim')"><span>😟</span></div>
                 </div>
             </div>
             <div class="bloco">
-                <p class="fw-bold small text-center">DOR EVA (ARRASTE): <span class="eva-valor" id="valM">0</span></p>
-                <input type="range" min="0" max="10" value="0" class="eva-range" oninput="document.getElementById('valM').innerText = this.value; d.m = this.value; checkAlerts();">
+                <p class="fw-bold small text-center">DOR EVA (0 a 10)</p>
+                <div class="eva-grid">
+                    <button class="btn-eva" onclick="selEva(this,'m',0)">0</button><button class="btn-eva" onclick="selEva(this,'m',1)">1</button><button class="btn-eva" onclick="selEva(this,'m',2)">2</button><button class="btn-eva" onclick="selEva(this,'m',3)">3</button><button class="btn-eva" onclick="selEva(this,'m',4)">4</button><button class="btn-eva" onclick="selEva(this,'m',5)">5</button><button class="btn-eva" onclick="selEva(this,'m',6)">6</button><button class="btn-eva" onclick="selEva(this,'m',7)">7</button><button class="btn-eva" onclick="selEva(this,'m',8)">8</button><button class="btn-eva" onclick="selEva(this,'m',9)">9</button><button class="btn-eva" onclick="selEva(this,'m',10)">10</button>
+                </div>
             </div>
-            <button class="btn-principal" onclick="ir(4)">PRÓXIMO: TARDE</button>
-            <button class="btn-voltar" onclick="ir(2)">Voltar para Sono</button>
+            <button class="btn-principal" onclick="ir(4)">CONCLUIR E IR PARA TARDE</button>
+            <button class="btn-voltar" onclick="ir(2)">← VOLTAR</button>
         </div>
     </div>
 
     <div id="tela4" class="tela">
         <div class="card-jornada">
-            <h5 class="fw-bold" style="color: var(--azul)">4. PERÍODO: TARDE</h5>
+            <h5 class="fw-bold" style="color: var(--azul)">4. REGISTRO: TARDE</h5>
             <div class="bloco">
-                <p class="fw-bold small text-center">HUMOR TARDE</p>
-                <div class="humor-box">
-                    <div class="btn-humor" onclick="sel(this,'hT','Ótimo')"><span>😊</span></div>
-                    <div class="btn-humor" onclick="sel(this,'hT','Médio')"><span>😐</span></div>
-                    <div class="btn-humor" onclick="sel(this,'hT','Ruim')"><span>😟</span></div>
+                <p class="fw-bold small text-center">DOR EVA (0 a 10)</p>
+                <div class="eva-grid">
+                    <button class="btn-eva" onclick="selEva(this,'t',0)">0</button><button class="btn-eva" onclick="selEva(this,'t',1)">1</button><button class="btn-eva" onclick="selEva(this,'t',2)">2</button><button class="btn-eva" onclick="selEva(this,'t',3)">3</button><button class="btn-eva" onclick="selEva(this,'t',4)">4</button><button class="btn-eva" onclick="selEva(this,'t',5)">5</button><button class="btn-eva" onclick="selEva(this,'t',6)">6</button><button class="btn-eva" onclick="selEva(this,'t',7)">7</button><button class="btn-eva" onclick="selEva(this,'t',8)">8</button><button class="btn-eva" onclick="selEva(this,'t',9)">9</button><button class="btn-eva" onclick="selEva(this,'t',10)">10</button>
                 </div>
             </div>
-            <div class="bloco">
-                <p class="fw-bold small text-center">DOR EVA (ARRASTE): <span class="eva-valor" id="valT">0</span></p>
-                <input type="range" min="0" max="10" value="0" class="eva-range" oninput="document.getElementById('valT').innerText = this.value; d.t = this.value; checkAlerts();">
-            </div>
-            <button class="btn-principal" onclick="ir(5)">PRÓXIMO: NOITE</button>
-            <button class="btn-voltar" onclick="ir(3)">Voltar para Manhã</button>
+            <button class="btn-principal" onclick="ir(5)">CONCLUIR E IR PARA NOITE</button>
+            <button class="btn-voltar" onclick="ir(3)">← VOLTAR</button>
         </div>
     </div>
 
     <div id="tela5" class="tela">
         <div class="card-jornada">
-            <h5 class="fw-bold" style="color: var(--azul)">5. PERÍODO: NOITE</h5>
+            <h5 class="fw-bold" style="color: var(--azul)">5. REGISTRO: NOITE</h5>
             <div class="bloco">
-                <p class="fw-bold small text-center">DOR EVA (ARRASTE): <span class="eva-valor" id="valN">0</span></p>
-                <input type="range" min="0" max="10" value="0" class="eva-range" oninput="document.getElementById('valN').innerText = this.value; d.n = this.value; checkAlerts();">
-            </div>
-            <div class="bloco">
-                <p class="fw-bold small mb-2">TOMOU MEDICAMENTOS?</p>
-                <select id="meds" class="form-select"><option value="Não">Não</option><option value="Sim">Sim</option></select>
+                <p class="fw-bold small text-center">DOR EVA (0 a 10)</p>
+                <div class="eva-grid">
+                    <button class="btn-eva" onclick="selEva(this,'n',0)">0</button><button class="btn-eva" onclick="selEva(this,'n',1)">1</button><button class="btn-eva" onclick="selEva(this,'n',2)">2</button><button class="btn-eva" onclick="selEva(this,'n',3)">3</button><button class="btn-eva" onclick="selEva(this,'n',4)">4</button><button class="btn-eva" onclick="selEva(this,'n',5)">5</button><button class="btn-eva" onclick="selEva(this,'n',6)">6</button><button class="btn-eva" onclick="selEva(this,'n',7)">7</button><button class="btn-eva" onclick="selEva(this,'n',8)">8</button><button class="btn-eva" onclick="selEva(this,'n',9)">9</button><button class="btn-eva" onclick="selEva(this,'n',10)">10</button>
+                </div>
             </div>
             
             <div id="alerta-agendamento" style="display:none; background:#fff5f5; border:1px solid #ffcccc; padding:15px; border-radius:15px; margin-top:15px;">
-                <p class="small fw-bold text-danger">⚠️ Nível de alerta atingido! Agende com Rui Ribeiro agora mesmo.</p>
-                <a href="https://wa.me/5538991717426?text=Olá Rui, meu monitoramento deu alerta." target="_blank" class="btn btn-success btn-sm w-100">AGENDAR VIA WHATSAPP</a>
+                <p class="small fw-bold text-danger">⚠️ Nível de alerta atingido!</p>
+                <a href="https://wa.me/5538991717426?text=Olá Rui, meu monitoramento deu alerta de ansiedade/dor intensa." target="_blank" class="btn btn-danger w-100 fw-bold">AGENDAR COM RUI RIBEIRO AGORA</a>
             </div>
 
             <button id="btn-final" class="btn-principal" onclick="finalizar()" disabled>MONITORAMENTO NORMAL</button>
-            <button class="btn-voltar" onclick="ir(4)">Voltar para Tarde</button>
+            <button class="btn-voltar" onclick="ir(4)">← VOLTAR</button>
         </div>
     </div>
 
     <script>
-        let d = { gad: 0, sono: "", hM: "", m: 0, hT: "", t: 0, n: 0 };
+        let d = { gad: 0, sono: "", hM: "", m: 0, t: 0, n: 0 };
         document.getElementById('data-dia').valueAsDate = new Date();
 
         function ir(n) {
@@ -160,7 +156,7 @@
             window.scrollTo(0,0);
         }
 
-        function resetarTudo() { if(confirm("Deseja recomeçar todo o preenchimento?")) window.location.reload(); }
+        function resetar() { if(confirm("Deseja apagar tudo e recomeçar?")) window.location.reload(); }
 
         function calcGAD() {
             let soma = 0;
@@ -174,17 +170,24 @@
             checkAlerts();
         }
 
-        function validarGad() {
+        function validarIr(n) {
             let ok = true;
             document.querySelectorAll('.g-in').forEach(i => { if(i.value === "") ok = false; });
-            if(!ok) { alert("Responda todas as perguntas do GAD-7."); return; }
-            ir(2);
+            if(!ok) { alert("Responda todas as perguntas do GAD-7 para avançar."); return; }
+            ir(n);
         }
 
         function sel(btn, cat, val) {
-            btn.parentElement.querySelectorAll('div').forEach(b => b.classList.remove('active'));
+            btn.parentElement.querySelectorAll('.btn-humor').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             d[cat] = val;
+        }
+
+        function selEva(btn, turno, val) {
+            btn.parentElement.querySelectorAll('.btn-eva').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            d[turno] = val;
+            checkAlerts();
         }
 
         function checkAlerts() {
@@ -192,16 +195,16 @@
             const alertBox = document.getElementById('alerta-agendamento');
             const btnFinal = document.getElementById('btn-final');
             if(ehAlerta) {
-                if(alertBox) alertBox.style.display = 'block';
-                if(btnFinal) { btnFinal.disabled = false; btnFinal.innerText = "ENVIAR ALERTA CLÍNICO 🚀"; btnFinal.style.background = "var(--alto)"; }
+                alertBox.style.display = 'block';
+                btnFinal.disabled = false; btnFinal.innerText = "ENVIAR ALERTA CLÍNICO 🚀"; btnFinal.style.background = "var(--alto)";
             } else {
-                if(alertBox) alertBox.style.display = 'none';
-                if(btnFinal) { btnFinal.disabled = true; btnFinal.innerText = "MONITORAMENTO NORMAL"; btnFinal.style.background = "#ccc"; }
+                alertBox.style.display = 'none';
+                btnFinal.disabled = true; btnFinal.innerText = "MONITORAMENTO NORMAL"; btnFinal.style.background = "#ccc";
             }
         }
 
         function finalizar() {
-            let msg = `*MÉTODO 360 - ALERTA*%0AGAD-7: ${d.gad}%0AM: EVA ${d.m} | T: EVA ${d.t} | N: EVA ${d.n}`;
+            let msg = `*ALERTA MÉTODO 360*%0ADATA: ${document.getElementById('data-dia').value}%0AGAD-7: ${d.gad}%0ASONO: ${d.sono}%0AEVA: M${d.m} | T${d.t} | N${d.n}`;
             window.open(`https://wa.me/5538991717426?text=${msg}`, '_blank');
         }
     </script>
