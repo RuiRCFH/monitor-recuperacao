@@ -12,21 +12,30 @@
 
         .tela { display: none; max-width: 500px; margin: 20px auto; padding: 15px; animation: slideIn 0.4s ease; }
         .ativa { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-        .card-jornada { background: #fff; border-radius: 35px; padding: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 10px solid var(--dourado); text-align: center; }
+        .card-jornada { background: #fff; border-radius: 35px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 10px solid var(--dourado); text-align: center; }
         
         .logo-txt { font-weight: 700; color: var(--azul); letter-spacing: 2px; font-size: 1.6rem; margin-bottom: 5px; }
         .btn-acao { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; margin-top: 25px; transition: 0.3s; }
         .btn-acao:hover { background: #002244; transform: scale(1.02); }
 
-        /* EMOJIS INTUITIVOS */
-        .emoji-flex { display: flex; justify-content: space-between; gap: 10px; margin: 20px 0; }
-        .btn-emoji { flex: 1; border: 2px solid #f0f0f0; border-radius: 20px; background: #fff; padding: 15px 5px; transition: 0.2s; cursor: pointer; }
-        .btn-emoji span { display: block; font-size: 2rem; margin-bottom: 5px; }
-        .btn-emoji small { font-weight: 700; font-size: 0.7rem; color: #777; }
-        .btn-emoji.active { border-color: var(--dourado); background: #fffcf0; }
-        .btn-emoji.active small { color: var(--dourado); }
+        /* ESTILO EMOJIS */
+        .emoji-flex { display: flex; justify-content: space-between; gap: 8px; margin: 15px 0; }
+        .btn-emoji { flex: 1; border: 2px solid #f0f0f0; border-radius: 18px; background: #fff; padding: 12px 5px; transition: 0.2s; cursor: pointer; }
+        .btn-emoji span { display: block; font-size: 1.8rem; margin-bottom: 5px; }
+        .btn-emoji small { font-weight: 700; font-size: 0.65rem; color: #777; text-transform: uppercase; }
+        .btn-emoji.active { border-color: var(--azul); background: #eef4f9; }
+        .btn-emoji.active small { color: var(--azul); }
+
+        /* ESCALA EVA 0-10 */
+        .eva-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 15px; }
+        .btn-eva { 
+            padding: 12px 0; border: 2px solid #f0f0f0; background: #fff; border-radius: 10px; 
+            font-weight: 700; color: var(--azul); transition: 0.2s; 
+        }
+        .btn-eva.active { background: var(--dourado); color: white; border-color: var(--dourado); transform: scale(1.1); }
+        .eva-labels { display: flex; justify-content: space-between; margin-top: 5px; font-size: 0.7rem; font-weight: 700; color: #999; }
     </style>
 </head>
 <body>
@@ -35,86 +44,50 @@
         <div class="card-jornada">
             <h1 class="logo-txt">MÉTODO 360</h1>
             <p style="color: var(--dourado); font-size: 0.8rem; letter-spacing: 3px; font-weight: 700;">RUI RIBEIRO</p>
-            
             <div class="mt-5 text-start">
                 <label class="fw-bold small mb-2" style="color: var(--azul)">DATA DO REGISTRO</label>
                 <input type="date" id="data-dia" class="form-control" style="border-radius: 15px; padding: 12px; font-weight: 700; border: 2px solid #eee;">
             </div>
-
             <button class="btn-acao" onclick="irPara(2)">INICIAR JORNADA</button>
         </div>
     </div>
 
     <div id="passo2" class="tela">
         <div class="card-jornada">
-            <h4 class="fw-bold mb-2" style="color: var(--azul)">Qualidade do Sono</h4>
+            <h4 class="fw-bold" style="color: var(--azul)">Qualidade do Sono</h4>
             <p class="small text-muted mb-4">Como você dormiu esta noite?</p>
-
             <div class="emoji-flex">
-                <div class="btn-emoji" onclick="selecionarEmoji(this, 'sono', 'Excelente')">
-                    <span>😴</span>
-                    <small>EXCELENTE</small>
-                </div>
-                <div class="btn-emoji" onclick="selecionarEmoji(this, 'sono', 'Regular')">
-                    <span>😐</span>
-                    <small>REGULAR</small>
-                </div>
-                <div class="btn-emoji" onclick="selecionarEmoji(this, 'sono', 'Ruim')">
-                    <span>😫</span>
-                    <small>RUIM</small>
-                </div>
+                <div class="btn-emoji" onclick="selecionar(this, 'sono', 'Excelente')"><span>😴</span><small>Excelente</small></div>
+                <div class="btn-emoji" onclick="selecionar(this, 'sono', 'Regular')"><span>😐</span><small>Regular</small></div>
+                <div class="btn-emoji" onclick="selecionar(this, 'sono', 'Ruim')"><span>😫</span><small>Ruim</small></div>
             </div>
-
             <button class="btn-acao" onclick="irPara(3)">PRÓXIMO PASSO ➜</button>
-            <button class="btn btn-link btn-sm mt-3 text-muted" onclick="irPara(1)">Voltar</button>
+            <button class="btn btn-link btn-sm mt-2 text-muted" onclick="irPara(1)">Voltar</button>
         </div>
     </div>
 
     <div id="passo3" class="tela">
-        <div class="card-jornada text-start">
-            <h5 class="text-center fw-bold mb-4" style="color: var(--azul)">Protocolo GAD-7</h5>
-            <div class="mb-4">
-                <label class="fw-bold small mb-2">Sentir-se nervoso, ansioso ou muito tenso?</label>
-                <select class="form-select" id="g1" style="border-radius: 12px;">
-                    <option value="">Selecione...</option>
-                    <option value="0">0 - Nenhuma vez</option>
-                    <option value="1">1 - Vários dias</option>
-                    <option value="2">2 - Metade dos dias</option>
-                    <option value="3">3 - Quase todos os dias</option>
-                </select>
+        <div class="card-jornada">
+            <h4 class="fw-bold" style="color: var(--azul)">Estado de Humor</h4>
+            <p class="small text-muted mb-3">Como você se sente emocionalmente agora?</p>
+            <div class="emoji-flex">
+                <div class="btn-emoji" onclick="selecionar(this, 'humor', 'Radiante')"><span>😊</span><small>Radiante</small></div>
+                <div class="btn-emoji" onclick="selecionar(this, 'humor', 'Estável')"><span>😐</span><small>Estável</small></div>
+                <div class="btn-emoji" onclick="selecionar(this, 'humor', 'Tenso')"><span>😟</span><small>Tenso</small></div>
             </div>
-            <button class="btn-acao" onclick="alert('Jornada em construção! O sono foi capturado.')">FINALIZAR TESTE</button>
-        </div>
-    </div>
 
-    <script>
-        let dadosJornada = { data: "", sono: "" };
+            <hr class="my-4" style="opacity: 0.1;">
 
-        // Coloca a data de hoje automaticamente
-        document.getElementById('data-dia').valueAsDate = new Date();
-
-        // Função para trocar de tela
-        function irPara(numero) {
-            // Esconde todas as telas
-            document.querySelectorAll('.tela').forEach(t => t.style.display = 'none');
-            // Mostra a tela desejada
-            const proxima = document.getElementById('passo' + numero);
-            if(proxima) {
-                proxima.style.display = 'block';
-                window.scrollTo(0,0);
-            }
-        }
-
-        // Função para selecionar o emoji
-        function selecionarEmoji(elemento, categoria, valor) {
-            // Remove a classe 'active' de todos os botões no mesmo grupo
-            elemento.parentElement.querySelectorAll('.btn-emoji').forEach(b => b.classList.remove('active'));
-            // Adiciona a classe 'active' ao clicado
-            elemento.classList.add('active');
-            // Salva o valor
-            dadosJornada[categoria] = valor;
-            console.log("Selecionado:", categoria, valor);
-        }
-    </script>
-</body>
-</html>
+            <h4 class="fw-bold" style="color: var(--azul)">Nível de Dor (EVA)</h4>
+            <p class="small text-muted mb-1">Assinale a intensidade da sua dor:</p>
+            
+            <div class="eva-grid">
+                <button class="btn-eva" onclick="selecionarEva(this, 0)">0</button>
+                <button class="btn-eva" onclick="selecionarEva(this, 1)">1</button>
+                <button class="btn-eva" onclick="selecionarEva(this, 2)">2</button>
+                <button class="btn-eva" onclick="selecionarEva(this, 3)">3</button>
+                <button class="btn-eva" onclick="selecionarEva(this, 4)">4</button>
+                <button class="btn-eva" onclick="selecionarEva(this, 5)">5</button>
+                <button class="btn-eva" onclick="selecionarEva(this, 6)">6</button>
+                <button class="btn-eva" onclick="selecionarEva(this, 7)">7</button>
+                <button class="btn-eva" onclick="selecionarEva(this,
