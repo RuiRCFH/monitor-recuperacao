@@ -5,34 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MÉTODO 360 | Rui Ribeiro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --azul: #003366; --dourado: #B8860B; --fundo: #f8f9fa; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; }
 
-        .tela { display: none; max-width: 500px; margin: 20px auto; padding: 15px; animation: slideIn 0.5s ease; }
+        .tela { display: none; max-width: 500px; margin: 20px auto; padding: 15px; animation: slideIn 0.4s ease; }
         .ativa { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card-jornada { background: #fff; border-radius: 35px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-top: 10px solid var(--dourado); text-align: center; }
+        .card-jornada { background: #fff; border-radius: 35px; padding: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 10px solid var(--dourado); text-align: center; }
         
-        /* FOTO E IDENTIDADE */
-        .foto-rui { width: 110px; height: 110px; border-radius: 55px; border: 3px solid var(--dourado); margin: 0 auto 15px; display: block; object-fit: cover; }
-        .logo-txt { font-weight: 700; color: var(--azul); letter-spacing: 2px; font-size: 1.4rem; }
+        .logo-txt { font-weight: 700; color: var(--azul); letter-spacing: 2px; font-size: 1.6rem; margin-bottom: 5px; }
+        .btn-acao { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; margin-top: 25px; transition: 0.3s; }
+        .btn-acao:hover { background: #002244; transform: scale(1.02); }
 
-        /* ESCALA EVA 0-10 */
-        .eva-grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; margin-top: 10px; }
-        .eva-btn { padding: 8px 0; font-size: 0.7rem; border: 1px solid #eee; background: #fff; border-radius: 5px; font-weight: 700; transition: 0.2s; }
-        .eva-btn.active { background: var(--azul); color: white; border-color: var(--azul); transform: scale(1.1); }
-
-        /* BOTÕES E INPUTS */
-        .btn-acao { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 16px; border-radius: 20px; border: none; font-size: 1rem; margin-top: 20px; }
-        .emoji-group { display: flex; justify-content: space-between; gap: 10px; margin: 15px 0; }
-        .btn-emoji { flex: 1; padding: 15px 5px; border: 2px solid #f0f0f0; border-radius: 15px; background: #fff; font-size: 1.3rem; transition: 0.2s; }
+        /* EMOJIS INTUITIVOS */
+        .emoji-flex { display: flex; justify-content: space-between; gap: 10px; margin: 20px 0; }
+        .btn-emoji { flex: 1; border: 2px solid #f0f0f0; border-radius: 20px; background: #fff; padding: 15px 5px; transition: 0.2s; cursor: pointer; }
+        .btn-emoji span { display: block; font-size: 2rem; margin-bottom: 5px; }
+        .btn-emoji small { font-weight: 700; font-size: 0.7rem; color: #777; }
         .btn-emoji.active { border-color: var(--dourado); background: #fffcf0; }
-
-        .box-pergunta { text-align: left; margin-top: 25px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px; }
-        .pergunta-label { font-weight: 700; color: var(--azul); font-size: 0.85rem; display: block; margin-bottom: 10px; }
+        .btn-emoji.active small { color: var(--dourado); }
     </style>
 </head>
 <body>
@@ -40,140 +34,86 @@
     <div id="passo1" class="tela ativa">
         <div class="card-jornada">
             <h1 class="logo-txt">MÉTODO 360</h1>
-            <p style="color: var(--dourado); font-size: 0.7rem; letter-spacing: 3px;">RUI RIBEIRO</p>
-            <p class="my-4 small px-3">Bem-vindo à sua jornada de monitoramento. Selecione a data e vamos começar o seu cuidado.</p>
-            <input type="date" id="data-val" class="form-control mb-4" style="border-radius: 15px; padding: 12px; font-weight: 700; border: 2px solid #eee;">
-            <button class="btn-acao" onclick="ir(2)">COMEÇAR AUTO CUIDADO</button>
+            <p style="color: var(--dourado); font-size: 0.8rem; letter-spacing: 3px; font-weight: 700;">RUI RIBEIRO</p>
+            
+            <div class="mt-5 text-start">
+                <label class="fw-bold small mb-2" style="color: var(--azul)">DATA DO REGISTRO</label>
+                <input type="date" id="data-dia" class="form-control" style="border-radius: 15px; padding: 12px; font-weight: 700; border: 2px solid #eee;">
+            </div>
+
+            <button class="btn-acao" onclick="irPara(2)">INICIAR JORNADA</button>
         </div>
     </div>
 
     <div id="passo2" class="tela">
-        <div class="card-jornada text-start">
-            <h5 class="text-center fw-bold mb-4" style="color: var(--azul)">PROTOCOLO GAD-7</h5>
-            <div id="gad-lista">
-                <div class="mb-3">
-                    <label class="pergunta-label">1. Sentir-se nervoso ou ansioso?</label>
-                    <select class="form-select g-item"><option value="">Selecione...</option><option value="0">0 - Nunca</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase sempre</option></select>
+        <div class="card-jornada">
+            <h4 class="fw-bold mb-2" style="color: var(--azul)">Qualidade do Sono</h4>
+            <p class="small text-muted mb-4">Como você dormiu esta noite?</p>
+
+            <div class="emoji-flex">
+                <div class="btn-emoji" onclick="selecionarEmoji(this, 'sono', 'Excelente')">
+                    <span>😴</span>
+                    <small>EXCELENTE</small>
                 </div>
-                <div class="mb-3"><label class="pergunta-label">2. Não conseguir controlar as preocupações?</label><select class="form-select g-item"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <p class="text-muted small text-center">Responda as 7 questões para avançar.</p>
+                <div class="btn-emoji" onclick="selecionarEmoji(this, 'sono', 'Regular')">
+                    <span>😐</span>
+                    <small>REGULAR</small>
+                </div>
+                <div class="btn-emoji" onclick="selecionarEmoji(this, 'sono', 'Ruim')">
+                    <span>😫</span>
+                    <small>RUIM</small>
+                </div>
             </div>
-            <button class="btn-acao" onclick="validarGad()">AVANÇAR PARA MONITORAMENTO</button>
+
+            <button class="btn-acao" onclick="irPara(3)">PRÓXIMO PASSO ➜</button>
+            <button class="btn btn-link btn-sm mt-3 text-muted" onclick="irPara(1)">Voltar</button>
         </div>
     </div>
 
     <div id="passo3" class="tela">
-        <div class="card-jornada">
-            <img src="SuaFoto.jpg" class="foto-rui" alt="Rui Ribeiro"> <h1 class="logo-txt">MÉTODO 360</h1>
-            
-            <div class="box-pergunta">
-                <span class="pergunta-label">QUALIDADE DO SONO</span>
-                <div class="emoji-group">
-                    <button class="btn-emoji" onclick="sel(this,'sono',10)">😴</button>
-                    <button class="btn-emoji" onclick="sel(this,'sono',5)">😐</button>
-                    <button class="btn-emoji" onclick="sel(this,'sono',0)">😫</button>
-                </div>
+        <div class="card-jornada text-start">
+            <h5 class="text-center fw-bold mb-4" style="color: var(--azul)">Protocolo GAD-7</h5>
+            <div class="mb-4">
+                <label class="fw-bold small mb-2">Sentir-se nervoso, ansioso ou muito tenso?</label>
+                <select class="form-select" id="g1" style="border-radius: 12px;">
+                    <option value="">Selecione...</option>
+                    <option value="0">0 - Nenhuma vez</option>
+                    <option value="1">1 - Vários dias</option>
+                    <option value="2">2 - Metade dos dias</option>
+                    <option value="3">3 - Quase todos os dias</option>
+                </select>
             </div>
-
-            <div class="box-pergunta">
-                <span class="pergunta-label">FEZ USO DE MEDICAMENTOS HOJE?</span>
-                <div class="d-flex gap-2">
-                    <button class="btn-emoji fs-6 py-2" onclick="sel(this,'med','Sim')">SIM</button>
-                    <button class="btn-emoji fs-6 py-2" onclick="sel(this,'med','Não')">NÃO</button>
-                </div>
-            </div>
-
-            <div class="box-pergunta">
-                <span class="pergunta-label">🌅 ESCALA DE DOR (EVA) - MANHÃ</span>
-                <div class="eva-grid" id="evaM">
-                    <button class="eva-btn" onclick="selEva(this,'m',0)">0</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',1)">1</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',2)">2</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',3)">3</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',4)">4</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',5)">5</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',6)">6</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',7)">7</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',8)">8</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',9)">9</button>
-                    <button class="eva-btn" onclick="selEva(this,'m',10)">10</button>
-                </div>
-            </div>
-
-            <button class="btn-acao" onclick="ir(4)">REGISTRAR TARDE</button>
+            <button class="btn-acao" onclick="alert('Jornada em construção! O sono foi capturado.')">FINALIZAR TESTE</button>
         </div>
     </div>
 
-    <div id="passo4" class="tela">
-        <div class="card-jornada">
-            <h4 class="fw-bold" style="color: var(--azul)">PERÍODO DA TARDE</h4>
-            <div class="box-pergunta">
-                <span class="pergunta-label">☀️ ESCALA DE DOR (EVA) - TARDE</span>
-                <div class="eva-grid">
-                    <button class="eva-btn" onclick="selEva(this,'t',0)">0</button>
-                    <button class="eva-btn" onclick="selEva(this,'t',3)">3</button>
-                    <button class="eva-btn" onclick="selEva(this,'t',5)">5</button>
-                    <button class="eva-btn" onclick="selEva(this,'t',7)">7</button>
-                    <button class="eva-btn" onclick="selEva(this,'t',10)">10</button>
-                </div>
-            </div>
-            <button class="btn-acao" onclick="ir(5)">REGISTRAR NOITE</button>
-        </div>
-    </div>
-
-    <div id="passo5" class="tela">
-        <div class="card-jornada">
-            <h4 class="fw-bold" style="color: var(--azul)">PERÍODO DA NOITE</h4>
-            <div class="box-pergunta">
-                <span class="pergunta-label">🌙 ESCALA DE DOR (EVA) - NOITE</span>
-                <div class="eva-grid">
-                    <button class="eva-btn" onclick="selEva(this,'n',0)">0</button>
-                    <button class="eva-btn" onclick="selEva(this,'n',5)">5</button>
-                    <button class="eva-btn" onclick="selEva(this,'n',10)">10</button>
-                </div>
-            </div>
-            <button class="btn-acao" onclick="enviarRelatorio()">GERAR GRÁFICO E ENVIAR 🚀</button>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let d = { data: "", gad: 0, sono: "", med: "", m: 0, t: 0, n: 0 };
-        document.getElementById('data-val').valueAsDate = new Date();
+        let dadosJornada = { data: "", sono: "" };
 
-        function ir(n) {
-            document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
-            document.getElementById('passo' + n).classList.add('ativa');
-            window.scrollTo(0,0);
+        // Coloca a data de hoje automaticamente
+        document.getElementById('data-dia').valueAsDate = new Date();
+
+        // Função para trocar de tela
+        function irPara(numero) {
+            // Esconde todas as telas
+            document.querySelectorAll('.tela').forEach(t => t.style.display = 'none');
+            // Mostra a tela desejada
+            const proxima = document.getElementById('passo' + numero);
+            if(proxima) {
+                proxima.style.display = 'block';
+                window.scrollTo(0,0);
+            }
         }
 
-        function sel(btn, t, v) {
-            btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            d[t] = v;
-        }
-
-        function selEva(btn, turno, v) {
-            btn.parentElement.querySelectorAll('.eva-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            d[turno] = v;
-        }
-
-        function validarGad() {
-            let ok = true; let soma = 0;
-            document.querySelectorAll('.g-item').forEach(s => {
-                if(s.value === "") ok = false;
-                soma += parseInt(s.value || 0);
-            });
-            if(!ok) { alert("Responda todas as questões!"); return; }
-            d.gad = soma; ir(3);
-        }
-
-        function enviarRelatorio() {
-            const data = document.getElementById('data-val').value;
-            const linkChart = `https://quickchart.io/chart?c={type:'line',data:{labels:['M','T','N'],datasets:[{label:'EVA',data:[${d.m},${d.t},${d.n}],borderColor:'gold',fill:false}]}}`;
-            let msg = `*MÉTODO 360 - ${data}*%0AGAD-7: ${d.gad}%0ASono: ${d.sono}%0AMed: ${d.med}%0AEVA: M${d.m}/T${d.t}/N${d.n}%0A%0A📈 Gráfico: ${linkChart}`;
-            window.open(`https://wa.me/5538999128532?text=${msg}`, '_blank');
+        // Função para selecionar o emoji
+        function selecionarEmoji(elemento, categoria, valor) {
+            // Remove a classe 'active' de todos os botões no mesmo grupo
+            elemento.parentElement.querySelectorAll('.btn-emoji').forEach(b => b.classList.remove('active'));
+            // Adiciona a classe 'active' ao clicado
+            elemento.classList.add('active');
+            // Salva o valor
+            dadosJornada[categoria] = valor;
+            console.log("Selecionado:", categoria, valor);
         }
     </script>
 </body>
