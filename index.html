@@ -15,8 +15,6 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .card-jornada { background: #fff; border-radius: 35px; padding: 30px 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-top: 10px solid var(--dourado); text-align: center; }
         .foto-rui { width: 150px; height: 150px; border-radius: 50%; border: 5px solid var(--dourado); margin: 0 auto 15px; display: block; object-fit: cover; background: #eee; }
-        #tarjeta-gad { display: none; padding: 12px; color: white; font-weight: 700; border-radius: 15px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
-        .eva-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 10px; }
         .btn-eva { border: 1px solid #eee; background: #fff; border-radius: 8px; padding: 10px 0; font-weight: 700; font-size: 0.85rem; color: var(--azul); }
         .btn-eva.active { background: var(--azul) !important; color: white !important; }
         .btn-principal { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; margin-top: 15px; }
@@ -24,7 +22,6 @@
         .bloco { background: #f8fafc; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; border: 1px solid #eee; }
         .btn-humor { flex: 1; border: 2px solid #eee; border-radius: 15px; background: #fff; padding: 10px; cursor: pointer; text-align: center; font-weight: 700; font-size: 0.7rem; }
         .btn-humor.active { border-color: var(--azul); background: #f0f7ff; }
-        .emoji-grande { display: block; font-size: 1.5rem; }
         .jornada-contador { font-weight: 700; color: var(--dourado); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
@@ -32,8 +29,8 @@
 
     <div id="tela0" class="tela ativa">
         <div class="card-jornada">
-            <span class="jornada-contador" id="contagem-dias">BEM-VINDO AO MÉTODO 360</span>
-            <img src="foto_rui.jpg" class="foto-rui" alt="Rui Ribeiro" onerror="this.src='https://ui-avatars.com/api/?name=Rui+Ribeiro&background=003366&color=fff&size=160'">
+            <span class="jornada-contador" id="contagem-dias">CARREGANDO JORNADA...</span>
+            <img src="foto_rui.jpg" class="foto-rui" alt="Rui Ribeiro" onerror="this.src='https://ui-avatars.com/api/?name=Rui+Ribeiro&background=003366&color=fff&size=150'">
             <h1 style="color: var(--azul); font-weight: 700;">MÉTODO 360</h1>
             <div class="mt-4 text-start px-3">
                 <label class="fw-bold small mb-2">DATA DO REGISTRO</label>
@@ -45,11 +42,11 @@
 
     <div id="tela1" class="tela">
         <div class="card-jornada">
-            <div id="tarjeta-gad">Status do Score</div>
+            <div id="tarjeta-gad" style="display:none; padding:10px; color:white; border-radius:10px; margin-bottom:15px; font-weight:700;"></div>
             <h5 class="fw-bold mb-3" style="color: var(--azul)">1. PROTOCOLO GAD-7</h5>
-            <div style="max-height: 400px; overflow-y: auto;">
+            <div id="form-gad" style="max-height: 400px; overflow-y: auto;">
                 <script>
-                    const pGAD = ["Nervoso/Ansioso?", "Controlar preocupações?", "Preocupar-se muito?", "Dificuldade relaxar?", "Inquietude?", "Irritabilidade?", "Medo de algo ruim?"];
+                    const pGAD = ["Sentir-se nervoso?", "Controlar preocupações?", "Preocupar-se muito?", "Dificuldade relaxar?", "Inquietude?", "Irritabilidade?", "Medo de algo ruim?"];
                     pGAD.forEach((p, i) => {
                         document.write(`<div class="bloco"><p class="small fw-bold mb-1">${i+1}. ${p}</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0 - Nenhuma vez</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase todos os dias</option></select></div>`);
                     });
@@ -64,58 +61,26 @@
         <div class="card-jornada">
             <h5 class="fw-bold mb-4" style="color: var(--azul)">2. QUALIDADE DO SONO</h5>
             <div class="d-flex justify-content-between gap-2">
-                <div class="btn-humor" onclick="sel(this,'sono','Ótimo')"><span class="emoji-grande">😴</span>Ótimo</div>
-                <div class="btn-humor" onclick="sel(this,'sono','Médio')"><span class="emoji-grande">😐</span>Médio</div>
-                <div class="btn-humor" onclick="sel(this,'sono','Ruim')"><span class="emoji-grande">😫</span>Ruim</div>
+                <div class="btn-humor" onclick="sel(this,'sono','Ótimo')"><span>😴</span><br>Ótimo</div>
+                <div class="btn-humor" onclick="sel(this,'sono','Médio')"><span>😐</span><br>Médio</div>
+                <div class="btn-humor" onclick="sel(this,'sono','Ruim')"><span>😫</span><br>Ruim</div>
             </div>
             <button class="btn-principal" onclick="ir(3)">PRÓXIMO: MANHÃ</button>
             <button class="btn-voltar" onclick="ir(1)">Voltar</button>
         </div>
     </div>
 
-    <script>
-        const turnos = [{n:"Manhã", id:"M", e:"😊"}, {n:"Tarde", id:"T", e:"☀️"}, {n:"Noite", id:"N", e:"🌙"}];
-        turnos.forEach((t, idx) => {
-            document.write(`
-                <div id="tela${idx+3}" class="tela">
-                    <div class="card-jornada">
-                        <h5 class="fw-bold" style="color: var(--azul)">${idx+3}. REGISTRO: ${t.n.toUpperCase()}</h5>
-                        <div class="bloco text-center">
-                            <p class="fw-bold small mb-2">HUMOR NO PERÍODO</p>
-                            <div class="d-flex gap-2">
-                                <div class="btn-humor" onclick="sel(this,'h${t.id}','Ótimo')"><span class="emoji-grande">😊</span>Ótimo</div>
-                                <div class="btn-humor" onclick="sel(this,'h${t.id}','Médio')"><span class="emoji-grande">😐</span>Médio</div>
-                                <div class="btn-humor" onclick="sel(this,'h${t.id}','Ruim')"><span class="emoji-grande">😟</span>Ruim</div>
-                            </div>
-                        </div>
-                        <div class="bloco text-center">
-                            <p class="fw-bold small mb-2">DOR EVA (0 a 10)</p>
-                            <div class="eva-grid">`);
-                                for(let i=0; i<=10; i++) document.write(`<button class="btn-eva" onclick="selEva(this,'${t.id.toLowerCase()}',${i})">${i}</button>`);
-                            document.write(`</div>
-                        </div>
-                        <button class="btn-principal" onclick="ir(${idx+4})">${idx === 2 ? 'VER MEU PRÉMIO 🏆' : 'PRÓXIMO PERÍODO'}</button>
-                        <button class="btn-voltar" onclick="ir(${idx+2})">Voltar</button>
-                    </div>
-                </div>
-            `);
-        });
-    </script>
+    <div id="turnos-container"></div>
 
     <div id="tela6" class="tela">
         <div class="card-jornada">
-            <h2 style="color: var(--sucesso); font-weight: 700;">PARABÉNS! 🏆</h2>
-            <p class="small text-muted mb-4">Você concluiu todas as etapas de hoje.</p>
-            
-            <div class="bloco">
-                <canvas id="graficoPremio"></canvas>
-            </div>
-
+            <h2 style="color: var(--sucesso); font-weight: 700;">CONCLUÍDO! 🏆</h2>
+            <p class="small text-muted mb-4">Veja sua evolução de hoje:</p>
+            <div class="bloco"><canvas id="graficoFinal"></canvas></div>
             <div id="alerta-box" style="display:none; background:#fff5f5; border:1px solid #ffcccc; padding:15px; border-radius:15px; margin-top:15px;">
-                <p class="small fw-bold text-danger mb-1">Agende com Rui Ribeiro agora mesmo!</p>
-                <a id="link-whatsapp" href="#" target="_blank" class="btn btn-danger w-100 fw-bold">FALAR NO WHATSAPP</a>
+                <p class="small fw-bold text-danger">⚠️ Alerta Clínico detectado!</p>
+                <a id="link-wa" href="#" target="_blank" class="btn btn-danger w-100 fw-bold">NOTIFICAR RUI RIBEIRO</a>
             </div>
-
             <button class="btn-principal" style="background:var(--sucesso)" onclick="location.reload()">NOVO REGISTRO</button>
         </div>
     </div>
@@ -124,17 +89,44 @@
         let d = { gad: 0, sono: "", hM: "", hT: "", hN: "", m: 0, t: 0, n: 0 };
         document.getElementById('data-dia').valueAsDate = new Date();
 
-        // Contagem de Dias
-        if(!localStorage.getItem('data_inicio')) localStorage.setItem('data_inicio', new Date().toISOString());
-        const inicio = new Date(localStorage.getItem('data_inicio'));
-        const hoje = new Date();
-        const dias = Math.floor((hoje - inicio) / (1000 * 60 * 60 * 24)) + 1;
-        document.getElementById('contagem-dias').innerText = `DIA ${dias} DA SUA JORNADA`;
+        // Lógica da Jornada (Tempo)
+        if(!localStorage.getItem('data_inicio_360')) localStorage.setItem('data_inicio_360', new Date().toISOString());
+        const dataInicio = new Date(localStorage.getItem('data_inicio_360'));
+        const diasJornada = Math.floor((new Date() - dataInicio) / (1000 * 60 * 60 * 24)) + 1;
+        document.getElementById('contagem-dias').innerText = `DIA ${diasJornada} DA SUA JORNADA`;
+
+        // Gerar telas de turnos
+        const periodos = [{n:'Manhã', id:'M'}, {n:'Tarde', id:'T'}, {n:'Noite', id:'N'}];
+        let htmlTurnos = '';
+        periodos.forEach((p, i) => {
+            htmlTurnos += `
+            <div id="tela${i+3}" class="tela">
+                <div class="card-jornada">
+                    <h5 class="fw-bold" style="color: var(--azul)">${i+3}. REGISTRO: ${p.n.toUpperCase()}</h5>
+                    <div class="bloco text-center">
+                        <p class="fw-bold small mb-2">HUMOR NO PERÍODO</p>
+                        <div class="humor-box">
+                            <div class="btn-humor" onclick="sel(this,'h${p.id}','Ótimo')"><span>😊</span><br>Ótimo</div>
+                            <div class="btn-humor" onclick="sel(this,'h${p.id}','Médio')"><span>😐</span><br>Médio</div>
+                            <div class="btn-humor" onclick="sel(this,'h${p.id}','Ruim')"><span>😟</span><br>Ruim</div>
+                        </div>
+                    </div>
+                    <div class="bloco text-center">
+                        <p class="fw-bold small mb-2">DOR EVA (0 a 10)</p>
+                        <div class="eva-grid">`;
+            for(let v=0; v<=10; v++) htmlTurnos += `<button class="btn-eva" onclick="selEva(this,'${p.id.toLowerCase()}',${v})">${v}</button>`;
+            htmlTurnos += `</div></div>
+                    <button class="btn-principal" onclick="ir(${i+4})">${i===2?'VER MEU PRÊMIO 🏆':'PRÓXIMO PERÍODO'}</button>
+                    <button class="btn-voltar" onclick="ir(${i+2})">Voltar</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('turnos-container').innerHTML = htmlTurnos;
 
         function ir(n) {
             document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
             document.getElementById('tela' + n).classList.add('ativa');
-            if(n === 6) gerarGrafico();
+            if(n === 6) desenharGrafico();
         }
 
         function calcGAD() {
@@ -157,7 +149,7 @@
         }
 
         function sel(btn, cat, val) {
-            btn.parentElement.querySelectorAll('.btn-humor').forEach(b => b.classList.remove('active'));
+            btn.parentElement.querySelectorAll('div').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             d[cat] = val;
         }
@@ -165,35 +157,22 @@
         function selEva(btn, turno, val) {
             btn.parentElement.querySelectorAll('.btn-eva').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            d[turno] = val;
+            d[turno.toLowerCase()] = val;
             checkAlerts();
         }
 
         function checkAlerts() {
-            const ehAlerta = (d.m >= 7 || d.t >= 7 || d.n >= 7 || d.gad >= 10);
-            document.getElementById('alerta-box').style.display = ehAlerta ? 'block' : 'none';
-            const msg = `*ALERTA MÉTODO 360*%0ADia: ${dias}%0AGAD-7: ${d.gad}%0AEVA: M${d.m}|T${d.t}|N${d.n}`;
-            document.getElementById('link-whatsapp').href = `https://wa.me/5538991717426?text=${msg}`;
+            const alerta = (d.m >= 7 || d.t >= 7 || d.n >= 7 || d.gad >= 10);
+            document.getElementById('alerta-box').style.display = alerta ? 'block' : 'none';
+            document.getElementById('link-wa').href = `https://wa.me/5538991717426?text=*MÉTODO 360 - ALERTA*%0ADia ${diasJornada}%0AGAD-7: ${d.gad}%0AEVA: M${d.m}|T${d.t}|N${d.n}`;
         }
 
-        function gerarGrafico() {
-            const ctx = document.getElementById('graficoPremio').getContext('2d');
+        function desenharGrafico() {
+            const ctx = document.getElementById('graficoFinal').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Manhã', 'Tarde', 'Noite'],
                     datasets: [{
-                        label: 'Sua Dor (EVA)',
-                        data: [d.m, d.t, d.n],
-                        borderColor: '#B8860B',
-                        backgroundColor: 'rgba(184, 134, 11, 0.2)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { scales: { y: { min: 0, max: 10 } } }
-            });
-        }
-    </script>
-</body>
-</html>
+                        label: 'Nível de Dor',
+                        data
