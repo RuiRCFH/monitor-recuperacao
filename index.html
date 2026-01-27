@@ -3,151 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÉTODO 360 - Rui Ribeiro</title>
+    <title>MÉTODO 360 | Rui Ribeiro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dourado: #B8860B; --escuro: #1a1a1a; }
-        body { font-family: 'Montserrat', sans-serif; background-color: #f4f4f4; color: var(--escuro); padding-bottom: 50px; }
-        .header { background: linear-gradient(135deg, #000, #333); color: white; padding: 30px 20px; text-align: center; border-bottom: 4px solid var(--dourado); }
-        .logo { max-width: 120px; margin-bottom: 15px; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .card-header { background-color: white; border-bottom: 1px solid #eee; font-weight: bold; color: var(--dourado); cursor: pointer; }
-        .emoji-group { display: flex; justify-content: space-between; margin: 15px 0; }
-        .emoji-btn { font-size: 24px; cursor: pointer; border: 2px solid transparent; border-radius: 10px; padding: 5px; transition: 0.3s; background: none; width: 18%; }
-        .emoji-btn:hover, .emoji-btn.active { border-color: var(--dourado); background-color: #fffcf0; }
-        .btn-enviar { background-color: var(--dourado); color: white; font-weight: bold; width: 100%; padding: 15px; border-radius: 30px; border: none; font-size: 18px; }
-        .gad-item { margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #f0f0f0; }
-        .required-alert { color: red; font-size: 12px; display: none; }
-        .turno-ativo { border-left: 5px solid var(--dourado); }
+        :root { --dourado: #B8860B; --texto: #333; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; color: var(--texto); padding-bottom: 50px; }
+
+        /* CABEÇALHO ORIGINAL QUE VOCÊ GOSTA */
+        .header-top {
+            background: #fff; padding: 35px 20px; text-align: center;
+            border-bottom: 5px solid var(--dourado); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        .header-top h1 { font-weight: 700; letter-spacing: 2px; margin: 0; color: #1a1a1a; }
+        .header-top p { color: var(--dourado); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 3px; font-weight: 700; margin-top: 5px; }
+
+        /* CARDS E TURNOS */
+        .card-turno { border: none; border-radius: 15px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 15px; }
+        .btn-header { width: 100%; padding: 20px; text-align: left; background: none; border: none; font-weight: 700; display: flex; justify-content: space-between; }
+        
+        .emoji-group { display: flex; justify-content: space-between; gap: 8px; padding: 0 20px 20px; }
+        .btn-emoji { 
+            flex: 1; padding: 15px 5px; border: 1px solid #f0f0f0; border-radius: 12px; 
+            background: #fff; font-size: 1.1rem; transition: 0.2s; cursor: pointer;
+        }
+        .btn-emoji.active { background: var(--dourado); color: white; border-color: var(--dourado); box-shadow: 0 4px 10px rgba(184,134,11,0.3); }
+
+        /* GAD-7 OBRIGATÓRIO */
+        .gad-box { border: 2px solid var(--dourado); border-radius: 15px; background: #fffdf9; margin-top: 25px; overflow: hidden; }
+        .gad-title { background: var(--dourado); color: white; padding: 15px; font-weight: 700; text-align: center; }
+        .gad-q { padding: 15px; border-bottom: 1px solid #f0f0f0; }
+        .gad-q p { font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+
+        /* BOTÃO ENVIAR */
+        .btn-enviar {
+            background: #1a1a1a; color: var(--dourado); font-weight: 700;
+            width: 100%; padding: 20px; border-radius: 50px; border: 2px solid var(--dourado);
+            margin-top: 30px; text-transform: uppercase; letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <img src="logo.png" alt="Logo Método 360" class="logo">
-    <h1>MÉTODO 360</h1>
-    <p>Monitor de Recuperação - Rui Ribeiro</p>
-</div>
+    <div class="header-top">
+        <h1>MÉTODO 360</h1>
+        <p>Monitor de Recuperação Ativa</p>
+    </div>
 
-<div class="container mt-4">
-    <div class="card" id="cardManha">
-        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#colManha">🌅 Manhã (Físico e Disposição)</div>
-        <div id="colManha" class="collapse">
-            <div class="card-body">
-                <label>Nível de Desconforto/Dor:</label>
-                <div class="emoji-group">
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 0, 'Manha')">0😊</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 3, 'Manha')">3🙂</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 5, 'Manha')">5😐</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 7, 'Manha')">7😟</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorManha', 10, 'Manha')">10😫</button>
+    <div class="container" style="max-width: 500px;">
+        
+        <div class="accordion" id="acc360">
+            
+            <div class="card-turno">
+                <button class="btn-header" type="button" data-bs-toggle="collapse" data-bs-target="#cManha">
+                    🌅 MANHÃ <small class="text-muted">Físico</small>
+                </button>
+                <div id="cManha" class="collapse" data-bs-parent="#acc360">
+                    <div class="emoji-group">
+                        <button class="btn-emoji" onclick="setV(this,'m',0,'cTarde')">0😊</button>
+                        <button class="btn-emoji" onclick="setV(this,'m',5,'cTarde')">5😐</button>
+                        <button class="btn-emoji" onclick="setV(this,'m',10,'cTarde')">10😫</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="card" id="cardTarde">
-        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#colTarde">☀️ Tarde (Energia e Foco)</div>
-        <div id="colTarde" class="collapse">
-            <div class="card-body">
-                <label>Nível de Desconforto/Dor:</label>
-                <div class="emoji-group">
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 0, 'Tarde')">0😊</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 3, 'Tarde')">3🙂</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 5, 'Tarde')">5😐</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 7, 'Tarde')">7😟</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorTarde', 10, 'Tarde')">10😫</button>
+            <div class="card-turno">
+                <button class="btn-header" type="button" data-bs-toggle="collapse" data-bs-target="#cTarde">
+                    ☀️ TARDE <small class="text-muted">Energia</small>
+                </button>
+                <div id="cTarde" class="collapse" data-bs-parent="#acc360">
+                    <div class="emoji-group">
+                        <button class="btn-emoji" onclick="setV(this,'t',0,'cNoite')">0😊</button>
+                        <button class="btn-emoji" onclick="setV(this,'t',5,'cNoite')">5😐</button>
+                        <button class="btn-emoji" onclick="setV(this,'t',10,'cNoite')">10😫</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="card" id="cardNoite">
-        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#colNoite">🌙 Noite (Humor e Sono)</div>
-        <div id="colNoite" class="collapse">
-            <div class="card-body">
-                <label>Qualidade do Sono/Humor:</label>
-                <div class="emoji-group">
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorNoite', 0, 'Noite')">0😴</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorNoite', 5, 'Noite')">5😐</button>
-                    <button class="emoji-btn" onclick="selecionar(this, 'dorNoite', 10, 'Noite')">10😫</button>
+            <div class="card-turno">
+                <button class="btn-header" type="button" data-bs-toggle="collapse" data-bs-target="#cNoite">
+                    🌙 NOITE <small class="text-muted">Sono</small>
+                </button>
+                <div id="cNoite" class="collapse" data-bs-parent="#acc360">
+                    <div class="emoji-group">
+                        <button class="btn-emoji" onclick="setV(this,'n',0,null)">0😴</button>
+                        <button class="btn-emoji" onclick="setV(this,'n',5,null)">5😐</button>
+                        <button class="btn-emoji" onclick="setV(this,'n',10,null)">10😫</button>
+                    </div>
                 </div>
             </div>
+
         </div>
+
+        <div class="gad-box">
+            <div class="gad-title">📑 PROTOCOLO GAD-7</div>
+            <div class="gad-q"><p>1. Sentir-se nervoso ou ansioso?</p><select class="form-select g-in"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            <div class="gad-q"><p>2. Não conseguir controlar as preocupações?</p><select class="form-select g-in"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            <div class="gad-q"><p>3. Preocupar-se muito com diversas coisas?</p><select class="form-select g-in"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            <div class="gad-q"><p>4. Dificuldade para relaxar?</p><select class="form-select g-in"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            <div class="gad-q"><p>5. Inquietude (difícil ficar sentado)?</p><select class="form-select g-in"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            <div class="gad-q"><p>6. Ficar facilmente irritado?</p><select class="form-select g-in"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+            <div class="gad-q"><p>7. Sentir medo de algo ruim acontecer?</p><select class="form-select g-in"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+        </div>
+
+        <button class="btn-enviar" onclick="enviar()">ENVIAR RELATÓRIO 🚀</button>
+
     </div>
 
-    <div class="card border-primary">
-        <div class="card-header bg-light text-primary">📑 Protocolo GAD-7 (Obrigatório)</div>
-        <div class="card-body">
-            <div id="gad-container">
-                <div class="gad-item">
-                    <p>1. Sentir-se nervoso, ansioso ou muito tenso?</p>
-                    <select class="form-select gad-input" id="gad1">
-                        <option value="">Selecione...</option>
-                        <option value="0">Nenhuma vez</option>
-                        <option value="1">Vários dias</option>
-                        <option value="2">Mais da metade dos dias</option>
-                        <option value="3">Quase todos os dias</option>
-                    </select>
-                </div>
-                <div class="gad-item"><p>2. Não ser capaz de impedir ou controlar as preocupações?</p>
-                <select class="form-select gad-input" id="gad2"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="gad-item"><p>3. Preocupar-se muito com diversas coisas?</p>
-                <select class="form-select gad-input" id="gad3"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                </div>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let res = { m: null, t: null, n: null };
 
-    <button class="btn-enviar" onclick="enviarRelatorio()">🚀 GERAR RELATÓRIO FINAL</button>
-</div>
+        // Ao abrir: Detecta hora e abre o turno certo sem demora
+        window.onload = function() {
+            const h = new Date().getHours();
+            let target = (h < 12) ? 'cManha' : (h < 18) ? 'cTarde' : 'cNoite';
+            let el = document.getElementById(target);
+            if(el) new bootstrap.Collapse(el).show();
+        };
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    let dados = { dorManha: "", dorTarde: "", dorNoite: "" };
-
-    window.onload = function() {
-        const hora = new Date().getHours();
-        let idCol = (hora >= 5 && hora < 12) ? "colManha" : (hora >= 12 && hora < 18) ? "colTarde" : "colNoite";
-        new bootstrap.Collapse(document.getElementById(idCol)).show();
-    };
-
-    function selecionar(btn, campo, valor, atual) {
-        // Remove active dos irmãos
-        btn.parentElement.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        dados[campo] = valor;
-
-        // Transição automática de turno
-        if(atual === 'Manha') { setTimeout(() => { new bootstrap.Collapse(document.getElementById('colManha')).hide(); new bootstrap.Collapse(document.getElementById('colTarde')).show(); }, 600); }
-        if(atual === 'Tarde') { setTimeout(() => { new bootstrap.Collapse(document.getElementById('colTarde')).hide(); new bootstrap.Collapse(document.getElementById('colNoite')).show(); }, 600); }
-    }
-
-    function enviarRelatorio() {
-        // Validação GAD-7
-        let gadIncompletos = false;
-        document.querySelectorAll('.gad-input').forEach(input => {
-            if (input.value === "") gadIncompletos = true;
-        });
-
-        if (gadIncompletos) {
-            alert("⚠️ Por favor, responda todas as perguntas do GAD-7. Elas são essenciais para o seu acompanhamento.");
-            return;
+        function setV(btn, t, v, prox) {
+            btn.parentElement.querySelectorAll('.btn-emoji').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            res[t] = v;
+            if(prox) {
+                setTimeout(() => {
+                    let atual = document.getElementById(btn.closest('.collapse').id);
+                    let seguinte = document.getElementById(prox);
+                    new bootstrap.Collapse(atual).hide();
+                    new bootstrap.Collapse(seguinte).show();
+                }, 400);
+            }
         }
 
-        // Construção da mensagem
-        let gadScore = 0;
-        document.querySelectorAll('.gad-input').forEach(i => gadScore += parseInt(i.value));
+        function enviar() {
+            let soma = 0; let gOK = true;
+            document.querySelectorAll('.g-in').forEach(i => {
+                if(i.value === "") gOK = false;
+                soma += parseInt(i.value || 0);
+            });
 
-        let msg = `*MÉTODO 360 - RELATÓRIO*%0A%0A`;
-        msg += `🌅 Manhã: ${dados.dorManha || '---'}%0A`;
-        msg += `☀️ Tarde: ${dados.dorTarde || '---'}%0A`;
-        msg += `🌙 Noite: ${dados.dorNoite || '---'}%0A%0A`;
-        msg += `📊 *GAD-7 Score: ${gadScore}* (Ansiedade)%0A`;
-        
-        const telefone = "5538999128532"; // Seu WhatsApp
-        window.open(`https://wa.me/${telefone}?text=${msg}`, '_blank');
-    }
-</script>
+            if(!gOK) {
+                alert("⚠️ Por favor, responda todas as perguntas do GAD-7.");
+                return;
+            }
+
+            let msg = `*MÉTODO 360 - RELATÓRIO*%0A🌅M: ${res.m??'--'}%0A☀️T: ${res.t??'--'}%0A🌙N: ${res.n??'--'}%0A📊GAD-7: ${soma}`;
+            window.open(`https://wa.me/5538999128532?text=${msg}`, '_blank');
+        }
+    </script>
 </body>
 </html>
