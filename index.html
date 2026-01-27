@@ -3,156 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÉTODO 360 | Jornada de Autocuidado</title>
+    <title>MÉTODO 360 | Rui Ribeiro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --azul: #003366; --dourado: #B8860B; --fundo: #f8f9fa; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; }
 
-        .tela { display: none; max-width: 500px; margin: 30px auto; padding: 20px; animation: fadeIn 0.6s ease-in-out; }
+        .tela { display: none; max-width: 500px; margin: 20px auto; padding: 15px; animation: slideIn 0.5s ease; }
         .ativa { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* CARD PRINCIPAL */
-        .card-jornada {
-            background: #fff; border-radius: 40px; padding: 40px 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            border-top: 10px solid var(--dourado); text-align: center;
-        }
+        .card-jornada { background: #fff; border-radius: 35px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-top: 10px solid var(--dourado); text-align: center; }
+        
+        /* FOTO E IDENTIDADE */
+        .foto-rui { width: 110px; height: 110px; border-radius: 55px; border: 3px solid var(--dourado); margin: 0 auto 15px; display: block; object-fit: cover; }
+        .logo-txt { font-weight: 700; color: var(--azul); letter-spacing: 2px; font-size: 1.4rem; }
 
-        .titulo-jornada { color: var(--azul); font-weight: 700; font-size: 2.2rem; letter-spacing: -1px; }
-        .sub-jornada { color: var(--dourado); font-weight: 400; text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; margin-bottom: 30px; }
+        /* ESCALA EVA 0-10 */
+        .eva-grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; margin-top: 10px; }
+        .eva-btn { padding: 8px 0; font-size: 0.7rem; border: 1px solid #eee; background: #fff; border-radius: 5px; font-weight: 700; transition: 0.2s; }
+        .eva-btn.active { background: var(--azul); color: white; border-color: var(--azul); transform: scale(1.1); }
 
-        /* INPUT DATA */
-        .box-data { background: #f0f4f8; padding: 20px; border-radius: 20px; margin-bottom: 30px; text-align: left; }
-        .label-data { font-weight: 700; color: var(--azul); font-size: 0.75rem; display: block; margin-bottom: 8px; margin-left: 5px; }
-        .input-data { border: none; background: transparent; font-size: 1.1rem; font-weight: 700; color: var(--azul); width: 100%; outline: none; }
+        /* BOTÕES E INPUTS */
+        .btn-acao { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 16px; border-radius: 20px; border: none; font-size: 1rem; margin-top: 20px; }
+        .emoji-group { display: flex; justify-content: space-between; gap: 10px; margin: 15px 0; }
+        .btn-emoji { flex: 1; padding: 15px 5px; border: 2px solid #f0f0f0; border-radius: 15px; background: #fff; font-size: 1.3rem; transition: 0.2s; }
+        .btn-emoji.active { border-color: var(--dourado); background: #fffcf0; }
 
-        /* BOTÕES */
-        .btn-acao {
-            background: var(--azul); color: white; font-weight: 700;
-            width: 100%; padding: 20px; border-radius: 25px; border: none;
-            font-size: 1.1rem; box-shadow: 0 10px 20px rgba(0,51,102,0.2);
-            transition: 0.3s;
-        }
-        .btn-acao:active { transform: scale(0.98); }
-
-        /* GAD-7 ESTILIZADO */
-        .gad-pergunta { text-align: left; background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #eee; }
-        .gad-pergunta p { font-weight: 700; font-size: 0.9rem; color: var(--azul); margin-bottom: 12px; }
-        .form-select { border-radius: 12px; border: 2px solid #f0f0f0; padding: 12px; font-weight: 500; }
+        .box-pergunta { text-align: left; margin-top: 25px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px; }
+        .pergunta-label { font-weight: 700; color: var(--azul); font-size: 0.85rem; display: block; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="tela1" class="tela ativa">
+    <div id="passo1" class="tela ativa">
         <div class="card-jornada">
-            <h1 class="titulo-jornada">MÉTODO 360</h1>
-            <p class="sub-jornada">Sua Jornada de Autocuidado</p>
+            <h1 class="logo-txt">MÉTODO 360</h1>
+            <p style="color: var(--dourado); font-size: 0.7rem; letter-spacing: 3px;">RUI RIBEIRO</p>
+            <p class="my-4 small px-3">Bem-vindo à sua jornada de monitoramento. Selecione a data e vamos começar o seu cuidado.</p>
+            <input type="date" id="data-val" class="form-control mb-4" style="border-radius: 15px; padding: 12px; font-weight: 700; border: 2px solid #eee;">
+            <button class="btn-acao" onclick="ir(2)">COMEÇAR AUTO CUIDADO</button>
+        </div>
+    </div>
+
+    <div id="passo2" class="tela">
+        <div class="card-jornada text-start">
+            <h5 class="text-center fw-bold mb-4" style="color: var(--azul)">PROTOCOLO GAD-7</h5>
+            <div id="gad-lista">
+                <div class="mb-3">
+                    <label class="pergunta-label">1. Sentir-se nervoso ou ansioso?</label>
+                    <select class="form-select g-item"><option value="">Selecione...</option><option value="0">0 - Nunca</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase sempre</option></select>
+                </div>
+                <div class="mb-3"><label class="pergunta-label">2. Não conseguir controlar as preocupações?</label><select class="form-select g-item"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <p class="text-muted small text-center">Responda as 7 questões para avançar.</p>
+            </div>
+            <button class="btn-acao" onclick="validarGad()">AVANÇAR PARA MONITORAMENTO</button>
+        </div>
+    </div>
+
+    <div id="passo3" class="tela">
+        <div class="card-jornada">
+            <img src="SuaFoto.jpg" class="foto-rui" alt="Rui Ribeiro"> <h1 class="logo-txt">MÉTODO 360</h1>
             
-            <p class="mb-4" style="font-size: 0.95rem; line-height: 1.6; color: #666;">
-                Bem-vindo ao seu monitoramento. <br>
-                Cada registro é um passo importante para a sua <b>recuperação plena</b>.
-            </p>
-
-            <div class="box-data">
-                <span class="label-data">DATA DE HOJE</span>
-                <input type="date" id="data-jornada" class="input-data">
+            <div class="box-pergunta">
+                <span class="pergunta-label">QUALIDADE DO SONO</span>
+                <div class="emoji-group">
+                    <button class="btn-emoji" onclick="sel(this,'sono',10)">😴</button>
+                    <button class="btn-emoji" onclick="sel(this,'sono',5)">😐</button>
+                    <button class="btn-emoji" onclick="sel(this,'sono',0)">😫</button>
+                </div>
             </div>
 
-            <button class="btn-acao" onclick="irPara(2)">COMEÇAR AUTO CUIDADO</button>
-            <p class="mt-4 small text-muted">Acompanhamento Profissional: Rui Ribeiro</p>
+            <div class="box-pergunta">
+                <span class="pergunta-label">FEZ USO DE MEDICAMENTOS HOJE?</span>
+                <div class="d-flex gap-2">
+                    <button class="btn-emoji fs-6 py-2" onclick="sel(this,'med','Sim')">SIM</button>
+                    <button class="btn-emoji fs-6 py-2" onclick="sel(this,'med','Não')">NÃO</button>
+                </div>
+            </div>
+
+            <div class="box-pergunta">
+                <span class="pergunta-label">🌅 ESCALA DE DOR (EVA) - MANHÃ</span>
+                <div class="eva-grid" id="evaM">
+                    <button class="eva-btn" onclick="selEva(this,'m',0)">0</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',1)">1</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',2)">2</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',3)">3</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',4)">4</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',5)">5</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',6)">6</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',7)">7</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',8)">8</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',9)">9</button>
+                    <button class="eva-btn" onclick="selEva(this,'m',10)">10</button>
+                </div>
+            </div>
+
+            <button class="btn-acao" onclick="ir(4)">REGISTRAR TARDE</button>
         </div>
     </div>
 
-    <div id="tela2" class="tela">
-        <div class="text-center mb-4">
-            <h2 style="color: var(--azul); font-weight: 700;">Protocolo GAD-7</h2>
-            <p class="small text-muted">Como você se sentiu nas últimas 2 semanas?</p>
+    <div id="passo4" class="tela">
+        <div class="card-jornada">
+            <h4 class="fw-bold" style="color: var(--azul)">PERÍODO DA TARDE</h4>
+            <div class="box-pergunta">
+                <span class="pergunta-label">☀️ ESCALA DE DOR (EVA) - TARDE</span>
+                <div class="eva-grid">
+                    <button class="eva-btn" onclick="selEva(this,'t',0)">0</button>
+                    <button class="eva-btn" onclick="selEva(this,'t',3)">3</button>
+                    <button class="eva-btn" onclick="selEva(this,'t',5)">5</button>
+                    <button class="eva-btn" onclick="selEva(this,'t',7)">7</button>
+                    <button class="eva-btn" onclick="selEva(this,'t',10)">10</button>
+                </div>
+            </div>
+            <button class="btn-acao" onclick="ir(5)">REGISTRAR NOITE</button>
         </div>
-
-        <div id="formulario-gad">
-            <div class="gad-pergunta">
-                <p>1. Sentir-se nervoso, ansioso ou muito tenso?</p>
-                <select class="form-select g-item">
-                    <option value="">Selecione uma opção...</option>
-                    <option value="0">0 - Nenhuma vez</option>
-                    <option value="1">1 - Vários dias</option>
-                    <option value="2">2 - Mais da metade dos dias</option>
-                    <option value="3">3 - Quase todos os dias</option>
-                </select>
-            </div>
-
-            <div class="gad-pergunta">
-                <p>2. Não ser capaz de impedir ou controlar as preocupações?</p>
-                <select class="form-select g-item">
-                    <option value="">Selecione uma opção...</option>
-                    <option value="0">0 - Nenhuma vez</option>
-                    <option value="1">1 - Vários dias</option>
-                    <option value="2">2 - Mais da metade dos dias</option>
-                    <option value="3">3 - Quase todos os dias</option>
-                </select>
-            </div>
-
-            <div class="gad-pergunta">
-                <p>3. Preocupar-se muito com diversas coisas?</p>
-                <select class="form-select g-item"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
-            </div>
-
-            <div class="gad-pergunta">
-                <p>4. Dificuldade para relaxar?</p>
-                <select class="form-select g-item"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
-            </div>
-
-            <div class="gad-pergunta">
-                <p>5. Estar tão inquieto que é difícil ficar sentado?</p>
-                <select class="form-select g-item"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
-            </div>
-
-            <div class="gad-pergunta">
-                <p>6. Ficar facilmente aborrecido ou irritado?</p>
-                <select class="form-select g-item"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
-            </div>
-
-            <div class="gad-pergunta">
-                <p>7. Sentir medo como se algo terrível fosse acontecer?</p>
-                <select class="form-select g-item"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
-            </div>
-        </div>
-
-        <button class="btn-acao mt-4" onclick="validarIrProximo()">PRÓXIMO PASSO ➜</button>
-        <center><button class="btn mt-3 text-muted small" onclick="irPara(1)">← Voltar ao início</button></center>
     </div>
 
+    <div id="passo5" class="tela">
+        <div class="card-jornada">
+            <h4 class="fw-bold" style="color: var(--azul)">PERÍODO DA NOITE</h4>
+            <div class="box-pergunta">
+                <span class="pergunta-label">🌙 ESCALA DE DOR (EVA) - NOITE</span>
+                <div class="eva-grid">
+                    <button class="eva-btn" onclick="selEva(this,'n',0)">0</button>
+                    <button class="eva-btn" onclick="selEva(this,'n',5)">5</button>
+                    <button class="eva-btn" onclick="selEva(this,'n',10)">10</button>
+                </div>
+            </div>
+            <button class="btn-acao" onclick="enviarRelatorio()">GERAR GRÁFICO E ENVIAR 🚀</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Define a data de hoje automaticamente
-        document.getElementById('data-jornada').valueAsDate = new Date();
+        let d = { data: "", gad: 0, sono: "", med: "", m: 0, t: 0, n: 0 };
+        document.getElementById('data-val').valueAsDate = new Date();
 
-        function irPara(passo) {
+        function ir(n) {
             document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
-            document.getElementById('tela' + passo).classList.add('ativa');
+            document.getElementById('passo' + n).classList.add('ativa');
             window.scrollTo(0,0);
         }
 
-        function validarIrProximo() {
-            let incompleto = false;
-            let soma = 0;
-            document.querySelectorAll('.g-item').forEach(sel => {
-                if(sel.value === "") incompleto = true;
-                soma += parseInt(sel.value || 0);
+        function sel(btn, t, v) {
+            btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            d[t] = v;
+        }
+
+        function selEva(btn, turno, v) {
+            btn.parentElement.querySelectorAll('.eva-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            d[turno] = v;
+        }
+
+        function validarGad() {
+            let ok = true; let soma = 0;
+            document.querySelectorAll('.g-item').forEach(s => {
+                if(s.value === "") ok = false;
+                soma += parseInt(s.value || 0);
             });
+            if(!ok) { alert("Responda todas as questões!"); return; }
+            d.gad = soma; ir(3);
+        }
 
-            if(incompleto) {
-                alert("Rui, para a segurança do paciente, todas as 7 perguntas do GAD-7 precisam ser respondidas.");
-                return;
-            }
-
-            // Salvamos o score do GAD-7 para o relatório final
-            localStorage.setItem('gad_score', soma);
-            
-            // Aqui seria a Tela 3 (Sua Foto + Monitoramento)
-            alert("GAD-7 Concluído com Score: " + soma + ". Vamos para a próxima tela!");
+        function enviarRelatorio() {
+            const data = document.getElementById('data-val').value;
+            const linkChart = `https://quickchart.io/chart?c={type:'line',data:{labels:['M','T','N'],datasets:[{label:'EVA',data:[${d.m},${d.t},${d.n}],borderColor:'gold',fill:false}]}}`;
+            let msg = `*MÉTODO 360 - ${data}*%0AGAD-7: ${d.gad}%0ASono: ${d.sono}%0AMed: ${d.med}%0AEVA: M${d.m}/T${d.t}/N${d.n}%0A%0A📈 Gráfico: ${linkChart}`;
+            window.open(`https://wa.me/5538999128532?text=${msg}`, '_blank');
         }
     </script>
 </body>
