@@ -14,82 +14,140 @@
         .ativa { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card-premium { background: #fff; border-radius: 35px; padding: 30px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 10px solid var(--dourado); text-align: center; }
+        .card-jornada { background: #fff; border-radius: 35px; padding: 30px 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-top: 10px solid var(--dourado); text-align: center; }
+        .foto-rui { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--dourado); margin: 0 auto 15px; display: block; object-fit: cover; background: var(--azul); }
         
-        /* TARJETA GAD-7 DINÂMICA */
-        #tarjeta-gad { display: none; padding: 12px; color: white; font-weight: 700; border-radius: 15px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.85rem; }
+        /* TARJETA GAD-7 */
+        #tarjeta-gad { display: none; padding: 12px; color: white; font-weight: 700; border-radius: 15px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
 
         /* ALERTA DE AGENDAMENTO */
-        #alerta-agendamento { display: none; background: #fffcf0; border: 2px solid var(--moderado); border-radius: 20px; padding: 20px; margin-bottom: 25px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
-        
-        .btn-whatsapp-agendar { background: #25d366; color: white; font-weight: 700; border-radius: 15px; padding: 12px; display: inline-block; text-decoration: none; margin-top: 10px; font-size: 0.9rem; }
+        #alerta-clinico { display: none; background: #fffcf0; border: 2px solid var(--moderado); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
+        .btn-agendar { background: #25d366; color: white; font-weight: 700; border-radius: 12px; padding: 10px; text-decoration: none; display: inline-block; font-size: 0.85rem; margin-top: 10px; }
 
-        /* DASHBOARD */
-        .item-jornada { background: #fff; border: 1px solid #eee; border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .concluido { border-left: 8px solid var(--sucesso); background: #f0fff4; }
-        .badge-status { font-size: 0.65rem; font-weight: 700; padding: 5px 10px; border-radius: 50px; text-transform: uppercase; background: #eee; color: #888; }
-        .badge-check { background: var(--sucesso); color: white; }
-
-        /* BOTÕES E GRIDS */
-        .btn-acao { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 16px; border-radius: 20px; border: none; margin-top: 20px; }
-        .btn-humor { flex: 1; border: 2px solid #eee; border-radius: 15px; background: #fff; padding: 10px; text-align: center; cursor: pointer; }
+        /* ESCALAS E BOTÕES */
+        .btn-principal { background: var(--azul); color: white; font-weight: 700; width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; margin-top: 25px; }
+        .btn-humor { flex: 1; border: 2px solid #eee; border-radius: 15px; background: #fff; padding: 10px; cursor: pointer; text-align: center; }
         .btn-humor.active { border-color: var(--azul); background: #f0f7ff; }
         .eva-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
-        .btn-eva { border: 2px solid #eee; background: #fff; border-radius: 10px; padding: 10px 0; font-weight: 700; color: var(--azul); }
+        .btn-eva { border: 2px solid #eee; background: #fff; border-radius: 10px; padding: 10px 0; font-weight: 700; color: var(--azul); font-size: 0.85rem; }
         .btn-eva.active { background: var(--azul); color: white; }
 
-        .pergunta-bloco { background: #f8fafc; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; }
+        .fase-info { font-size: 0.7rem; font-weight: 700; color: var(--dourado); text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .bloco { background: #f8fafc; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; border: 1px solid #eee; }
     </style>
 </head>
 <body>
 
     <div id="tela0" class="tela ativa">
-        <div class="card-premium">
-            <h1 style="color: var(--azul); font-weight: 700;">MÉTODO 360</h1>
-            <p style="color: var(--dourado); font-weight: 700; letter-spacing: 2px; font-size: 0.7rem; margin-bottom: 25px;">SUA JORNADA DIÁRIA</p>
-
-            <div id="alerta-agendamento">
-                <p class="mb-2 fw-bold" style="color: var(--azul)">⚠️ Nível de Ansiedade Elevado</p>
-                <p class="small mb-2">Seus resultados sugerem que você precisa de suporte agora.</p>
-                <a href="https://wa.me/5538991717426?text=Olá Rui, meu monitoramento GAD-7 deu nível moderado/alto. Preciso de agendar um suporte." target="_blank" class="btn-whatsapp-agendar">Agende com Rui Ribeiro agora mesmo</a>
-            </div>
+        <div class="card-jornada">
+            <img src="https://ui-avatars.com/api/?name=Rui+Ribeiro&background=003366&color=fff&size=150" class="foto-rui" alt="Rui Ribeiro">
+            <h1 style="color: var(--azul); font-weight: 700; font-size: 2rem;">MÉTODO 360</h1>
+            <p style="color: var(--dourado); font-weight: 700; letter-spacing: 2px; font-size: 0.75rem;">JORNADA DE AUTOCUIDADO</p>
             
-            <div id="painel">
-                <div class="item-jornada" id="card-gad" onclick="ir(1)"><div><span class="d-block fw-bold">Passo 1: GAD-7</span><small>Status Clínico</small></div><span class="badge-status" id="status-gad">Pendente</span></div>
-                <div class="item-jornada" id="card-sono" onclick="ir(2)"><div><span class="d-block fw-bold">Passo 2: Sono</span><small>Repouso</small></div><span class="badge-status" id="status-sono">Pendente</span></div>
-                <div class="item-jornada" id="card-m" onclick="ir(3)"><div><span class="d-block fw-bold">Passo 3: Manhã</span><small>Humor e EVA</small></div><span class="badge-status" id="status-m">Pendente</span></div>
-                <div class="item-jornada" id="card-t" onclick="ir(4)"><div><span class="d-block fw-bold">Passo 4: Tarde</span><small>Humor e EVA</small></div><span class="badge-status" id="status-t">Pendente</span></div>
-                <div class="item-jornada" id="card-n" onclick="ir(5)"><div><span class="d-block fw-bold">Passo 5: Noite</span><small>Finalização</small></div><span class="badge-status" id="status-n">Pendente</span></div>
+            <div class="mt-5 text-start px-3">
+                <label class="fw-bold small mb-2">DATA DO REGISTRO</label>
+                <input type="date" id="data-dia" class="form-control" style="border-radius: 15px; padding: 12px; font-weight: 700;">
             </div>
-
-            <button id="btn-envio" class="btn-principal" onclick="enviarRelatorio()" disabled>MONITORAMENTO NORMAL</button>
+            <button class="btn-principal" onclick="ir(1)">INICIAR JORNADA</button>
         </div>
     </div>
 
     <div id="tela1" class="tela">
-        <div class="card-premium">
-            <div id="tarjeta-gad">Aguardando Pontuação...</div>
-            <h5 class="fw-bold mb-4" style="color: var(--azul)">PROTOCOLO GAD-7</h5>
-            <div id="pergs" style="max-height: 350px; overflow-y: auto;">
-                <div class="pergunta-bloco"><p class="small fw-bold">1. Sentir-se nervoso ou ansioso?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="pergunta-bloco"><p class="small fw-bold">2. Não controlar preocupações?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="pergunta-bloco"><p class="small fw-bold">3. Preocupar-se muito?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="pergunta-bloco"><p class="small fw-bold">4. Dificuldade para relaxar?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="pergunta-bloco"><p class="small fw-bold">5. Inquietude?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="pergunta-bloco"><p class="small fw-bold">6. Irritabilidade?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
-                <div class="pergunta-bloco"><p class="small fw-bold">7. Medo de algo ruim?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+        <div class="card-jornada">
+            <div id="tarjeta-gad">Status do Score</div>
+            <span class="fase-info">Passo 1 de 5</span>
+            <h5 class="fw-bold mb-3" style="color: var(--azul)">PROTOCOLO GAD-7</h5>
+            <div id="lista-gad" style="max-height: 380px; overflow-y: auto;">
+                <div class="bloco"><p class="small fw-bold mb-2">1. Sentir-se nervoso ou ansioso?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0 - Nenhuma vez</option><option value="1">1 - Vários dias</option><option value="2">2 - Metade dos dias</option><option value="3">3 - Quase todos os dias</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">2. Não controlar preocupações?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">3. Preocupar-se muito?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">4. Dificuldade para relaxar?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">5. Inquietude?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">6. Irritabilidade?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div class="bloco"><p class="small fw-bold mb-2">7. Medo de algo ruim?</p><select class="form-select g-in" onchange="calcGAD()"><option value="">Selecione...</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
             </div>
-            <button class="btn-acao" onclick="ir(0)">CONFIRMAR E VOLTAR</button>
+            <button class="btn-principal" onclick="validarGad()">PRÓXIMO: SONO</button>
         </div>
     </div>
 
-    <div id="tela2" class="tela"><div class="card-premium"><h5>SONO</h5><div class="humor-box"><div class="btn-humor" onclick="setVal('sono','Ótimo', this)"><span>😴</span></div><div class="btn-humor" onclick="setVal('sono','Médio', this)"><span>😐</span></div><div class="btn-humor" onclick="setVal('sono','Ruim', this)"><span>😫</span></div></div><button class="btn-acao" onclick="ir(0)">VOLTAR</button></div></div>
-    
-    <div id="tela3" class="tela"><div class="card-premium"><h5>MANHÃ</h5><div class="eva-grid"><button class="btn-eva" onclick="setEva('dorM',1,this)">1</button><button class="btn-eva" onclick="setEva('dorM',7,this)">7</button><button class="btn-eva" onclick="setEva('dorM',10,this)">10</button></div><button class="btn-acao" onclick="ir(0)">VOLTAR</button></div></div>
+    <div id="tela2" class="tela">
+        <div class="card-jornada">
+            <span class="fase-info">Passo 2 de 5</span>
+            <h5 class="fw-bold mb-4" style="color: var(--azul)">QUALIDADE DO SONO</h5>
+            <div class="d-flex justify-content-between gap-2">
+                <div class="btn-humor" onclick="sel(this,'sono','Ótimo')"><span>😴</span><small>Ótimo</small></div>
+                <div class="btn-humor" onclick="sel(this,'sono','Médio')"><span>😐</span><small>Médio</small></div>
+                <div class="btn-humor" onclick="sel(this,'sono','Ruim')"><span>😫</span><small>Ruim</small></div>
+            </div>
+            <button class="btn-principal" onclick="ir(3)">PRÓXIMO: MANHÃ</button>
+        </div>
+    </div>
+
+    <div id="tela3" class="tela">
+        <div class="card-jornada">
+            <span class="fase-info">Passo 3 de 5</span>
+            <div class="badge bg-primary mb-3">TURNO: MANHÃ</div>
+            <div class="bloco">
+                <p class="fw-bold small mb-2 text-center">HUMOR MATINAL</p>
+                <div class="d-flex gap-2">
+                    <div class="btn-humor" onclick="sel(this,'hM','Ótimo')"><span>😊</span></div>
+                    <div class="btn-humor" onclick="sel(this,'hM','Médio')"><span>😐</span></div>
+                    <div class="btn-humor" onclick="sel(this,'hM','Ruim')"><span>😟</span></div>
+                </div>
+            </div>
+            <div class="bloco">
+                <p class="fw-bold small mb-2 text-center">DOR (EVA 1-10)</p>
+                <div class="eva-grid">
+                    <button class="btn-eva" onclick="selEva(this,'m',1)">1</button><button class="btn-eva" onclick="selEva(this,'m',3)">3</button><button class="btn-eva" onclick="selEva(this,'m',5)">5</button><button class="btn-eva" onclick="selEva(this,'m',7)">7</button><button class="btn-eva" onclick="selEva(this,'m',10)">10</button>
+                </div>
+            </div>
+            <button class="btn-principal" onclick="ir(4)">CONCLUIR E IR PARA TARDE</button>
+        </div>
+    </div>
+
+    <div id="tela4" class="tela">
+        <div class="card-jornada">
+            <span class="fase-info">Passo 4 de 5</span>
+            <div class="badge bg-primary mb-3">TURNO: TARDE</div>
+            <div class="bloco">
+                <p class="fw-bold small mb-2 text-center">DOR (EVA 1-10)</p>
+                <div class="eva-grid">
+                    <button class="btn-eva" onclick="selEva(this,'t',1)">1</button><button class="btn-eva" onclick="selEva(this,'t',7)">7</button><button class="btn-eva" onclick="selEva(this,'t',10)">10</button>
+                </div>
+            </div>
+            <button class="btn-principal" onclick="ir(5)">CONCLUIR E IR PARA NOITE</button>
+        </div>
+    </div>
+
+    <div id="tela5" class="tela">
+        <div class="card-jornada">
+            <span class="fase-info">Último Passo</span>
+            <div class="badge bg-primary mb-3">TURNO: NOITE</div>
+            
+            <div id="alerta-clinico">
+                <p class="mb-1 fw-bold" style="color: var(--alto)">Agende com Rui Ribeiro agora mesmo!</p>
+                <a href="https://wa.me/5538991717426?text=Olá Rui, meu monitoramento GAD-7 ou dor EVA deu nível de alerta. Preciso de suporte." target="_blank" class="btn-agendar">FALAR NO WHATSAPP AGORA</a>
+            </div>
+
+            <div class="bloco">
+                <p class="fw-bold small mb-2 text-center">DOR (EVA 1-10)</p>
+                <div class="eva-grid">
+                    <button class="btn-eva" onclick="selEva(this,'n',1)">1</button><button class="btn-eva" onclick="selEva(this,'n',7)">7</button><button class="btn-eva" onclick="selEva(this,'n',10)">10</button>
+                </div>
+            </div>
+            
+            <div class="bloco">
+                <p class="fw-bold small mb-1">MEDICAMENTOS?</p>
+                <select id="meds" class="form-select"><option value="Não">Não</option><option value="Sim">Sim</option></select>
+            </div>
+
+            <button id="btn-final" class="btn-principal" onclick="finalizar()" disabled>MONITORAMENTO NORMAL</button>
+        </div>
+    </div>
 
     <script>
-        let jornada = { gad: 0, sono: "", m: 0, t: 0, n: 0 };
+        let d = { gad: 0, sono: "", m: 0, t: 0, n: 0 };
+        document.getElementById('data-dia').valueAsDate = new Date();
 
         function ir(n) {
             document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
@@ -98,60 +156,53 @@
         }
 
         function calcGAD() {
-            let soma = 0; let total = 0;
-            document.querySelectorAll('.g-in').forEach(i => { if(i.value !== "") { soma += parseInt(i.value); total++; } });
-            jornada.gad = soma;
+            let soma = 0;
+            document.querySelectorAll('.g-in').forEach(i => { if(i.value !== "") soma += parseInt(i.value); });
+            d.gad = soma;
             const t = document.getElementById('tarjeta-gad');
-            const alerta = document.getElementById('alerta-agendamento');
             t.style.display = 'block';
-
-            if(soma < 10) { 
-                t.innerText = "Ansiedade Leve"; t.style.background = "var(--leve)"; 
-                alerta.style.display = 'none';
-            } else if(soma < 15) { 
-                t.innerText = "Ansiedade Moderada"; t.style.background = "var(--moderado)"; 
-                alerta.style.display = 'block'; // DISPARA ALERTA
-            } else { 
-                t.innerText = "Ansiedade Elevada"; t.style.background = "var(--alto)"; 
-                alerta.style.display = 'block'; // DISPARA ALERTA
-            }
-            if(total === 7) marcar('gad');
+            if(soma < 10) { t.innerText = "Ansiedade Leve"; t.style.background = "var(--leve)"; }
+            else if(soma < 15) { t.innerText = "Ansiedade Moderada"; t.style.background = "var(--moderado)"; }
+            else { t.innerText = "Ansiedade Elevada"; t.style.background = "var(--alto)"; }
+            checkAlerts();
         }
 
-        function setVal(cat, val, btn) {
+        function validarGad() {
+            let ok = true;
+            document.querySelectorAll('.g-in').forEach(i => { if(i.value === "") ok = false; });
+            if(!ok) { alert("Responda todas as 7 perguntas para continuar."); return; }
+            ir(2);
+        }
+
+        function sel(btn, cat, val) {
             btn.parentElement.querySelectorAll('div').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            jornada[cat] = val;
-            marcar(cat === 'sono' ? 'sono' : 'm');
+            d[cat] = val;
         }
 
-        function setEva(turno, val, btn) {
+        function selEva(btn, turno, val) {
             btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            jornada[turno === 'dorM' ? 'm' : (turno === 'dorT' ? 't' : 'n')] = val;
-            marcar(turno === 'dorM' ? 'm' : (turno === 'dorT' ? 't' : 'n'));
-            checkAlertaEnvio();
+            d[turno] = val;
+            checkAlerts();
         }
 
-        function marcar(passo) {
-            document.getElementById('card-' + passo).classList.add('concluido');
-            const s = document.getElementById('status-' + passo);
-            s.innerText = "Concluído ✅"; s.classList.add('badge-check');
-            checkAlertaEnvio();
-        }
-
-        function checkAlertaEnvio() {
-            const btn = document.getElementById('btn-envio');
-            const alerta = (jornada.m >= 7 || jornada.t >= 7 || jornada.n >= 7 || jornada.gad >= 10);
-            if(alerta) {
-                btn.disabled = false; btn.innerText = "ENVIAR ALERTA AO RUI 🚀"; btn.style.background = "var(--alto)";
+        function checkAlerts() {
+            const alertaBox = document.getElementById('alerta-clinico');
+            const btnFinal = document.getElementById('btn-final');
+            const ehAlerta = (d.m >= 7 || d.t >= 7 || d.n >= 7 || d.gad >= 10);
+            
+            if(ehAlerta) {
+                if(alertaBox) alertaBox.style.display = 'block';
+                if(btnFinal) { btnFinal.disabled = false; btnFinal.innerText = "ENVIAR RELATÓRIO DE ALERTA 🚀"; btnFinal.style.background = "var(--alto)"; }
             } else {
-                btn.disabled = true; btn.innerText = "MONITORAMENTO NORMAL"; btn.style.background = "#ccc";
+                if(alertaBox) alertaBox.style.display = 'none';
+                if(btnFinal) { btnFinal.disabled = true; btnFinal.innerText = "MONITORAMENTO NORMAL"; btnFinal.style.background = "#ccc"; }
             }
         }
 
-        function enviarRelatorio() {
-            let msg = `*ALERTA MÉTODO 360*%0AGAD-7: ${jornada.gad}%0AM: ${jornada.m} | T: ${jornada.t} | N: ${jornada.n}`;
+        function finalizar() {
+            let msg = `*ALERTA MÉTODO 360*%0ADATA: ${document.getElementById('data-dia').value}%0AGAD-7: ${d.gad}%0ASONO: ${d.sono}%0AEVA: M${d.m}/T${d.t}/N${d.n}%0AMEDS: ${document.getElementById('meds').value}`;
             window.open(`https://wa.me/5538991717426?text=${msg}`, '_blank');
         }
     </script>
