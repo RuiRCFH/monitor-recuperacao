@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Energética | Rui Ribeiro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f0f2f5; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; padding: 20px; }
+
+        .card-camera {
+            background: #fff; border-radius: 30px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 450px; margin: 0 auto;
+            text-align: center; border-top: 8px solid var(--dourado);
+        }
+
+        .instrucoes { background: #eef2f7; padding: 15px; border-radius: 15px; text-align: left; margin-bottom: 20px; }
+        .instrucoes li { margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: #555; }
+
+        /* ÁREA DA CÂMERA */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #ddd;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 3px solid #ccc;
+        }
+
+        /* MOLDURA GUIA (Onde o paciente encaixa a língua) */
+        .moldura-guia {
+            position: absolute;
+            width: 60%; /* Largura da língua */
+            height: 70%; /* Altura da língua */
+            border: 4px dashed var(--dourado); /* Linha pontilhada guia */
+            border-radius: 50% 50% 40% 40%; /* Formato aproximado de U */
+            box-shadow: 0 0 0 100px rgba(0, 51, 102, 0.5); /* Escurece a área fora da moldura */
+            pointer-events: none; /* Deixa o clique passar para a câmera */
+            z-index: 10;
+        }
+        .texto-guia {
+             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+             color: white; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+             z-index: 11; pointer-events: none;
+        }
+
+        #preview-img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .placeholder-icon { font-size: 4rem; color: #aaa; }
+
+        /* BOTÕES */
+        .btn-acao { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; font-size: 1rem; margin-bottom: 10px; transition: 0.2s; }
+        .btn-azul { background: var(--azul); color: white; }
+        .btn-dourado { background: white; border: 2px solid var(--dourado); color: var(--dourado); }
+        
+        /* Input de arquivo escondido */
+        #input-camera { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card-camera">
+        <h4 style="color: var(--azul); font-weight: 700;">ANÁLISE ENERGÉTICA</h4>
+        <p style="color: var(--dourado); font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">BIOMETRIA LINGUAL</p>
+
+        <div class="instrucoes">
+            <ul class="ps-3 mb-0">
+                <li>💡 Use luz natural (perto de uma janela).</li>
+                <li>👅 Relaxe a língua, não force para fora.</li>
+                <li>📸 Encaixe a língua dentro da moldura pontilhada.</li>
+            </ul>
+        </div>
+
+        <div class="camera-container" onclick="acionarCamera()">
+            <div class="moldura-guia"></div>
+            <span class="texto-guia" id="texto-guia">TOQUE PARA INICIAR</span>
+            
+            <img id="preview-img" src="">
+            <span class="placeholder-icon" id="icon-cam">📷</span>
+        </div>
+     
+        <input type="file" id="input-camera" accept="image/*" capture="environment" onchange="mostrarPreview(event)">
+
+        <div id="botoes-iniciais">
+            <button class="btn-acao btn-azul" onclick="acionarCamera()">ABRIR CÂMERA</button>
+        </div>
+
+        <div id="botoes-finais" style="display: none;">
+            <button class="btn-acao btn-azul" onclick="enviarFoto()">ENVIAR PARA RUI RIBEIRO 🚀</button>
+            <button class="btn-acao btn-dourado" onclick="acionarCamera()">TIRAR OUTRA FOTO 🔄</button>
+        </div>
+
+    </div>
+
+    <script>
+        function acionarCamera() {
+            // Simula o clique no input de arquivo escondido
+            document.getElementById('input-camera').click();
+        }
+
+        function mostrarPreview(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('preview-img');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    
+                    // Esconde elementos de guia
+                    document.getElementById('icon-cam').style.display = 'none';
+                    document.getElementById('texto-guia').style.display = 'none';
+                    // Opcional: Esconder a moldura após tirar a foto para ver a imagem limpa
+                    // document.querySelector('.moldura-guia').style.display = 'none';
+
+                    // Troca os botões
+                    document.getElementById('botoes-iniciais').style.display = 'none';
+                    document.getElementById('botoes-finais').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function enviarFoto() {
+            alert("Em um app real, esta foto seria enviada para o seu servidor ou WhatsApp!");
+            // Aqui entraria a lógica de integração com o seu backend ou API do WhatsApp
+        }
+    </script>
+</body>
+</html>
