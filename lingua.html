@@ -3,115 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio-Língua 360 | Rui Ribeiro</title>
+    <title>Bio-Língua PRO | Rui Ribeiro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --azul: #003366; --dourado: #B8860B; }
-        body { font-family: sans-serif; background: #f4f7f6; text-align: center; padding: 10px; }
-        .camera-box { position: relative; width: 100%; max-width: 400px; margin: auto; border-radius: 20px; overflow: hidden; background: #000; height: 500px; }
-        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        canvas { display: none; }
+        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--fundo); color: #333; }
         
-        /* Moldura em tempo real */
-        .overlay { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 4px dashed var(--dourado); border-radius: 50% 50% 45% 45%;
-            transform: scale(0.6); pointer-events: none; z-index: 10;
-        }
-        .instrucao { font-size: 0.8rem; font-weight: bold; color: var(--azul); margin-top: 10px; }
-        .btn-click { background: var(--azul); color: white; padding: 20px; border-radius: 50%; border: 5px solid white; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 20; }
+        /* Área da Foto - Fixa no Topo */
+        #container-foto { position: sticky; top: 0; z-index: 100; background: #000; height: 300px; overflow: hidden; border-bottom: 5px solid var(--dourado); }
+        video, #preview { width: 100%; height: 100%; object-fit: cover; }
+        .moldura { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 180px; height: 240px; border: 3px dashed rgba(184, 134, 11, 0.6); border-radius: 50% 50% 45% 45%; pointer-events: none; }
         
-        /* Painel de Análise */
-        #painel-analise { display: none; background: white; padding: 20px; border-radius: 20px; margin-top: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .sugestao-box { background: #eef7ff; padding: 15px; border-radius: 15px; border-left: 5px solid var(--azul); margin-top: 15px; text-align: left; }
-    </style>
-</head>
-<body>
-
-    <h4 style="color: var(--azul); font-weight: 800;">MÉTODO 360: BIO-LÍNGUA</h4>
-
-    <div id="etapa-camera">
-        <div class="camera-box">
-            <video id="video" autoplay playsinline></video>
-            <div class="overlay"></div>
-            <button class="btn-click" onclick="tirarFoto()">📸</button>
-        </div>
-        <p class="instrucao">ENCAIXE A LÍNGUA NA MOLDURA E CLIQUE NO BOTÃO</p>
-    </div>
-
-    <canvas id="canvas"></canvas>
-
-    <div id="painel-analise">
-        <h5 class="fw-bold">ANÁLISE VISUAL</h5>
-        <img id="foto-preview" style="width: 150px; border-radius: 10px; margin-bottom: 15px;">
+        /* Botões de Seleção Rápida */
+        .secao-tecnica { padding: 20px; max-width: 500px; margin: auto; }
+        .label-cat { font-size: 0.75rem; font-weight: 800; color: var(--azul); text-transform: uppercase; margin-top: 15px; display: block; letter-spacing: 1px; }
+        .btn-grupo { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 10px; }
+        .btn-check { flex: 0 0 auto; padding: 10px 15px; border-radius: 12px; border: 1px solid #ddd; background: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-check.active { background: var(--azul); color: white; border-color: var(--azul); }
         
-        <div class="text-start mb-3">
-            <label class="small fw-bold">COR DO CORPO:</label>
-            <select id="cor" class="form-select" onchange="sugerir()">
-                <option value="">Selecione...</option>
-                <option value="palida">Pálida (Branca/Clara)</option>
-                <option value="rosada">Rosada (Normal)</option>
-                <option value="vermelha">Vermelha (Calor)</option>
-                <option value="roxa">Roxa/Azulada (Estase)</option>
-            </select>
-        </div>
-
-        <div class="text-start mb-3">
-            <label class="small fw-bold">SABURRA (CAPA):</label>
-            <select id="saburra" class="form-select" onchange="sugerir()">
-                <option value="">Selecione...</option>
-                <option value="nenhuma">Sem saburra (Espelhada)</option>
-                <option value="branca">Branca Fina/Grossa</option>
-                <option value="amarela">Amarela (Calor)</option>
-            </select>
-        </div>
-
-        <div id="resultado-sugestao" class="sugestao-box" style="display:none;">
-            <p class="mb-1"><strong>💡 Sugestão Energética:</strong></p>
-            <span id="texto-sugestao" class="text-primary fw-bold">...</span>
-        </div>
-
-        <button class="btn btn-primary w-100 mt-3 p-3 fw-bold" onclick="location.reload()">NOVA ANÁLISE</button>
-    </div>
-
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const etapaCamera = document.getElementById('etapa-camera');
-        const painelAnalise = document.getElementById('painel-analise');
-
-        // Iniciar câmera ao vivo
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-            .then(stream => { video.srcObject = stream; })
-            .catch(err => { alert("Erro ao acessar câmera. Verifique as permissões."); });
-
-        function tirarFoto() {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            document.getElementById('foto-preview').src = canvas.toDataURL('image/png');
-            etapaCamera.style.display = 'none';
-            painelAnalise.style.display = 'block';
-        }
-
-        function sugerir() {
-            const cor = document.getElementById('cor').value;
-            const sab = document.getElementById('saburra').value;
-            const res = document.getElementById('resultado-sugestao');
-            const texto = document.getElementById('texto-sugestao');
-
-            if(cor && sab) {
-                res.style.display = 'block';
-                if(cor === 'palida' && sab === 'branca') texto.innerText = "Deficiência de Qi ou Yang (Frio Interno).";
-                else if(cor === 'vermelha' && sab === 'amarela') texto.innerText = "Excesso de Calor ou Umidade-Calor.";
-                else if(cor === 'vermelha' && sab === 'nenhuma') texto.innerText = "Deficiência de Yin (Fogo por Vazio).";
-                else if(cor === 'roxa') texto.innerText = "Estagnação de Sangue (Xue).";
-                else if(cor === 'rosada' && sab === 'branca') texto.innerText = "Padrão dentro da normalidade energética.";
-                else texto.innerText = "Padrão misto. Necessário avaliar forma e marcas dentais.";
-            }
-        }
-    </script>
-</body>
-</html>
+        /* Resultado Inteligente */
+        #painel-diagnostico { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); margin-top: 20px; border: 2px solid var(--azul); display: none; }
+        .badge-sí
