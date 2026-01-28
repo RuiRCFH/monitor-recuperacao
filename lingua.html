@@ -3,133 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise Energética | Rui Ribeiro</title>
+    <title>Bio-Língua 360 | Rui Ribeiro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f0f2f5; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo); color: #333; padding: 20px; }
-
-        .card-camera {
-            background: #fff; border-radius: 30px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 450px; margin: 0 auto;
-            text-align: center; border-top: 8px solid var(--dourado);
-        }
-
-        .instrucoes { background: #eef2f7; padding: 15px; border-radius: 15px; text-align: left; margin-bottom: 20px; }
-        .instrucoes li { margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: #555; }
-
-        /* ÁREA DA CÂMERA */
-        .camera-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            background: #ddd;
-            border-radius: 20px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            border: 3px solid #ccc;
-        }
-
-        /* MOLDURA GUIA (Onde o paciente encaixa a língua) */
-        .moldura-guia {
-            position: absolute;
-            width: 60%; /* Largura da língua */
-            height: 70%; /* Altura da língua */
-            border: 4px dashed var(--dourado); /* Linha pontilhada guia */
-            border-radius: 50% 50% 40% 40%; /* Formato aproximado de U */
-            box-shadow: 0 0 0 100px rgba(0, 51, 102, 0.5); /* Escurece a área fora da moldura */
-            pointer-events: none; /* Deixa o clique passar para a câmera */
-            z-index: 10;
-        }
-        .texto-guia {
-             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-             color: white; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-             z-index: 11; pointer-events: none;
-        }
-
-        #preview-img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .placeholder-icon { font-size: 4rem; color: #aaa; }
-
-        /* BOTÕES */
-        .btn-acao { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; font-size: 1rem; margin-bottom: 10px; transition: 0.2s; }
-        .btn-azul { background: var(--azul); color: white; }
-        .btn-dourado { background: white; border: 2px solid var(--dourado); color: var(--dourado); }
+        :root { --azul: #003366; --dourado: #B8860B; }
+        body { font-family: sans-serif; background: #f4f7f6; text-align: center; padding: 10px; }
+        .camera-box { position: relative; width: 100%; max-width: 400px; margin: auto; border-radius: 20px; overflow: hidden; background: #000; height: 500px; }
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        canvas { display: none; }
         
-        /* Input de arquivo escondido */
-        #input-camera { display: none; }
+        /* Moldura em tempo real */
+        .overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 4px dashed var(--dourado); border-radius: 50% 50% 45% 45%;
+            transform: scale(0.6); pointer-events: none; z-index: 10;
+        }
+        .instrucao { font-size: 0.8rem; font-weight: bold; color: var(--azul); margin-top: 10px; }
+        .btn-click { background: var(--azul); color: white; padding: 20px; border-radius: 50%; border: 5px solid white; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 20; }
+        
+        /* Painel de Análise */
+        #painel-analise { display: none; background: white; padding: 20px; border-radius: 20px; margin-top: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .sugestao-box { background: #eef7ff; padding: 15px; border-radius: 15px; border-left: 5px solid var(--azul); margin-top: 15px; text-align: left; }
     </style>
 </head>
 <body>
 
-    <div class="card-camera">
-        <h4 style="color: var(--azul); font-weight: 700;">ANÁLISE ENERGÉTICA</h4>
-        <p style="color: var(--dourado); font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">BIOMETRIA LINGUAL</p>
+    <h4 style="color: var(--azul); font-weight: 800;">MÉTODO 360: BIO-LÍNGUA</h4>
 
-        <div class="instrucoes">
-            <ul class="ps-3 mb-0">
-                <li>💡 Use luz natural (perto de uma janela).</li>
-                <li>👅 Relaxe a língua, não force para fora.</li>
-                <li>📸 Encaixe a língua dentro da moldura pontilhada.</li>
-            </ul>
+    <div id="etapa-camera">
+        <div class="camera-box">
+            <video id="video" autoplay playsinline></video>
+            <div class="overlay"></div>
+            <button class="btn-click" onclick="tirarFoto()">📸</button>
+        </div>
+        <p class="instrucao">ENCAIXE A LÍNGUA NA MOLDURA E CLIQUE NO BOTÃO</p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="painel-analise">
+        <h5 class="fw-bold">ANÁLISE VISUAL</h5>
+        <img id="foto-preview" style="width: 150px; border-radius: 10px; margin-bottom: 15px;">
+        
+        <div class="text-start mb-3">
+            <label class="small fw-bold">COR DO CORPO:</label>
+            <select id="cor" class="form-select" onchange="sugerir()">
+                <option value="">Selecione...</option>
+                <option value="palida">Pálida (Branca/Clara)</option>
+                <option value="rosada">Rosada (Normal)</option>
+                <option value="vermelha">Vermelha (Calor)</option>
+                <option value="roxa">Roxa/Azulada (Estase)</option>
+            </select>
         </div>
 
-        <div class="camera-container" onclick="acionarCamera()">
-            <div class="moldura-guia"></div>
-            <span class="texto-guia" id="texto-guia">TOQUE PARA INICIAR</span>
-            
-            <img id="preview-img" src="">
-            <span class="placeholder-icon" id="icon-cam">📷</span>
-        </div>
-     
-        <input type="file" id="input-camera" accept="image/*" capture="environment" onchange="mostrarPreview(event)">
-
-        <div id="botoes-iniciais">
-            <button class="btn-acao btn-azul" onclick="acionarCamera()">ABRIR CÂMERA</button>
+        <div class="text-start mb-3">
+            <label class="small fw-bold">SABURRA (CAPA):</label>
+            <select id="saburra" class="form-select" onchange="sugerir()">
+                <option value="">Selecione...</option>
+                <option value="nenhuma">Sem saburra (Espelhada)</option>
+                <option value="branca">Branca Fina/Grossa</option>
+                <option value="amarela">Amarela (Calor)</option>
+            </select>
         </div>
 
-        <div id="botoes-finais" style="display: none;">
-            <button class="btn-acao btn-azul" onclick="enviarFoto()">ENVIAR PARA RUI RIBEIRO 🚀</button>
-            <button class="btn-acao btn-dourado" onclick="acionarCamera()">TIRAR OUTRA FOTO 🔄</button>
+        <div id="resultado-sugestao" class="sugestao-box" style="display:none;">
+            <p class="mb-1"><strong>💡 Sugestão Energética:</strong></p>
+            <span id="texto-sugestao" class="text-primary fw-bold">...</span>
         </div>
 
+        <button class="btn btn-primary w-100 mt-3 p-3 fw-bold" onclick="location.reload()">NOVA ANÁLISE</button>
     </div>
 
     <script>
-        function acionarCamera() {
-            // Simula o clique no input de arquivo escondido
-            document.getElementById('input-camera').click();
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const etapaCamera = document.getElementById('etapa-camera');
+        const painelAnalise = document.getElementById('painel-analise');
+
+        // Iniciar câmera ao vivo
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => { alert("Erro ao acessar câmera. Verifique as permissões."); });
+
+        function tirarFoto() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            document.getElementById('foto-preview').src = canvas.toDataURL('image/png');
+            etapaCamera.style.display = 'none';
+            painelAnalise.style.display = 'block';
         }
 
-        function mostrarPreview(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.getElementById('preview-img');
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                    
-                    // Esconde elementos de guia
-                    document.getElementById('icon-cam').style.display = 'none';
-                    document.getElementById('texto-guia').style.display = 'none';
-                    // Opcional: Esconder a moldura após tirar a foto para ver a imagem limpa
-                    // document.querySelector('.moldura-guia').style.display = 'none';
+        function sugerir() {
+            const cor = document.getElementById('cor').value;
+            const sab = document.getElementById('saburra').value;
+            const res = document.getElementById('resultado-sugestao');
+            const texto = document.getElementById('texto-sugestao');
 
-                    // Troca os botões
-                    document.getElementById('botoes-iniciais').style.display = 'none';
-                    document.getElementById('botoes-finais').style.display = 'block';
-                }
-                reader.readAsDataURL(file);
+            if(cor && sab) {
+                res.style.display = 'block';
+                if(cor === 'palida' && sab === 'branca') texto.innerText = "Deficiência de Qi ou Yang (Frio Interno).";
+                else if(cor === 'vermelha' && sab === 'amarela') texto.innerText = "Excesso de Calor ou Umidade-Calor.";
+                else if(cor === 'vermelha' && sab === 'nenhuma') texto.innerText = "Deficiência de Yin (Fogo por Vazio).";
+                else if(cor === 'roxa') texto.innerText = "Estagnação de Sangue (Xue).";
+                else if(cor === 'rosada' && sab === 'branca') texto.innerText = "Padrão dentro da normalidade energética.";
+                else texto.innerText = "Padrão misto. Necessário avaliar forma e marcas dentais.";
             }
-        }
-
-        function enviarFoto() {
-            alert("Em um app real, esta foto seria enviada para o seu servidor ou WhatsApp!");
-            // Aqui entraria a lógica de integração com o seu backend ou API do WhatsApp
         }
     </script>
 </body>
