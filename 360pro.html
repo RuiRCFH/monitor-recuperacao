@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Método 360 PRO | Rui Ribeiro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --azul: #003366; --dourado: #B8860B; }
+        body { background: #f4f7f6; font-family: sans-serif; }
+        .tela { display: none; padding: 20px; max-width: 500px; margin: auto; }
+        .ativa { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .card-pro { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 8px solid var(--azul); }
+        .btn-pro { background: var(--azul); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; margin-top: 15px; }
+        
+        /* Estilo Câmera */
+        #visor-lingua { width: 100%; height: 300px; background: #000; border-radius: 15px; position: relative; overflow: hidden; margin: 15px 0; }
+        video, #foto-final { width: 100%; height: 100%; object-fit: cover; }
+        .moldura { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 180px; border: 2px dashed var(--dourado); border-radius: 50% 50% 40% 40%; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div id="tela1" class="tela ativa">
+        <div class="card-pro text-center">
+            <h3 class="fw-bold" style="color:var(--azul)">MÉTODO 360 PRO</h3>
+            <p class="text-muted">Avaliação Completa: Mental, Fisiológica e Energética.</p>
+            <button class="btn-pro" onclick="irPara(2)">INICIAR DIAGNÓSTICO</button>
+        </div>
+    </div>
+
+    <div id="tela2" class="tela">
+        <div class="card-pro">
+            <h5 class="fw-bold">1. Nível de Ansiedade</h5>
+            <p class="small">Como se sentiu nos últimos dias?</p>
+            <select id="ansiedade" class="form-select mb-3">
+                <option value="0">Tranquilo</option>
+                <option value="1">Levemente ansioso</option>
+                <option value="2">Muito ansioso</option>
+                <option value="3">Incapaz de relaxar</option>
+            </select>
+            <button class="btn-pro" onclick="irPara(3)">PRÓXIMO: SONO</button>
+        </div>
+    </div>
+
+    <div id="tela3" class="tela">
+        <div class="card-pro">
+            <h5 class="fw-bold">2. Qualidade do Sono</h5>
+            <p class="small">Como foi seu descanso ontem?</p>
+            <select id="sono" class="form-select mb-3">
+                <option value="bom">Dormi bem</option>
+                <option value="medio">Acordei cansado</option>
+                <option value="ruim">Insônia / Sono agitado</option>
+            </select>
+            <button class="btn-pro" onclick="iniciarLingua()">PRÓXIMO: BIO-LÍNGUA</button>
+        </div>
+    </div>
+
+    <div id="tela4" class="tela">
+        <div class="card-pro">
+            <h5 class="fw-bold">3. Biometria Energética</h5>
+            <p class="small">Enquadre sua língua na moldura e capture.</p>
+            <div id="visor-lingua">
+                <video id="v" autoplay playsinline></video>
+                <img id="foto-final" style="display:none;">
+                <div class="moldura"></div>
+            </div>
+            <button id="btn-foto" class="btn btn-light w-100 fw-bold border" onclick="tirarFoto()">📸 CAPTURAR LÍNGUA</button>
+            
+            <div id="ajuste-tecnico" style="display:none;" class="mt-3">
+                <label class="small fw-bold">Cor Observada:</label>
+                <select id="cor-l" class="form-select mb-2" onchange="gerarRelatorio()">
+                    <option value="">Selecione...</option>
+                    <option value="palida">Pálida</option>
+                    <option value="rosada">Normal</option>
+                    <option value="vermelha">Vermelha</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div id="tela5" class="tela">
+        <div class="card-pro">
+            <h4 class="fw-bold text-primary">SÍNTESE 360</h4>
+            <div id="resumo-final" class="p-3 bg-light rounded small"></div>
+            <button class="btn-pro" onclick="location.reload()">NOVA AVALIAÇÃO</button>
+        </div>
+    </div>
+
+    <script>
+        function irPara(tela) {
+            document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+            document.getElementById('tela' + tela).classList.add('ativa');
+        }
+
+        function iniciarLingua() {
+            irPara(4);
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+                .then(s => { document.getElementById('v').srcObject = s; });
+        }
+
+        function tirarFoto() {
+            const v = document.getElementById('v');
+            const f = document.getElementById('foto-final');
+            const canvas = document.createElement('canvas');
+            canvas.width = v.videoWidth; canvas.height = v.videoHeight;
+            canvas.getContext('2d').drawImage(v, 0, 0);
+            f.src = canvas.toDataURL('image/png');
+            v.style.display = 'none'; f.style.display = 'block';
+            document.getElementById('btn-foto').style.display = 'none';
+            document.getElementById('ajuste-tecnico').style.display = 'block';
+        }
+
+        function gerarRelatorio() {
+            const ans = document.getElementById('ansiedade').value;
+            const son = document.getElementById('sono').value;
+            const cor = document.getElementById('cor-l').value;
+            
+            let diag = "";
+            if(ans >= 2 && cor === 'vermelha') diag = "🔥 <b>Calor Excessivo:</b> Ansiedade alta refletida em calor interno.";
+            else if(son === 'ruim' && cor === 'palida') diag = "❄️ <b>Deficiência de Qi:</b> O corpo não tem energia para reparar no sono.";
+            else diag = "⚖️ <b>Padrão Misto:</b> Necessário equilíbrio geral.";
+
+            document.getElementById('resumo-final').innerHTML = `
+                <b>Ansiedade:</b> Nível ${ans}<br>
+                <b>Sono:</b> ${son}<br>
+                <b>Língua:</b> ${cor}<br><hr>
+                ${diag}
+            `;
+            irPara(5);
+        }
+    </script>
+</body>
+</html>
