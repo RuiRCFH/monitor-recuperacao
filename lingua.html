@@ -3,147 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio-Língua Auto | Rui Ribeiro</title>
+    <title>MTC Auto-Check | Rui Ribeiro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --azul: #003366; --dourado: #B8860B; --fundo: #f4f7f6; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--fundo); color: #333; padding-bottom: 50px; }
-        
-        #container-foto { position: sticky; top: 0; z-index: 100; background: #000; height: 280px; overflow: hidden; border-bottom: 4px solid var(--dourado); }
-        video, #preview { width: 100%; height: 100%; object-fit: cover; }
-        .moldura { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 160px; height: 210px; border: 2px dashed var(--dourado); border-radius: 50% 50% 45% 45%; pointer-events: none; opacity: 0.6; }
-        
-        .secao-tecnica { padding: 15px; max-width: 600px; margin: auto; }
-        .label-cat { font-size: 0.7rem; font-weight: 800; color: var(--azul); text-transform: uppercase; margin: 15px 0 5px; display: block; letter-spacing: 1px; }
-        .btn-grupo { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .btn-check { flex: 0 0 auto; padding: 8px 12px; border-radius: 10px; border: 1px solid #ccc; background: #fff; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-        .btn-check.active { background: var(--azul); color: white; border-color: var(--azul); }
-        
-        #painel-diagnostico { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 20px; border-top: 10px solid var(--azul); display: none; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .resumo-sintomas { font-size: 0.75rem; color: #666; font-style: italic; margin-bottom: 10px; }
-        .btn-camera-float { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: #fff; border: none; font-size: 1.2rem; z-index: 102; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        :root { --azul: #003366; --dourado: #B8860B; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding-bottom: 50px; }
+        #visor { position: sticky; top: 0; z-index: 100; height: 260px; background: #000; border-bottom: 4px solid var(--dourado); overflow: hidden; }
+        video, #foto { width: 100%; height: 100%; object-fit: cover; }
+        .moldura { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 200px; border: 2px dashed var(--dourado); border-radius: 50% 50% 45% 45%; pointer-events: none; }
+        .btn-snap { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; border-radius: 50%; background: #fff; border: none; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 101; }
+        .card-diag { background: #fff; border-radius: 20px; padding: 20px; margin: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid var(--azul); display: none; }
+        .label-p { font-size: 0.7rem; font-weight: 800; color: var(--azul); text-transform: uppercase; margin: 15px 0 5px; display: block; }
+        .btn-opt { padding: 8px 12px; border-radius: 10px; border: 1px solid #ddd; background: #fff; font-size: 0.8rem; font-weight: 600; margin-right: 5px; margin-bottom: 5px; }
+        .btn-opt.active { background: var(--azul); color: white; border-color: var(--azul); }
     </style>
 </head>
 <body>
 
-    <div id="container-foto">
-        <video id="video" autoplay playsinline></video>
-        <img id="preview" style="display:none;">
-        <div class="moldura" id="moldura-v"></div>
-        <button id="btn-snap" class="btn-camera-float" onclick="capturar()">📸</button>
+    <div id="visor">
+        <video id="v" autoplay playsinline></video>
+        <img id="foto" style="display:none;">
+        <div class="moldura"></div>
+        <button class="btn-snap" onclick="snap()">📸</button>
     </div>
 
-    <div class="secao-tecnica">
-        <div id="status-analise" class="text-center mb-3">
-            <h6 class="fw-bold m-0" style="color:var(--azul)">AUTOAVALIAÇÃO ENERGÉTICA</h6>
-            <p class="small text-muted">Tire a foto para liberar os seletores</p>
+    <div class="container py-3">
+        <h6 class="text-center fw-bold text-primary mb-3">AUTOAVALIAÇÃO BIO-ENERGÉTICA</h6>
+        
+        <div id="campos" style="opacity:0.4; pointer-events:none;">
+            <span class="label-p">1. Cor Predominante</span>
+            <div id="c-cor">
+                <button class="btn-opt" onclick="sel('cor','palida',this)">Pálida</button>
+                <button class="btn-opt" onclick="sel('cor','rosada',this)">Rosada</button>
+                <button class="btn-opt" onclick="sel('cor','vermelha',this)">Vermelha</button>
+                <button class="btn-opt" onclick="sel('cor','roxa',this)">Roxa</button>
+            </div>
+
+            <span class="label-p">2. Forma e Bordas</span>
+            <div id="c-forma">
+                <button class="btn-opt" onclick="sel('forma','normal',this)">Normal</button>
+                <button class="btn-opt" onclick="sel('forma','inchada',this)">Inchada</button>
+                <button class="btn-opt" onclick="sel('forma','marcas',this)">Marcas Dente</button>
+                <button class="btn-opt" onclick="sel('forma','rachada',this)">Rachaduras</button>
+                <button class="btn-opt" onclick="sel('forma','desviada',this)">Desviada</button>
+            </div>
+
+            <span class="label-p">3. Saburra (Capa)</span>
+            <div id="c-sab">
+                <button class="btn-opt" onclick="sel('sab','branca',this)">Branca</button>
+                <button class="btn-opt" onclick="sel('sab','amarela',this)">Amarela</button>
+                <button class="btn-opt" onclick="sel('sab','gordurosa',this)">Gordurosa</button>
+                <button class="btn-opt" onclick="sel('sab','nenhuma',this)">Sem Capa</button>
+            </div>
         </div>
 
-        <div id="analise-campos" style="opacity: 0.4; pointer-events: none;">
-            <span class="label-cat">1. Cor do Corpo</span>
-            <div class="btn-grupo">
-                <div class="btn-check" onclick="set('cor', 'palida', this)">Pálida</div>
-                <div class="btn-check" onclick="set('cor', 'rosada', this)">Normal</div>
-                <div class="btn-check" onclick="set('cor', 'vermelha', this)">Vermelha</div>
-                <div class="btn-check" onclick="set('cor', 'escarlate', this)">Vermelha Escura</div>
-                <div class="btn-check" onclick="set('cor', 'roxa', this)">Roxa/Azul</div>
+        <div id="resultado" class="card-diag">
+            <h5 id="r-tit" class="fw-bold mb-1">...</h5>
+            <p id="r-exp" class="small text-muted mb-3">...</p>
+            <div style="background:#fff9c4; padding:10px; border-radius:10px; border-left:4px solid #fbc02d;">
+                <p class="small fw-bold mb-0">💡 Sugestão:</p>
+                <p id="r-sug" class="small mb-0">...</p>
             </div>
-
-            <span class="label-cat">2. Forma e Bordas</span>
-            <div class="btn-grupo">
-                <div class="btn-check" onclick="set('forma', 'normal', this)">Normal</div>
-                <div class="btn-check" onclick="set('forma', 'inchada', this)">Inchada</div>
-                <div class="btn-check" onclick="set('forma', 'marcas', this)">Marcas Dente</div>
-                <div class="btn-check" onclick="set('forma', 'fina', this)">Fina/Curta</div>
-                <div class="btn-check" onclick="set('forma', 'rachada', this)">Rachaduras</div>
-            </div>
-
-            <span class="label-cat">3. Saburra (Cobertura)</span>
-            <div class="btn-grupo">
-                <div class="btn-check" onclick="set('sab', 'nenhuma', this)">Ausente</div>
-                <div class="btn-check" onclick="set('sab', 'branca_f', this)">Branca Fina</div>
-                <div class="btn-check" onclick="set('sab', 'branca_g', this)">Branca Grossa</div>
-                <div class="btn-check" onclick="set('sab', 'amarela', this)">Amarela</div>
-                <div class="btn-check" onclick="set('sab', 'gordurosa', this)">Gordurosa</div>
-            </div>
-
-            <div id="painel-diagnostico">
-                <p class="resumo-sintomas" id="sintomas-selecionados"></p>
-                <h4 id="diag-titulo" class="fw-bold text-primary mb-1">Analisando...</h4>
-                <div id="diag-explica" class="small text-dark mb-3">...</div>
-                
-                <div style="background: #fff8e1; padding: 10px; border-radius: 10px; border-left: 4px solid #ffc107;">
-                    <p class="small fw-bold mb-1">🌱 Sugestão Terapêutica:</p>
-                    <p id="diag-sugere" class="small mb-0">...</p>
-                </div>
-                
-                <button class="btn btn-outline-secondary btn-sm w-100 mt-4" onclick="location.reload()">Refazer Nova Foto</button>
-            </div>
+            <button class="btn btn-dark btn-sm w-100 mt-3" onclick="location.reload()">Nova Análise</button>
         </div>
     </div>
 
-    <canvas id="canvas" style="display:none;"></canvas>
+    <canvas id="c" style="display:none;"></canvas>
 
     <script>
-        const video = document.getElementById('video');
-        const preview = document.getElementById('preview');
-        const canvas = document.getElementById('canvas');
-        let d = { cor: "", forma: "", sab: "" };
+        let res = { cor: "", forma: "", sab: "" };
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => { document.getElementById('v').srcObject = s; });
 
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-            .then(s => { video.srcObject = s; })
-            .catch(e => { alert("Câmera bloqueada. Verifique permissões."); });
-
-        function capturar() {
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            preview.src = canvas.toDataURL('image/png');
-            video.style.display = 'none'; preview.style.display = 'block';
-            document.getElementById('btn-snap').style.display = 'none';
-            document.getElementById('moldura-v').style.display = 'none';
-            document.getElementById('analise-campos').style.opacity = '1';
-            document.getElementById('analise-campos').style.pointerEvents = 'auto';
-            document.getElementById('status-analise').innerHTML = '<h6 class="fw-bold text-success">FOTO CAPTURADA ✅</h6>';
+        function snap() {
+            const canvas = document.getElementById('c');
+            const v = document.getElementById('v');
+            canvas.width = v.videoWidth; canvas.height = v.videoHeight;
+            canvas.getContext('2d').drawImage(v, 0, 0);
+            document.getElementById('foto').src = canvas.toDataURL('image/png');
+            v.style.display = 'none'; document.getElementById('foto').style.display = 'block';
+            document.getElementById('campos').style.opacity = '1';
+            document.getElementById('campos').style.pointerEvents = 'auto';
         }
 
-        function set(cat, val, el) {
-            el.parentElement.querySelectorAll('.btn-check').forEach(b => b.classList.remove('active'));
+        function sel(cat, val, el) {
+            el.parentElement.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            d[cat] = val;
-            if(d.cor && d.forma && d.sab) processar();
+            res[cat] = val;
+            if(res.cor && res.forma && res.sab) calc();
         }
 
-        function processar() {
-            const p = document.getElementById('painel-diagnostico');
-            const tit = document.getElementById('diag-titulo');
-            const exp = document.getElementById('diag-explica');
-            const sug = document.getElementById('diag-sugere');
-            p.style.display = 'block';
+        function calc() {
+            const r = document.getElementById('resultado');
+            r.style.display = 'block';
+            let t = "Padrão Misto"; let e = "Sinais complexos. Recomenda-se consulta."; let s = "Avalie hábitos de sono e stress.";
 
-            let r = { t: "Padrão Misto", e: "Sinais complexos detectados. Recomenda-se avaliação detalhada.", s: "Consulte seu terapeuta." };
-
-            // MATRIZ DE TODAS AS SÍNDROMES (Lógica Expandida)
-            if(d.cor==='palida' && d.forma==='marcas') {
-                r = { t: "Deficiência de Qi do Baço", e: "A língua pálida com marcas de dentes indica que o corpo não tem energia suficiente para processar líquidos.", s: "Evite alimentos crus/gelados. Use pontos E36 e BP6." };
-            } else if(d.cor==='palida' && d.forma==='fina') {
-                r = { t: "Deficiência de Sangue (Xue)", e: "Cor clara e corpo pequeno mostram falta de nutrição nos tecidos.", s: "Inclua raízes escuras e repouso. Ponto BP6 e VC4." };
-            } else if(d.cor==='vermelha' && d.sab==='amarela') {
-                r = { t: "Calor e Umidade", e: "Sinal de inflamação ou excesso de 'fogo' no sistema digestivo.", s: "Beber chá de hortelã ou dente-de-leão. Ponto IG11 e E44." };
-            } else if(d.cor==='vermelha' && d.sab==='nenhuma') {
-                r = { t: "Deficiência de Yin", e: "Falta de saburra indica que os líquidos lubrificantes do corpo secaram.", s: "Hidratação profunda e meditação. Ponto R3 e R6." };
-            } else if(d.cor==='roxa') {
-                r = { t: "Estase de Sangue", e: "Circulação obstruída. Comum em dores crônicas ou traumas.", s: "Movimentação suave e compressas mornas. Ponto F3 e IG4." };
-            } else if(d.cor==='palida' && d.forma==='inchada' && d.sab==='branca_g') {
-                r = { t: "Deficiência de Yang (Frio)", e: "O corpo está sem 'fogo' para aquecer as funções metabólicas.", s: "Moxabustão e alimentos cozidos. Ponto VC4 e R7." };
-            } else if(d.forma==='rachada') {
-                r = { t: "Calor de Estômago / Def. Yin", e: "As rachaduras mostram que o calor crônico 'quebrou' a superfície da língua.", s: "Alimentação neutra e fresca. Evite pimenta e álcool." };
-            } else if(d.cor==='rosada' && d.sab==='branca_f') {
-                r = { t: "Equilíbrio Energético", e: "Sua língua apresenta sinais de saúde e equilíbrio funcional.", s: "Mantenha seus hábitos saudáveis atuais!" };
+            // LOGICA DE SINDROMES TÉCNICAS
+            if(res.cor==='palida' && res.forma==='marcas') {
+                t="Deficiência de Qi do Baço"; e="Falta de energia digestiva e acúmulo de umidade."; s="Chá de gengibre e evitar alimentos crus.";
+            } else if(res.cor==='vermelha' && res.sab==='amarela') {
+                t="Calor e Umidade no Fígado/Vesícula"; e="Excesso de inflamação e 'fogo' interno."; s="Chá de dente-de-leão e evitar álcool/frituras.";
+            } else if(res.cor==='vermelha' && res.sab==='nenhuma') {
+                t="Deficiência de Yin (Calor Vazio)"; e="Falta de lubrificação e descanso profundo."; s="Beber muita água e meditação. Evitar pimentas.";
+            } else if(res.cor==='roxa') {
+                t="Estase de Sangue (Xue)"; e="Bloqueio na circulação. Pode haver dor fixa."; s="Atividade física leve e compressas mornas.";
+            } else if(res.forma==='desviada') {
+                t="Vento Interno do Fígado"; e="Desequilíbrio profundo no sistema nervoso."; s="Repouso absoluto e controle da pressão arterial.";
+            } else if(res.cor==='rosada' && res.sab==='branca') {
+                t="Equilíbrio Energético"; e="Sinais de funcionalidade normal."; s="Mantenha o estilo de vida atual!";
             }
 
-            tit.innerText = r.t; exp.innerText = r.e; sug.innerText = r.s;
-            p.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('r-tit').innerText = t;
+            document.getElementById('r-exp').innerText = e;
+            document.getElementById('r-sug').innerText = s;
+            r.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
